@@ -12,6 +12,9 @@ target/
 *.pem
 *.ppk
 
+# Environment #
+.env
+
 # Eclipse files #
 **/.project
 **/.classpath

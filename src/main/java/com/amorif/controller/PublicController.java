@@ -1,4 +1,4 @@
-package com.loveif.controller;
+package com.amorif.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
