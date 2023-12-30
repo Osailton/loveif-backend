@@ -1,5 +1,9 @@
 package com.amorif.repository;
 
-public class AnoLetivoRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.amorif.entities.AnoLetivo;
+
+public interface AnoLetivoRepository extends JpaRepository<AnoLetivo, Long> {
 
 }

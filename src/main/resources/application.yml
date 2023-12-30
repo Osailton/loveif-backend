@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: test
   config:
     import: optional:file:.env[.properties]
   datasource:
@@ -13,3 +15,6 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
+logging:
+  level: 
+    '[org.springframework.data.web]': DEBUG
