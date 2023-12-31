@@ -26,8 +26,7 @@ public class StartApp {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				System.out.println("Add Cors: " + allowedCORS);
-				registry.addMapping("/pontuacao").allowedOrigins(allowedCORS);
+				registry.addMapping("/*").allowedOrigins(allowedCORS);
 			}
 		};
 	}

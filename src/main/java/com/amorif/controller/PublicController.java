@@ -29,7 +29,7 @@ public class PublicController {
 
 //	Method to return a list of 'Turma' with total points
 //	This must be for the last AnoLetivo in wich 'aberto' is true
-	@GetMapping(name = "/pontuacao")
+	@GetMapping("/pontuacao")
 	public ResponseEntity<List<TurmaDtoResponse>> listPoints() {
 		return ResponseEntity.ok().body(this.publicPageService.listPontuacao());
 	}
