@@ -1,7 +1,6 @@
 package com.amorif.controller;
 
 import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +29,7 @@ public class PublicController {
 
 //	Method to return a list of 'Turma' with total points
 //	This must be for the last AnoLetivo in wich 'aberto' is true
-	@GetMapping("/pontuacao")
+	@GetMapping(name = "/pontuacao")
 	public ResponseEntity<List<TurmaDtoResponse>> listPoints() {
 		return ResponseEntity.ok().body(this.publicPageService.listPontuacao());
 	}
