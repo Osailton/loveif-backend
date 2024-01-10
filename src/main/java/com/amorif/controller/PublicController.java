@@ -14,6 +14,7 @@ import com.amorif.services.PublicPageService;
  */
 
 @RestController
+@RequestMapping("/api/public")
 public class PublicController {
 	
 	private final PublicPageService publicPageService;
@@ -22,14 +23,9 @@ public class PublicController {
 		this.publicPageService = publicPageService;
 	}
 
-	@RequestMapping("/hello")
-	public String hello() {
-		return "Hello, world!";
-	}
-
 //	Method to return a list of 'Turma' with total points
 //	This must be for the last AnoLetivo in wich 'aberto' is true
-	@GetMapping("/pontuacao")
+	@GetMapping("pontuacao")
 	public ResponseEntity<List<TurmaDtoResponse>> listPoints() {
 		return ResponseEntity.ok().body(this.publicPageService.listPontuacao());
 	}

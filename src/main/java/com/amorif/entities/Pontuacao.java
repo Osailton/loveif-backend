@@ -26,7 +26,7 @@ import jakarta.persistence.TemporalType;
 
 @Entity
 @IdClass(PontuacaoID.class)
-@Table(name = "Pontuacao")
+@Table(name = "pontuacao")
 public class Pontuacao implements Serializable {
 
 	private static final long serialVersionUID = 1L;

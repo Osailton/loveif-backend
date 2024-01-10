@@ -23,7 +23,7 @@ import jakarta.persistence.Table;
  */
 
 @Entity
-@Table(name = "Turma")
+@Table(name = "turma")
 public class Turma implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -32,7 +32,7 @@ public class Turma implements Serializable {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "anoLetivo_id")
+	@JoinColumn(name = "ano_letivo_id")
 	private AnoLetivo anoLetivo;
 
 	private String nome;

@@ -20,7 +20,7 @@ import jakarta.persistence.Table;
  */
 
 @Entity
-@Table(name = "AnoLetivo")
+@Table(name = "ano_letivo")
 public class AnoLetivo implements Serializable {
 
 	private static final long serialVersionUID = 1L;

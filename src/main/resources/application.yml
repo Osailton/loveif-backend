@@ -1,3 +1,8 @@
+security:
+  jwt:
+    token:
+      secret-key: ${JWT_SECRET_KEY}
+      expire-lenght: 3600000
 spring:
   profiles:
     active: test
@@ -15,6 +20,9 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
+
+          
 logging:
   level: 
     '[org.springframework.data.web]': DEBUG
+    
