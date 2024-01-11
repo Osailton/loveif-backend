@@ -25,11 +25,6 @@ public class AuthenticationController {
 	public AuthenticationController(AuthService authService) {
 		this.authService = authService;
 	}
-
-	@RequestMapping("hello")
-	public String hello() {
-		return "Hello, world!";
-	}
 	
 	@PostMapping("register")
 	public ResponseEntity<?> register(@RequestBody RegisterDtoRequest request) {
@@ -38,7 +33,8 @@ public class AuthenticationController {
 		
 //		Check if user is already registered
 		if(this.authService.existsByMatricula(dto.getMatricula())) {
-			throw new UserAlreadyExistsException("Já existe um usuário cadastrado para esta matrícula!");
+//			if it exists, authenticate the user
+			return ResponseEntity.ok().body(this.authService.authenticate(dto));
 		}
 		
 //		Register the new user cause if doesn't exist in the DB

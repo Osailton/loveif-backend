@@ -9,6 +9,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.amorif.dto.response.ErrorMessageDtoResponse;
+import com.amorif.exceptions.InvalidArgumentException;
 import com.amorif.exceptions.InvalidJWTAuthenticationException;
 import com.amorif.exceptions.UserAlreadyExistsException;
 
@@ -23,6 +24,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 	
 	@ExceptionHandler(InvalidJWTAuthenticationException.class)
 	public ResponseEntity<Object> handleUsernameAvailableException(InvalidJWTAuthenticationException e, WebRequest request) {
+		ErrorMessageDtoResponse eMessage = new ErrorMessageDtoResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+		return new ResponseEntity<Object>(eMessage, new HttpHeaders(), eMessage.getStatus());
+	}
+	
+	@ExceptionHandler(InvalidArgumentException.class)
+	public ResponseEntity<Object> handleInvalidArgumentException(InvalidArgumentException e, WebRequest request) {
 		ErrorMessageDtoResponse eMessage = new ErrorMessageDtoResponse(HttpStatus.BAD_REQUEST, e.getMessage());
 		return new ResponseEntity<Object>(eMessage, new HttpHeaders(), eMessage.getStatus());
 	}

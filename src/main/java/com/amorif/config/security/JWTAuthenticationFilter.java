@@ -60,18 +60,6 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 		}
 		
 		filterChain.doFilter(request, response);
-		
-		// Verifies if the token is valid, by its claims and by db
-		
-//		String token = this.jwtTokenProvider.resolveToken((HttpServletRequest) request);
-//		if (token != null && this.jwtTokenProvider.validateToken(token)) {
-//			Authentication authentication = this.jwtTokenProvider.getAuthentication(token);
-//			if (authentication != null) {
-//				SecurityContextHolder.getContext().setAuthentication(authentication);
-//			}
-//		}
-//		filterChain.doFilter(request, response);
-		
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.amorif.services.impl;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.http.HttpEntity;
@@ -21,6 +22,7 @@ import com.amorif.entities.Role;
 import com.amorif.entities.RoleEnum;
 import com.amorif.entities.Token;
 import com.amorif.entities.User;
+import com.amorif.exceptions.InvalidJWTAuthenticationException;
 import com.amorif.repository.RoleRepository;
 import com.amorif.repository.TokenRepository;
 import com.amorif.repository.UserRepository;
@@ -37,12 +39,13 @@ public class AuthServiceImpl implements AuthService {
 	@Value("${SUAP_USER_INFO_URL}")
 	private String SUAP_USER_INFO_URL;
 
-	private UserRepository userRepository;
-	private RoleRepository roleRepository;
-	private TokenRepository tokenRepository;
-	private JWTTokenProvider jwtTokenProvider;
+	private final UserRepository userRepository;
+	private final RoleRepository roleRepository;
+	private final TokenRepository tokenRepository;
+	private final JWTTokenProvider jwtTokenProvider;
 
-	public AuthServiceImpl(UserRepository userRepository, RoleRepository roleRepository, TokenRepository tokenRepository, JWTTokenProvider jwtTokenProvider) {
+	public AuthServiceImpl(UserRepository userRepository, RoleRepository roleRepository,
+			TokenRepository tokenRepository, JWTTokenProvider jwtTokenProvider) {
 		this.userRepository = userRepository;
 		this.roleRepository = roleRepository;
 		this.tokenRepository = tokenRepository;
@@ -52,7 +55,7 @@ public class AuthServiceImpl implements AuthService {
 	@Override
 	public AuthenticationDtoResponse register(SUAPUserDtoRequest dto) {
 		User user = new User().builder().matricula(dto.getMatricula()).nome(dto.getNomeUsual()).build();
-		
+
 		switch (dto.getTipoVinculo()) {
 		case "Servidor": {
 			user.getFuncoes().add(this.roleRepository.getByName(RoleEnum.ROLE_SERV.toString()));
@@ -70,20 +73,18 @@ public class AuthServiceImpl implements AuthService {
 			user.getFuncoes().add(this.roleRepository.getByName(RoleEnum.ROLE_PSERV.toString()));
 			break;
 		}
-		
+
 		this.userRepository.save(user);
-		
+
 		// Generate token
-		String token = jwtTokenProvider.getStringAccessToken(user.getMatricula(), user.getFuncoes().stream().map(Role::getName).collect(Collectors.toList()));
-		String refToken = jwtTokenProvider.getStringRefreshToken(user.getMatricula(), user.getFuncoes().stream().map(Role::getName).collect(Collectors.toList()));
+		String token = jwtTokenProvider.getStringAccessToken(user.getMatricula(),
+				user.getFuncoes().stream().map(Role::getName).collect(Collectors.toList()));
+		String refToken = jwtTokenProvider.getStringRefreshToken(user.getMatricula(),
+				user.getFuncoes().stream().map(Role::getName).collect(Collectors.toList()));
 		saveUserToken(user, token);
-		
-		return AuthenticationDtoResponse.builder()
-				.accessToken(token)
-				.refreshToken(refToken)
-				.matricula(user.getMatricula())
-				.nome(user.getNome())
-				.build();
+
+		return AuthenticationDtoResponse.builder().accessToken(token).refreshToken(refToken)
+				.matricula(user.getMatricula()).nome(user.getNome()).build();
 	}
 
 	@Override
@@ -96,8 +97,6 @@ public class AuthServiceImpl implements AuthService {
 			get.addHeader("Accept", "application/json");
 			get.addHeader("Authorization", "Bearer " + token);
 
-			System.out.println("Executing request " + get.getRequestLine());
-
 			ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
 
 				@Override
@@ -107,10 +106,9 @@ public class AuthServiceImpl implements AuthService {
 						HttpEntity entity = response.getEntity();
 						return entity != null ? EntityUtils.toString(entity) : null;
 					} else {
-						throw new ClientProtocolException("Unexpected response status: " + status);
+						throw new InvalidJWTAuthenticationException("Credenciais inválidas!");
 					}
 				}
-
 			};
 			String response = httpclient.execute(get, responseHandler);
 
@@ -138,16 +136,39 @@ public class AuthServiceImpl implements AuthService {
 	public boolean existsByMatricula(String matricula) {
 		return !this.userRepository.findByMatricula(matricula).isEmpty();
 	}
-	
+
+	@Override
+	public AuthenticationDtoResponse authenticate(SUAPUserDtoRequest dto) {
+		User user = this.userRepository.findByMatricula(dto.getMatricula()).orElseThrow();
+		String token = jwtTokenProvider.getStringAccessToken(user.getMatricula(),
+				user.getFuncoes().stream().map(Role::getName).collect(Collectors.toList()));
+		String refToken = jwtTokenProvider.getStringRefreshToken(user.getMatricula(),
+				user.getFuncoes().stream().map(Role::getName).collect(Collectors.toList()));
+		
+//		Revoke all other tokens
+		revokeAllUserTokens(user);
+		saveUserToken(user, token);
+		
+		return AuthenticationDtoResponse.builder().accessToken(token).refreshToken(refToken)
+				.matricula(user.getMatricula()).nome(user.getNome()).build();
+	}
+
 	private void saveUserToken(User user, String jwtToken) {
-		Token token = Token.builder()
-				.user(user)
-				.token(jwtToken)
-				.tokenType("BEARER")
-				.expired(false)
-				.revoked(false)
+		Token token = Token.builder().user(user).token(jwtToken).tokenType("BEARER").expired(false).revoked(false)
 				.build();
 		tokenRepository.save(token);
+	}
+	
+	private void revokeAllUserTokens(User user) {
+		List<Token> validTokens = tokenRepository.findAllValidTokensByUser(user.getId());
+		if(validTokens.isEmpty()) {
+			return;
+		}
+		for (Token token : validTokens) {
+			token.setExpired(true);
+			token.setRevoked(true);
+		}
+		tokenRepository.saveAll(validTokens);
 	}
 
 }

@@ -12,5 +12,6 @@ public interface AuthService {
 	SUAPUserDtoRequest getSuapUser(String token);
 	boolean existsByMatricula(String matricula);
 	AuthenticationDtoResponse register(SUAPUserDtoRequest dto);
+	AuthenticationDtoResponse authenticate(SUAPUserDtoRequest dto);
 
 }
