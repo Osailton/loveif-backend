@@ -1,5 +1,7 @@
 package com.amorif.config.security;
 
+import java.util.Arrays;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -8,6 +10,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.amorif.entities.RoleEnum;
 
@@ -37,6 +41,15 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		return httpSecurity.httpBasic((basic) -> basic.disable()).csrf((csrf) -> csrf.disable())
+				.cors(httpSecurityCorsConfigurer  -> {
+					CorsConfiguration config = new CorsConfiguration();
+					config.setAllowedOrigins(Arrays.asList("*"));
+					config.setAllowedMethods(Arrays.asList("*"));
+					config.setAllowedHeaders(Arrays.asList("*"));
+                    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                    source.registerCorsConfiguration("/**", config);
+                    httpSecurityCorsConfigurer.configurationSource(source);
+				})
 				.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests((auth) -> auth.requestMatchers(WHITE_LIST).permitAll().requestMatchers(AVAL_LIST)
 						.hasAnyRole(this.getRole(RoleEnum.ROLE_ADMIN.toString()),
