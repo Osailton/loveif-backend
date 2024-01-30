@@ -50,7 +50,8 @@ public class TestConfig implements CommandLineRunner {
 		Role r2 = Role.builder().name(RoleEnum.ROLE_AVAL.toString()).build();
 		Role r3 = Role.builder().name(RoleEnum.ROLE_SERV.toString()).build();
 		Role r4 = Role.builder().name(RoleEnum.ROLE_ALUNO.toString()).build();
-		roleRepository.saveAll(Arrays.asList(r1, r2, r3, r4));
+		Role r5 = Role.builder().name(RoleEnum.ROLE_PSERV.toString()).build();
+		roleRepository.saveAll(Arrays.asList(r1, r2, r3, r4, r5));
 
 //		Create User
 		User u1 = User.builder().nome("Teste").matricula("0101").funcao(r1).build();

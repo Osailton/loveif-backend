@@ -1,6 +1,11 @@
 package com.amorif.controller;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,5 +33,14 @@ public class PublicController {
 	@GetMapping("pontuacao")
 	public ResponseEntity<List<TurmaDtoResponse>> listPoints() {
 		return ResponseEntity.ok().body(this.publicPageService.listPontuacao());
+	}
+	
+//	Redirect test
+	@GetMapping("red")
+	public ResponseEntity<List<TurmaDtoResponse>> redirect() throws URISyntaxException {
+		URI externalUri = new URI("http://localhost:3000/regiment");
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLocation(externalUri);
+        return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
 	}
 }

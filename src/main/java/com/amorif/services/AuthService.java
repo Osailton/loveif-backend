@@ -1,5 +1,6 @@
 package com.amorif.services;
 
+import com.amorif.dto.request.RegisterDtoRequest;
 import com.amorif.dto.request.SUAPUserDtoRequest;
 import com.amorif.dto.response.AuthenticationDtoResponse;
 
@@ -10,6 +11,7 @@ import com.amorif.dto.response.AuthenticationDtoResponse;
 public interface AuthService {
 
 	SUAPUserDtoRequest getSuapUser(String token);
+	RegisterDtoRequest getTokenFromCode(String code);
 	boolean existsByMatricula(String matricula);
 	AuthenticationDtoResponse register(SUAPUserDtoRequest dto);
 	AuthenticationDtoResponse authenticate(SUAPUserDtoRequest dto);
