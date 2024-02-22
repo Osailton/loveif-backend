@@ -1,13 +1,16 @@
 package com.amorif.dto.response;
 
 import java.io.Serializable;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @author osailton
  */
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AuthenticationDtoResponse implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -21,6 +24,8 @@ public class AuthenticationDtoResponse implements Serializable {
 	private String matricula;
 	
 	private String nome;
+	
+	private List<String> roles;
 
 	public AuthenticationDtoResponse() {
 
@@ -31,6 +36,15 @@ public class AuthenticationDtoResponse implements Serializable {
 		this.refreshToken = builder.refreshToken;
 		this.matricula = builder.matricula;
 		this.nome = builder.nome;
+		this.roles = builder.roles;
+	}
+	
+	public List<String> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<String> roles) {
+		this.roles = roles;
 	}
 
 	public String getAccessToken() {
@@ -74,6 +88,7 @@ public class AuthenticationDtoResponse implements Serializable {
 		String refreshToken;
 		String matricula;
 		String nome;
+		List<String> roles;
 
 		public Builder accessToken(String accessToken) {
 			this.accessToken = accessToken;
@@ -92,6 +107,11 @@ public class AuthenticationDtoResponse implements Serializable {
 		
 		public Builder nome(String nome) {
 			this.nome = nome;
+			return this;
+		}
+		
+		public Builder roles(List<String> roles) {
+			this.roles = roles;
 			return this;
 		}
 

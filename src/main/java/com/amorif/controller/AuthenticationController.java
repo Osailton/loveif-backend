@@ -9,6 +9,8 @@ import com.amorif.dto.request.SUAPUserDtoRequest;
 import com.amorif.exceptions.UserAlreadyExistsException;
 import com.amorif.services.AuthService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -51,5 +53,12 @@ public class AuthenticationController {
 //		Register the new user cause if doesn't exist in the DB
 		return ResponseEntity.ok().body(this.authService.register(dto));
 	}
+	
+	@GetMapping("user")
+	public ResponseEntity<?> user(HttpServletRequest request) {
+//		Get user from the token
+		return ResponseEntity.ok().body(this.authService.getUserFromToken(request));
+	}
+	
 
 }

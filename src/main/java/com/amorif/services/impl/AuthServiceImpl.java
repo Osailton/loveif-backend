@@ -1,10 +1,6 @@
 package com.amorif.services.impl;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,7 +11,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -23,6 +18,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
 import com.amorif.config.security.JWTTokenProvider;
@@ -39,6 +35,8 @@ import com.amorif.repository.TokenRepository;
 import com.amorif.repository.UserRepository;
 import com.amorif.services.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * @author osailton
@@ -74,6 +72,28 @@ public class AuthServiceImpl implements AuthService {
 		this.tokenRepository = tokenRepository;
 		this.jwtTokenProvider = jwtTokenProvider;
 	}
+	
+	@Override
+	public AuthenticationDtoResponse getUserFromToken(HttpServletRequest request) {
+		String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+		if(header == null || !header.startsWith("Bearer ")) {
+			return null;
+		}
+		String token = header.substring(7);
+		String matricula = request.getUserPrincipal().getName();
+		if(matricula == null) {
+			return null;
+		}
+		User user = userRepository.findByMatricula(matricula).orElseThrow();
+		if(!jwtTokenProvider.validateToken(token)) {
+			return null;
+		}
+		String refToken = jwtTokenProvider.getStringRefreshToken(user.getMatricula(),
+				user.getFuncoes().stream().map(Role::getName).collect(Collectors.toList()));
+		return AuthenticationDtoResponse.builder().accessToken(token).refreshToken(refToken)
+				.matricula(user.getMatricula()).nome(user.getNome())
+				.roles(user.getFuncoes().stream().map(Role::getName).collect(Collectors.toList())).build();
+	}
 
 	@Override
 	public AuthenticationDtoResponse register(SUAPUserDtoRequest dto) {
@@ -82,6 +102,7 @@ public class AuthServiceImpl implements AuthService {
 		switch (dto.getTipoVinculo()) {
 		case "Servidor": {
 			user.getFuncoes().add(this.roleRepository.getByName(RoleEnum.ROLE_SERV.toString()));
+			user.getFuncoes().add(this.roleRepository.getByName(RoleEnum.ROLE_AVAL.toString()));
 			break;
 		}
 		case "Aluno": {
@@ -107,12 +128,13 @@ public class AuthServiceImpl implements AuthService {
 		saveUserToken(user, token);
 
 		return AuthenticationDtoResponse.builder().accessToken(token).refreshToken(refToken)
-				.matricula(user.getMatricula()).nome(user.getNome()).build();
+				.matricula(user.getMatricula()).nome(user.getNome())
+				.roles(user.getFuncoes().stream().map(Role::getName).collect(Collectors.toList())).build();
 	}
 
 	@Override
 	public RegisterDtoRequest getTokenFromCode(String code) {
-		
+
 //		Get the suap token from the code
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		RegisterDtoRequest dto = null;
@@ -158,9 +180,8 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	public SUAPUserDtoRequest getSuapUser(String token) {
-		
+
 //		Get the user info from the token
-		
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		SUAPUserDtoRequest dto = null;
 
@@ -222,7 +243,8 @@ public class AuthServiceImpl implements AuthService {
 		saveUserToken(user, token);
 
 		return AuthenticationDtoResponse.builder().accessToken(token).refreshToken(refToken)
-				.matricula(user.getMatricula()).nome(user.getNome()).build();
+				.matricula(user.getMatricula()).nome(user.getNome())
+				.roles(user.getFuncoes().stream().map(Role::getName).collect(Collectors.toList())).build();
 	}
 
 	private void saveUserToken(User user, String jwtToken) {
