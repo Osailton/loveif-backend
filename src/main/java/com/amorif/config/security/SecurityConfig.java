@@ -27,7 +27,7 @@ public class SecurityConfig {
 
 	private final String[] AVAL_LIST = new String[] { "/api/pontuacao/**" };
 
-	private final String[] MANAGE_LIST = new String[] { "/api/manager/**" };
+	private final String[] MANAGE_LIST = new String[] { "/api/manager/**", "/api/anoletivo/**" };
 
 	private final AuthenticationProvider authenticationProvider;
 	private final JWTAuthenticationFilter jwtAuthenticationFilter;
