@@ -27,7 +27,7 @@ public class SecurityConfig {
 
 	private final String[] AVAL_LIST = new String[] { "/api/pontuacao/**" };
 
-	private final String[] MANAGE_LIST = new String[] { "/api/manager/**", "/api/anoletivo/**" };
+	private final String[] MANAGER_LIST = new String[] { "/api/manager/**", "/api/anoletivo/**" };
 
 	private final AuthenticationProvider authenticationProvider;
 	private final JWTAuthenticationFilter jwtAuthenticationFilter;
@@ -54,7 +54,7 @@ public class SecurityConfig {
 				.authorizeHttpRequests((auth) -> auth.requestMatchers(WHITE_LIST).permitAll().requestMatchers(AVAL_LIST)
 						.hasAnyRole(this.getRole(RoleEnum.ROLE_ADMIN.toString()),
 								this.getRole(RoleEnum.ROLE_AVAL.toString()))
-						.requestMatchers(MANAGE_LIST).hasAnyRole(this.getRole(RoleEnum.ROLE_ADMIN.toString()))
+						.requestMatchers(MANAGER_LIST).hasAnyRole(this.getRole(RoleEnum.ROLE_ADMIN.toString()))
 						.requestMatchers("/users").denyAll().anyRequest().authenticated())
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 				.authenticationProvider(this.authenticationProvider).build();
