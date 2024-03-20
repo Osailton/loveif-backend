@@ -10,7 +10,8 @@ public class TurmaDtoResponse implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private Integer anoLetivo;
+	private Long id;
+	private AnoLetivoDtoResponse anoLetivo;
 	private String nome;
 	private String descricao;
 	private Integer pontuacao;
@@ -20,17 +21,26 @@ public class TurmaDtoResponse implements Serializable {
 	}
 
 	public TurmaDtoResponse(Builder builder) {
+		this.id = builder.id;
 		this.anoLetivo = builder.anoLetivo;
 		this.nome = builder.nome;
 		this.descricao = builder.descricao;
 		this.pontuacao = builder.pontuacao;
 	}
+	
+	public Long getId() {
+		return id;
+	}
 
-	public Integer getAnoLetivo() {
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public AnoLetivoDtoResponse getAnoLetivo() {
 		return anoLetivo;
 	}
 
-	public void setAnoLetivo(Integer anoLetivo) {
+	public void setAnoLetivo(AnoLetivoDtoResponse anoLetivo) {
 		this.anoLetivo = anoLetivo;
 	}
 
@@ -63,12 +73,18 @@ public class TurmaDtoResponse implements Serializable {
 	}
 
 	public static final class Builder {
-		Integer anoLetivo;
+		Long id;
+		AnoLetivoDtoResponse anoLetivo;
 		String nome;
 		String descricao;
 		Integer pontuacao;
+		
+		public Builder id(Long id) {
+			this.id = id;
+			return this;
+		}
 
-		public Builder anoLetivo(Integer anoLetivo) {
+		public Builder anoLetivo(AnoLetivoDtoResponse anoLetivo) {
 			this.anoLetivo = anoLetivo;
 			return this;
 		}

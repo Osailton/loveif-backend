@@ -34,11 +34,10 @@ public class AnoLetivoController {
 		return ResponseEntity.ok().body(this.anoLetivoService.listAll());
 	}
 	
-//	Create a new Ano Letivo
+//	Create or update a 'AnoLetivo'
 	@PostMapping("ano")
-	public ResponseEntity<AnoLetivoDtoResponse> postMethodName(@RequestBody AnoLetivoDtoRequest request) {
-		return ResponseEntity.ok().body(this.anoLetivoService.createAnoLetivo(request));
+	public ResponseEntity<AnoLetivoDtoResponse> postAnoLetivo(@RequestBody AnoLetivoDtoRequest request) {
+		return ResponseEntity.ok().body(this.anoLetivoService.postAnoLetivo(request));
 	}
-	
 
 }

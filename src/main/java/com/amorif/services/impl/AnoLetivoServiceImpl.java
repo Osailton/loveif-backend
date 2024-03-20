@@ -32,7 +32,7 @@ public class AnoLetivoServiceImpl implements AnoLetivoService {
 	}
 
 	@Override
-	public AnoLetivoDtoResponse createAnoLetivo(AnoLetivoDtoRequest anoLetivoRequest) {
+	public AnoLetivoDtoResponse postAnoLetivo(AnoLetivoDtoRequest anoLetivoRequest) {
 		if (anoLetivoRequest.getId() != null) {
 
 			AnoLetivo ano = this.anoLetivoRepository.getReferenceById(anoLetivoRequest.getId());

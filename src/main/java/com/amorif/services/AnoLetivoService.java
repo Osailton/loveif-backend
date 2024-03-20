@@ -11,6 +11,6 @@ import com.amorif.dto.response.AnoLetivoDtoResponse;
 public interface AnoLetivoService {
 	
 	List<AnoLetivoDtoResponse> listAll();
-	AnoLetivoDtoResponse createAnoLetivo(AnoLetivoDtoRequest anoLetivoRequest);
+	AnoLetivoDtoResponse postAnoLetivo(AnoLetivoDtoRequest anoLetivoRequest);
 
 }

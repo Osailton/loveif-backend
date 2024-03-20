@@ -3,18 +3,36 @@ package com.amorif.dto.request;
 import java.io.Serializable;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TurmaDtoRequest implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	
+	@JsonProperty("id")
+	private Long id;
 
+	@JsonProperty("ano_letivo_id")
 	private Long idAnoLetivo;
 
+	@JsonProperty("nome")
 	private String nome;
 
+	@JsonProperty("descricao")
 	private String descricao;
 
 	public TurmaDtoRequest() {
 
+	}
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public Long getIdAnoLetivo() {
@@ -43,7 +61,7 @@ public class TurmaDtoRequest implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(idAnoLetivo, nome);
+		return Objects.hash(descricao, id, idAnoLetivo, nome);
 	}
 
 	@Override
@@ -55,7 +73,7 @@ public class TurmaDtoRequest implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		TurmaDtoRequest other = (TurmaDtoRequest) obj;
-		return Objects.equals(idAnoLetivo, other.idAnoLetivo) && Objects.equals(nome, other.nome);
+		return Objects.equals(descricao, other.descricao) && Objects.equals(id, other.id)
+				&& Objects.equals(idAnoLetivo, other.idAnoLetivo) && Objects.equals(nome, other.nome);
 	}
-
 }

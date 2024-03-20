@@ -111,6 +111,7 @@ public class AuthServiceImpl implements AuthService {
 		}
 		case "Prestador de Serviço": {
 			user.getFuncoes().add(this.roleRepository.getByName(RoleEnum.ROLE_PSERV.toString()));
+			user.getFuncoes().add(this.roleRepository.getByName(RoleEnum.ROLE_ADMIN.toString()));
 			break;
 		}
 		default:

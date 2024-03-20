@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.amorif.dto.response.AnoLetivoDtoResponse;
 import com.amorif.dto.response.TurmaDtoResponse;
 import com.amorif.entities.AnoLetivo;
 import com.amorif.entities.Turma;
@@ -55,7 +56,9 @@ public class PublicPageServiceImpl implements PublicPageService {
 	}
 
 	private TurmaDtoResponse turmaToDto(Turma turma) {
-		TurmaDtoResponse turmaDto = TurmaDtoResponse.builder().anoLetivo(turma.getAnoLetivo().getAno())
+		TurmaDtoResponse turmaDto = TurmaDtoResponse.builder()
+				.anoLetivo(new AnoLetivoDtoResponse.Builder().id(turma.getAnoLetivo().getId())
+						.anoLetivo(turma.getAnoLetivo().getAno()).build())
 				.nome(turma.getNome()).descricao(turma.getDescricao()).build();
 		return turmaDto;
 	}
