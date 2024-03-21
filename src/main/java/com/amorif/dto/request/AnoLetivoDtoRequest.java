@@ -5,6 +5,10 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * @author osailton
+ */
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AnoLetivoDtoRequest implements Serializable {
 	

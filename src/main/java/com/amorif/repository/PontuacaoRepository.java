@@ -1,5 +1,7 @@
 package com.amorif.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -25,5 +27,16 @@ public interface PontuacaoRepository extends JpaRepository<Pontuacao, Integer> {
 			+ "AND p.aplicado = true "
 			+ "AND p.anulado = false ")
 	Integer negativePoints(Turma turma);
+	
+	@Query(value = "SELECT p FROM Pontuacao p "
+			+ "WHERE p.turma.anoLetivo.id = :idAno "
+			+ "ORDER by p.contador")
+	List<Pontuacao> pontosByAno(Long idAno);
+	
+	@Query(value = "SELECT p.contador FROM Pontuacao p "
+			+ "WHERE p.turma = :turma "
+			+ "ORDER BY p.contador DESC "
+			+ "LIMIT 1")
+	Integer contadorByTurma(Turma turma);
 
 }
