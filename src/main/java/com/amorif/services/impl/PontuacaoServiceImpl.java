@@ -37,12 +37,13 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 	public PontuacaoDtoResponse throwPoints(PontuacaoDtoRequest dtoRequest) {
 		Turma turma = this.turmaRepository.getReferenceById(dtoRequest.getIdTurma());
 		if(turma != null) {
+			Integer count = this.pontuacaoRepository.contadorByTurma(turma);
 			Pontuacao pontuacao = Pontuacao.builder()
 					.pontos(dtoRequest.getPontos())
 					.operacao(dtoRequest.getOperacao().equals("SUM") ? PontuacaoOperationEnum.SUM : PontuacaoOperationEnum.SUB)
 					.descricao(dtoRequest.getDescricao())
 					.turma(turma)
-					.contador(this.pontuacaoRepository.contadorByTurma(turma) + 1)
+					.contador(count != null ? this.pontuacaoRepository.contadorByTurma(turma) + 1 : 1)
 					.aplicado(false)
 					.anulado(false)
 					.build();

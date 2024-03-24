@@ -11,6 +11,7 @@ import com.amorif.dto.response.TurmaDtoResponse;
 public interface TurmaService {
 	
 	List<TurmaDtoResponse> listAll();
-	public TurmaDtoResponse postTurma(TurmaDtoRequest turmaRequest);
+	List<TurmaDtoResponse> listByAno(Long idAno);
+	TurmaDtoResponse postTurma(TurmaDtoRequest turmaRequest);
 
 }

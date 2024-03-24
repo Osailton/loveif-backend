@@ -34,6 +34,16 @@ public class TurmaServiceImpl implements TurmaService {
 	public List<TurmaDtoResponse> listAll() {
 		return turmaRepository.findAll().stream().map(e -> dtoFromTurma(e)).collect(Collectors.toList());
 	}
+	
+	@Override
+	public List<TurmaDtoResponse> listByAno(Long idAno) {
+		AnoLetivo ano = this.anoLetivoRepository.getReferenceById(idAno);
+		if(ano != null) {
+			return turmaRepository.findAllByAnoLetivo(ano).stream().map(e -> dtoFromTurma(e)).collect(Collectors.toList());
+		} else {
+			throw new InvalidArgumentException("Ano letivo não existe!");
+		}
+	}
 
 	@Override
 	public TurmaDtoResponse postTurma(TurmaDtoRequest turmaRequest) {
@@ -73,5 +83,6 @@ public class TurmaServiceImpl implements TurmaService {
 		return Turma.builder().nome(dto.getNome()).descricao(dto.getDescricao())
 				.anoLetivo(this.anoLetivoRepository.getReferenceById(dto.getIdAnoLetivo())).build();
 	}
+
 
 }

@@ -14,6 +14,9 @@ public class PontuacaoDtoRequest implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
+	@JsonProperty("contador")
+	private Integer contador;
+	
 	@JsonProperty("id_turma")
 	private Long idTurma;
 	
@@ -28,6 +31,14 @@ public class PontuacaoDtoRequest implements Serializable {
 	
 	public PontuacaoDtoRequest() {
 
+	}
+
+	public Integer getContador() {
+		return contador;
+	}
+
+	public void setContador(Integer contador) {
+		this.contador = contador;
 	}
 
 	public Long getIdTurma() {

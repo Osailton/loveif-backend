@@ -39,7 +39,6 @@ public class PublicPageServiceImpl implements PublicPageService {
 
 		// Get the last active AnoLetivo
 		AnoLetivo anoLetivo = this.anoLetivoRepository.getLastActiveAnoLetivo();
-		System.out.println("ANO: " + anoLetivo.getAno());
 
 		// Get a list of Turma for that AnoLetivo
 		List<Turma> turmas = this.turmaRepository.findAllByAnoLetivo(anoLetivo);

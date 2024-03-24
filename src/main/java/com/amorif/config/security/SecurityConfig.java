@@ -25,9 +25,9 @@ public class SecurityConfig {
 
 	private final String[] WHITE_LIST = new String[] { "/api/auth/**", "/api/public/**" };
 
-	private final String[] AVAL_LIST = new String[] { "/api/pontuacao/**" };
+	private final String[] AVAL_LIST = new String[] { "/api/pontuacao/**", "/api/anoletivo/**", "/api/turma/**" };
 
-	private final String[] MANAGER_LIST = new String[] { "/api/manager/**", "/api/anoletivo/**", "/api/turma/**" };
+	private final String[] MANAGER_LIST = new String[] { "/api/manager/**" };
 
 	private final AuthenticationProvider authenticationProvider;
 	private final JWTAuthenticationFilter jwtAuthenticationFilter;
@@ -51,10 +51,13 @@ public class SecurityConfig {
                     httpSecurityCorsConfigurer.configurationSource(source);
 				})
 				.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authorizeHttpRequests((auth) -> auth.requestMatchers(WHITE_LIST).permitAll().requestMatchers(AVAL_LIST)
-						.hasAnyRole(this.getRole(RoleEnum.ROLE_ADMIN.toString()),
+				.authorizeHttpRequests((auth) -> auth
+						.requestMatchers(WHITE_LIST).permitAll()
+						.requestMatchers(AVAL_LIST).hasAnyRole(
+								this.getRole(RoleEnum.ROLE_ADMIN.toString()),
 								this.getRole(RoleEnum.ROLE_AVAL.toString()))
-						.requestMatchers(MANAGER_LIST).hasAnyRole(this.getRole(RoleEnum.ROLE_ADMIN.toString()))
+						.requestMatchers(MANAGER_LIST).hasAnyRole(
+								this.getRole(RoleEnum.ROLE_ADMIN.toString()))
 						.requestMatchers("/users").denyAll().anyRequest().authenticated())
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 				.authenticationProvider(this.authenticationProvider).build();

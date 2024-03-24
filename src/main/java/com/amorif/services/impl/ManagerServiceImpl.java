@@ -4,13 +4,17 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.amorif.dto.request.PontuacaoDtoRequest;
 import com.amorif.dto.request.TurmaDtoRequest;
 import com.amorif.dto.response.AnoLetivoDtoResponse;
+import com.amorif.dto.response.PontuacaoDtoResponse;
 import com.amorif.dto.response.TurmaDtoResponse;
 import com.amorif.entities.AnoLetivo;
+import com.amorif.entities.Pontuacao;
 import com.amorif.entities.Turma;
 import com.amorif.exceptions.InvalidArgumentException;
 import com.amorif.repository.AnoLetivoRepository;
+import com.amorif.repository.PontuacaoRepository;
 import com.amorif.repository.TurmaRepository;
 import com.amorif.services.ManagerService;
 
@@ -23,10 +27,12 @@ public class ManagerServiceImpl implements ManagerService {
 
 	private final TurmaRepository turmaRepository;
 	private final AnoLetivoRepository anoLetivoRepository;
+	private final PontuacaoRepository pontuacaoRepository;
 
-	public ManagerServiceImpl(TurmaRepository turmaRepository, AnoLetivoRepository anoLetivoRepository) {
+	public ManagerServiceImpl(TurmaRepository turmaRepository, AnoLetivoRepository anoLetivoRepository, PontuacaoRepository pontuacaoRepository) {
 		this.turmaRepository = turmaRepository;
 		this.anoLetivoRepository = anoLetivoRepository;
+		this.pontuacaoRepository = pontuacaoRepository;
 	}
 
 	@Override
@@ -48,10 +54,57 @@ public class ManagerServiceImpl implements ManagerService {
 		}
 	}
 
+	@Override
+	public PontuacaoDtoResponse approvePoints(PontuacaoDtoRequest request) {
+		Turma turma = this.turmaRepository.getReferenceById(request.getIdTurma());
+		if(turma != null) {
+			Pontuacao pontuacao = this.pontuacaoRepository.getByContadorTurma(request.getContador(), turma);
+			if(pontuacao != null) {
+				pontuacao.setAplicado(true);
+				pontuacao = this.pontuacaoRepository.save(pontuacao);
+				return this.dtoFromPontuacao(pontuacao);
+			} else {
+				throw new InvalidArgumentException("Parâmetros inválidos para a requisição!");
+			}
+		} else {
+			throw new InvalidArgumentException("Parâmetros inválidos para a requisição!");
+		}
+	}
+	
+	@Override
+	public PontuacaoDtoResponse cancelPoints(PontuacaoDtoRequest request) {
+		Turma turma = this.turmaRepository.getReferenceById(request.getIdTurma());
+		if(turma != null) {
+			Pontuacao pontuacao = this.pontuacaoRepository.getByContadorTurma(request.getContador(), turma);
+			if(pontuacao != null) {
+				pontuacao.setAnulado(true);
+				pontuacao = this.pontuacaoRepository.save(pontuacao);
+				return this.dtoFromPontuacao(pontuacao);
+			} else {
+				throw new InvalidArgumentException("Parâmetros inválidos para a requisição!");
+			}
+		} else {
+			throw new InvalidArgumentException("Parâmetros inválidos para a requisição!");
+		}
+	}
+
 	private TurmaDtoResponse turmaToTurmaDtoResponse(Turma turma) {
 		return TurmaDtoResponse.builder()
 				.anoLetivo(new AnoLetivoDtoResponse.Builder().id(turma.getAnoLetivo().getId())
 						.anoLetivo(turma.getAnoLetivo().getAno()).build())
 				.nome(turma.getNome()).descricao(turma.getDescricao()).pontuacao(0).build();
+	}
+	
+	private PontuacaoDtoResponse dtoFromPontuacao(Pontuacao pontuacao) {
+		return PontuacaoDtoResponse.builder()
+				.contador(pontuacao.getContador())
+				.nomeTurma(pontuacao.getTurma().getNome())
+				.idTurma(pontuacao.getTurma().getId())
+				.descricao(pontuacao.getDescricao())
+				.pontos(pontuacao.getPontos())
+				.operacao(pontuacao.getOperacao().toString())
+				.aplicado(pontuacao.isAplicado())
+				.anulado(pontuacao.isAnulado())
+				.build();
 	}
 }

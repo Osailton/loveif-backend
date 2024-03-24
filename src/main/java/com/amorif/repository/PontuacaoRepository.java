@@ -38,5 +38,9 @@ public interface PontuacaoRepository extends JpaRepository<Pontuacao, Integer> {
 			+ "ORDER BY p.contador DESC "
 			+ "LIMIT 1")
 	Integer contadorByTurma(Turma turma);
-
+	
+	@Query(value = "SELECT p FROM Pontuacao p "
+			+ "WHERE p.contador = :contador "
+			+ "AND p.turma = :turma")
+	Pontuacao getByContadorTurma(Integer contador, Turma turma);
 }
