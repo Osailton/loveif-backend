@@ -6,21 +6,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.amorif.dto.request.RegisterDtoRequest;
 import com.amorif.dto.request.SUAPUserDtoRequest;
-import com.amorif.exceptions.UserAlreadyExistsException;
 import com.amorif.services.AuthService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * @author osailton

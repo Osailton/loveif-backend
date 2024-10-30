@@ -5,7 +5,7 @@ security:
       expire-lenght: 3600000
 spring:
   profiles:
-    active: test
+    active: prod
   config:
     import: optional:file:.env[.properties]
   datasource:
