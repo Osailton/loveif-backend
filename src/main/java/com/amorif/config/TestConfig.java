@@ -8,15 +8,20 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import com.amorif.entities.AnoLetivo;
+import com.amorif.entities.FrequenciaRegraEnum;
 import com.amorif.entities.Pontuacao;
 import com.amorif.entities.PontuacaoOperationEnum;
 import com.amorif.entities.Role;
 import com.amorif.entities.RoleEnum;
+import com.amorif.entities.Senso;
+import com.amorif.entities.TipoRegra;
 import com.amorif.entities.Turma;
 import com.amorif.entities.User;
 import com.amorif.repository.AnoLetivoRepository;
 import com.amorif.repository.PontuacaoRepository;
 import com.amorif.repository.RoleRepository;
+import com.amorif.repository.SensoRepository;
+import com.amorif.repository.TipoRegraRepository;
 import com.amorif.repository.TurmaRepository;
 import com.amorif.repository.UserRepository;
 
@@ -33,14 +38,19 @@ public class TestConfig implements CommandLineRunner {
 	private final PontuacaoRepository pontuacaoRepository;
 	private final RoleRepository roleRepository;
 	private final UserRepository userRepository;
+	private final SensoRepository sensoRepository;
+	private final TipoRegraRepository tipoRegraRepository;
 
 	public TestConfig(AnoLetivoRepository anoLetivoRepository, TurmaRepository turmaRepository,
-			PontuacaoRepository pontuacaoRepository, RoleRepository roleRepository, UserRepository userRepository) {
+			PontuacaoRepository pontuacaoRepository, RoleRepository roleRepository, UserRepository userRepository,
+			SensoRepository sensoRepository, TipoRegraRepository tipoRegraRepository) { // Adicione TipoRegraRepository no construtor
 		this.anoLetivoRepository = anoLetivoRepository;
 		this.turmaRepository = turmaRepository;
 		this.pontuacaoRepository = pontuacaoRepository;
 		this.roleRepository = roleRepository;
 		this.userRepository = userRepository;
+		this.sensoRepository = sensoRepository;
+		this.tipoRegraRepository = tipoRegraRepository; // Inicialize o repositório aqui
 	}
 
 	@Override
@@ -112,6 +122,26 @@ public class TestConfig implements CommandLineRunner {
 				.pontos(1).descricao("Descricao da pontuacao.").aplicado(true).anulado(false)
 				.data(new Date(System.currentTimeMillis())).build();
 		pontuacaoRepository.saveAll(Arrays.asList(pontTrB1, pontTrB2, pontTrB3, pontTrB4, pontTrB5));
+		
+		// Criar sensos
+		Senso senso1 = Senso.builder().descricao("Utilização").build();
+		Senso senso2 = Senso.builder().descricao("Ordenação").build();
+		Senso senso3 = Senso.builder().descricao("Limpeza").build();
+		Senso senso4 = Senso.builder().descricao("Saúde").build();
+		Senso senso5 = Senso.builder().descricao("Autodisciplina").build();
+		sensoRepository.saveAll(Arrays.asList(senso1, senso2, senso3, senso4, senso5));
+		
+		// Criar tipos de regra
+		TipoRegra tipo1 = TipoRegra.builder().descricao("Valor Fixo").fixo(true).temAluno(false).frequencia(FrequenciaRegraEnum.AVULSO.ordinal()).build();
+		TipoRegra tipo2 = TipoRegra.builder().descricao("Valor Fixo em bimestre extra por ano letivo").fixo(true).temAluno(false).frequencia(FrequenciaRegraEnum.ANUAL.ordinal()).bimestreExtra(true).build();
+		TipoRegra tipo3 = TipoRegra.builder().descricao("Valor Fixo automático").fixo(true).temAluno(false).frequencia(FrequenciaRegraEnum.AVULSO.ordinal()).automatico(true).build();
+		TipoRegra tipo4 = TipoRegra.builder().descricao("Valor Fixo por turno").fixo(true).temAluno(false).frequencia(FrequenciaRegraEnum.AVULSO.ordinal()).build();
+		TipoRegra tipo5 = TipoRegra.builder().descricao("Valor Fixo por aluno por bimestre").fixo(true).temAluno(true).frequencia(FrequenciaRegraEnum.BIMESTRAL.ordinal()).build();
+		TipoRegra tipo6 = TipoRegra.builder().descricao("Valor Variável por bimestre").fixo(false).temAluno(false).frequencia(FrequenciaRegraEnum.BIMESTRAL.ordinal()).build();
+		TipoRegra tipo7 = TipoRegra.builder().descricao("Valor Fixo por aluno por ano letivo").fixo(true).temAluno(true).frequencia(FrequenciaRegraEnum.ANUAL.ordinal()).build();
+		TipoRegra tipo8 = TipoRegra.builder().descricao("Valor Variável").fixo(false).temAluno(false).frequencia(FrequenciaRegraEnum.AVULSO.ordinal()).build();
+
+		tipoRegraRepository.saveAll(Arrays.asList(tipo1, tipo2, tipo3, tipo4, tipo5, tipo6, tipo7, tipo8));
 
 	}
 

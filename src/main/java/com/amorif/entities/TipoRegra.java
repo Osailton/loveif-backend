@@ -29,13 +29,19 @@ public class TipoRegra implements Serializable {
 	private Long id;
 	
 	@Column(nullable = false)
-	private boolean fixo;
+	private String descricao;
 	
 	@Column(nullable = false)
-	private String operacao;
+	private boolean fixo;
 
 	@Column(nullable = false)
 	private boolean temAluno;
+	
+	@Column(nullable = false)
+	private boolean automatico;
+	
+	@Column(nullable = false)
+	private boolean bimestreExtra;
 	
 	@Column(nullable = false)
 	private int frequencia;

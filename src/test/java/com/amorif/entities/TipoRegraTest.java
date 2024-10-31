@@ -23,8 +23,8 @@ class TipoRegraTest {
         // Cria um objeto TipoRegra com dados iniciais
         tipoRegra = TipoRegra.builder()
                 .id(1L)
+                .descricao("Teste")
                 .fixo(true)
-                .operacao("Operação de Teste")
                 .temAluno(true)
                 .frequencia(5)
                 .regras(regras)
@@ -36,7 +36,6 @@ class TipoRegraTest {
         // Verifica se os atributos foram atribuídos corretamente
         assertThat(tipoRegra.getId()).isEqualTo(1L);
         assertThat(tipoRegra.isFixo()).isTrue();
-        assertThat(tipoRegra.getOperacao()).isEqualTo("Operação de Teste");
         assertThat(tipoRegra.isTemAluno()).isTrue();
         assertThat(tipoRegra.getFrequencia()).isEqualTo(5);
         assertThat(tipoRegra.getRegras()).isNotNull();
