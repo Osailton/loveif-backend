@@ -32,10 +32,13 @@ private static final long serialVersionUID = 1L;
 	@Column(unique = true)
 	private String descricao;
 	
-	@Column(unique = true)
+	@Column(nullable = false)
+	private String operacao;
+	
+	@Column(nullable = false)
 	private int valorMinimo;
 	
-	@Column(unique = false)
+	@Column(nullable = true)
 	private int valorMaximo;
 	
 	@ManyToOne

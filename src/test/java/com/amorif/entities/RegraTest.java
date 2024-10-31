@@ -27,7 +27,6 @@ class RegraTest {
         tipoRegra = TipoRegra.builder()
                 .id(1L)
                 .fixo(true)
-                .operacao("Operação de Teste")
                 .temAluno(true)
                 .frequencia(5)
                 .build();
