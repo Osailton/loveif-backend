@@ -17,8 +17,7 @@ class TipoRegraTest {
     void setUp() {
         // Inicializa uma lista de regras para associar ao TipoRegra
         regras = new ArrayList<>();
-        Regra regra1 = new Regra();
-        regra1.setDescricao("Regra de Teste 1");
+        Regra regra1 = Regra.builder().descricao("Regra de Teste 1").build();
         regras.add(regra1);
 
         // Cria um objeto TipoRegra com dados iniciais
@@ -48,8 +47,7 @@ class TipoRegraTest {
     @Test
     void testAddRegraToTipoRegra() {
         // Adiciona uma nova regra e verifica se foi adicionada
-        Regra regra2 = new Regra();
-        regra2.setDescricao("Regra de Teste 2");
+        Regra regra2 = Regra.builder().descricao("Regra de Teste 2").build();
         tipoRegra.getRegras().add(regra2);
 
         assertThat(tipoRegra.getRegras()).hasSize(2);

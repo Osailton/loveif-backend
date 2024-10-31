@@ -17,8 +17,7 @@ class SensoTest {
     void setUp() {
         // Inicializa um objeto de regra vazio para associar ao Senso
         regras = new ArrayList<>();
-        Regra regra1 = new Regra();
-        regra1.setDescricao("Regra 1");
+        Regra regra1 = Regra.builder().descricao("Regra de Teste 1").build();
         regras.add(regra1);
 
         // Cria um objeto Senso com dados iniciais
@@ -42,8 +41,7 @@ class SensoTest {
     @Test
     void testAddRegraToSenso() {
         // Adiciona uma nova regra ao senso e verifica se ela foi adicionada
-        Regra regra2 = new Regra();
-        regra2.setDescricao("Regra 2");
+    	Regra regra2 = Regra.builder().descricao("Regra de Teste 2").build();
         senso.getRegras().add(regra2);
 
         assertThat(senso.getRegras()).hasSize(2);

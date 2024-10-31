@@ -43,18 +43,4 @@ public class TipoRegra implements Serializable {
 	@OneToMany(mappedBy = "tipoRegra", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Regra> regras;
 	
-	public TipoRegra() {
-		
-	}
-
-	public TipoRegra(Long id, boolean fixo, String operacao, boolean temAluno, int frequencia, List<Regra> regras) {
-		super();
-		this.id = id;
-		this.fixo = fixo;
-		this.operacao = operacao;
-		this.temAluno = temAluno;
-		this.frequencia = frequencia;
-		this.regras = regras;
-	}
-	
 }

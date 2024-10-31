@@ -33,16 +33,5 @@ public class Senso implements Serializable {
 	
 	@OneToMany(mappedBy = "senso", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Regra> regras;
-	
-	public Senso() {
-		
-	}
-
-	public Senso(Long id, String descricao, List<Regra> regras) {
-		super();
-		this.id = id;
-		this.descricao = descricao;
-		this.regras = regras;
-	}
 
 }

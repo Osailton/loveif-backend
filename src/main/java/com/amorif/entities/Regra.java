@@ -42,19 +42,5 @@ private static final long serialVersionUID = 1L;
 	@ManyToOne
 	@JoinColumn(name = "id")
 	private TipoRegra tipoRegra;
-	
-	public Regra() {
-		
-	}
 
-	public Regra(Long id, String descricao, int valorMinimo, int valorMaximo, Senso senso, TipoRegra tipoRegra) {
-		super();
-		this.id = id;
-		this.descricao = descricao;
-		this.valorMinimo = valorMinimo;
-		this.valorMaximo = valorMaximo;
-		this.senso = senso;
-		this.tipoRegra = tipoRegra;
-	}
-	
 }
