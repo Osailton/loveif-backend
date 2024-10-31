@@ -1,6 +1,6 @@
 package com.amorif.entities;
 
-import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -15,11 +15,17 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author osailton
  */
 
+@Builder
+@Getter
+@Setter
 @Entity
 @Table(name = "funcao")
 public class Role implements GrantedAuthority {
@@ -35,37 +41,10 @@ public class Role implements GrantedAuthority {
 	
 	@JsonIgnore
 	@ManyToMany(mappedBy = "funcoes")
-	private Set<User> usuarios = new HashSet<>();
-
-	public Role() {
-		
-	}
+	private Set<User> usuarios;
 	
-	private Role(Builder builder) {
-		this.id = builder.id;
-		this.name = builder.name;
-		this.usuarios = builder.usuarios;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Set<User> getUsuarios() {
-		return usuarios;
-	}
+	@ManyToMany(mappedBy = "roles")
+    private List<Regra> regras;
 
 	@Override
 	public String getAuthority() {
@@ -88,33 +67,5 @@ public class Role implements GrantedAuthority {
 		Role other = (Role) obj;
 		return id == other.id;
 	}
-	
-	public static Builder builder() {
-		return new Builder();
-	};
-	
-	public static final class Builder {
-		Long id;
-		String name;
-		Set<User> usuarios = new HashSet<>();
-		
-		public Builder id(Long id) {
-			this.id = id;
-			return this;
-		}
-		
-		public Builder name(String name) {
-			this.name = name;
-			return this;
-		}
-		
-		public Builder usuarios(Set<User> usuarios) {
-			this.usuarios = usuarios;
-			return this;
-		}
-		
-		public Role build() {
-			return new Role(this);
-		}
-	}
+
 }

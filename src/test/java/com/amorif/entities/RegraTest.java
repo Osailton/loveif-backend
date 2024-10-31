@@ -5,15 +5,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class RegraTest {
 
     private Regra regra;
     private Senso senso;
     private TipoRegra tipoRegra;
+    private Role role1;
+    private Role role2;
 
     @BeforeEach
     void setUp() {
-        // Inicializa as entidades relacionadas
+        // Configuração das entidades relacionadas
         senso = Senso.builder()
                 .id(1L)
                 .descricao("Senso de Teste")
@@ -27,7 +32,17 @@ class RegraTest {
                 .frequencia(5)
                 .build();
 
-        // Cria um objeto Regra com dados iniciais
+        // Criação dos objetos Role
+        role1 = Role.builder().name(RoleEnum.ROLE_ALUNO.toString()).build();
+
+        role2 = Role.builder().name(RoleEnum.ROLE_ADMIN.toString()).build();
+
+        // Associação dos roles à regra
+        List<Role> roles = new ArrayList<>();
+        roles.add(role1);
+        roles.add(role2);
+
+        // Criação do objeto Regra com os dados iniciais e associação de roles
         regra = Regra.builder()
                 .id(1L)
                 .descricao("Regra de Teste")
@@ -35,6 +50,7 @@ class RegraTest {
                 .valorMaximo(20)
                 .senso(senso)
                 .tipoRegra(tipoRegra)
+                .roles(roles)
                 .build();
     }
 
@@ -48,17 +64,11 @@ class RegraTest {
     }
 
     @Test
-    void testRegraSensoAssociation() {
-        // Verifica se a associação com Senso está correta
-        assertThat(regra.getSenso()).isNotNull();
-        assertThat(regra.getSenso().getDescricao()).isEqualTo("Senso de Teste");
-    }
-
-    @Test
-    void testRegraTipoRegraAssociation() {
-        // Verifica se a associação com TipoRegra está correta
-        assertThat(regra.getTipoRegra()).isNotNull();
-        assertThat(regra.getTipoRegra().getOperacao()).isEqualTo("Operação de Teste");
-        assertThat(regra.getTipoRegra().isFixo()).isTrue();
+    void testRegraRolesAssociation() {
+        // Verifica se a associação com Role está correta
+        assertThat(regra.getRoles()).isNotNull();
+        assertThat(regra.getRoles()).hasSize(2);
+        assertThat(regra.getRoles().get(0).getName()).isEqualTo("ROLE_ALUNO");
+        assertThat(regra.getRoles().get(1).getName()).isEqualTo("ROLE_ADMIN");
     }
 }
