@@ -54,10 +54,10 @@ public class SecurityConfig {
 				.authorizeHttpRequests((auth) -> auth
 						.requestMatchers(WHITE_LIST).permitAll()
 						.requestMatchers(AVAL_LIST).hasAnyRole(
-								this.getRole(RoleEnum.ROLE_ADMIN.toString()),
+								this.getRole(RoleEnum.ROLE_ADMINISTRADOR.toString()),
 								this.getRole(RoleEnum.ROLE_AVAL.toString()))
 						.requestMatchers(MANAGER_LIST).hasAnyRole(
-								this.getRole(RoleEnum.ROLE_ADMIN.toString()))
+								this.getRole(RoleEnum.ROLE_ADMINISTRADOR.toString()))
 						.requestMatchers("/users").denyAll().anyRequest().authenticated())
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 				.authenticationProvider(this.authenticationProvider).build();

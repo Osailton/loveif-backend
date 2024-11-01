@@ -34,7 +34,7 @@ class RegraTest {
         // Criação dos objetos Role
         role1 = Role.builder().name(RoleEnum.ROLE_ALUNO.toString()).build();
 
-        role2 = Role.builder().name(RoleEnum.ROLE_ADMIN.toString()).build();
+        role2 = Role.builder().name(RoleEnum.ROLE_ADMINISTRADOR.toString()).build();
 
         // Associação dos roles à regra
         List<Role> roles = new ArrayList<>();
@@ -68,6 +68,6 @@ class RegraTest {
         assertThat(regra.getRoles()).isNotNull();
         assertThat(regra.getRoles()).hasSize(2);
         assertThat(regra.getRoles().get(0).getName()).isEqualTo("ROLE_ALUNO");
-        assertThat(regra.getRoles().get(1).getName()).isEqualTo("ROLE_ADMIN");
+        assertThat(regra.getRoles().get(1).getName()).isEqualTo("ROLE_ADMINISTRADOR");
     }
 }

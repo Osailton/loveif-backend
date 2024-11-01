@@ -29,7 +29,7 @@ private static final long serialVersionUID = 1L;
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(unique = true)
+	@Column
 	private String descricao;
 	
 	@Column(nullable = false)
@@ -38,8 +38,9 @@ private static final long serialVersionUID = 1L;
 	@Column(nullable = false)
 	private int valorMinimo;
 	
-	@Column(nullable = true)
-	private int valorMaximo;
+	@Column(nullable = false)
+	@Builder.Default
+	private int valorMaximo = 500;
 	
 	@ManyToOne
 	@JoinColumn(name = "senso_id")
@@ -56,5 +57,22 @@ private static final long serialVersionUID = 1L;
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private List<Role> roles;
+
+	public Regra(Long id, String descricao, String operacao, int valorMinimo, int valorMaximo, Senso senso,
+			TipoRegra tipoRegra, List<Role> roles) {
+		super();
+		this.id = id;
+		this.descricao = descricao;
+		this.operacao = operacao;
+		this.valorMinimo = valorMinimo;
+		this.valorMaximo = valorMaximo;
+		this.senso = senso;
+		this.tipoRegra = tipoRegra;
+		this.roles = roles;
+	}
+
+	public Regra() {
+		super();
+	}
 
 }

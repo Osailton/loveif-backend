@@ -68,4 +68,16 @@ public class Role implements GrantedAuthority {
 		return id == other.id;
 	}
 
+	public Role(Long id, String name, Set<User> usuarios, List<Regra> regras) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.usuarios = usuarios;
+		this.regras = regras;
+	}
+	
+	public Role() {
+		super();
+	}
+
 }

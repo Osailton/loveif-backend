@@ -6,4 +6,6 @@ import com.amorif.entities.TipoRegra;
 
 public interface TipoRegraRepository extends JpaRepository<TipoRegra, Long> {
 
+	TipoRegra findByDescricao(String descricao);
+	
 }

@@ -13,6 +13,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Builder
@@ -21,7 +22,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "senso")
 public class Senso implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -34,4 +35,14 @@ public class Senso implements Serializable {
 	@OneToMany(mappedBy = "senso", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Regra> regras;
 
+	public Senso(Long id, String descricao, List<Regra> regras) {
+		super();
+		this.id = id;
+		this.descricao = descricao;
+		this.regras = regras;
+	}
+	
+	public Senso() {
+		super();
+	}
 }
