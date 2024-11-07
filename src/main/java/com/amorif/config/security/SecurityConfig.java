@@ -22,7 +22,7 @@ import com.amorif.entities.RoleEnum;
 
 @Configuration
 @EnableWebSecurity
-@Profile("test")
+@Profile("!test")
 public class SecurityConfig {
 
 	private final String[] WHITE_LIST = new String[] { "/api/auth/**", "/api/public/**" };
