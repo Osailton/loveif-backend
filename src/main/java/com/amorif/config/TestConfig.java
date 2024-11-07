@@ -214,11 +214,11 @@ public class TestConfig implements CommandLineRunner {
 						.roles(Arrays.asList(bibliotecario)).build(),
 
 				// Utilização - Bibliotecário - Negativas
-				Regra.builder().descricao("10 pontos por perda de livro").operacao("SUB").valorMinimo(10)
+				Regra.builder().descricao("20 pontos por perda de livro").operacao("SUB").valorMinimo(20)
 						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario)).build(),
-				Regra.builder().descricao("4 pontos por atraso de livro").operacao("SUB").valorMinimo(4)
+				Regra.builder().descricao("3 pontos por atraso de livro").operacao("SUB").valorMinimo(3)
 						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario)).build(),
-				Regra.builder().descricao("8 pontos por avaria de livro").operacao("SUB").valorMinimo(8)
+				Regra.builder().descricao("5 pontos por avaria de livro").operacao("SUB").valorMinimo(5)
 						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario)).build(),
 
 				// Ordenação - Apoio Acadêmico - Positivas
@@ -333,7 +333,7 @@ public class TestConfig implements CommandLineRunner {
 				// Autodisciplina - Apoio Acadêmico - Negativas
 				Regra.builder().descricao("1 ponto por aluno da turma notificado").operacao("SUB").valorMinimo(1)
 						.senso(autodisciplina).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico)).build(),
-				Regra.builder().descricao("x pontos por turma notificada").operacao("SUB").senso(autodisciplina)
+				Regra.builder().descricao("Pontos por turma notificada").operacao("SUB").senso(autodisciplina)
 						.tipoRegra(tipoVariavel).roles(Arrays.asList(apoioAcademico)).build(),
 				Regra.builder().descricao("1 ponto por dia de aluno da turma suspenso").operacao("SUB").valorMinimo(1)
 						.senso(autodisciplina).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico)).build(),
