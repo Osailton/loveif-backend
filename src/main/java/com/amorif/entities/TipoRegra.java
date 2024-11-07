@@ -3,6 +3,8 @@ package com.amorif.entities;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -47,6 +49,7 @@ public class TipoRegra implements Serializable {
 	private int frequencia;
 	
 	@OneToMany(mappedBy = "tipoRegra", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnore
     private List<Regra> regras;
 
 	public TipoRegra(Long id, String descricao, boolean fixo, boolean temAluno, boolean automatico,

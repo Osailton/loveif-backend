@@ -44,6 +44,7 @@ public class Role implements GrantedAuthority {
 	private Set<User> usuarios;
 	
 	@ManyToMany(mappedBy = "roles")
+	@JsonIgnore
     private List<Regra> regras;
 
 	@Override
