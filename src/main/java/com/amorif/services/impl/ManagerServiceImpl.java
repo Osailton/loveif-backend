@@ -100,9 +100,9 @@ public class ManagerServiceImpl implements ManagerService {
 				.contador(pontuacao.getContador())
 				.nomeTurma(pontuacao.getTurma().getNome())
 				.idTurma(pontuacao.getTurma().getId())
-				.descricao(pontuacao.getDescricao())
+				.descricao(pontuacao.getMotivacao())
 				.pontos(pontuacao.getPontos())
-				.operacao(pontuacao.getOperacao().toString())
+				.operacao(pontuacao.getRegra().getOperacao().toString())
 				.aplicado(pontuacao.isAplicado())
 				.anulado(pontuacao.isAnulado())
 				.build();

@@ -5,10 +5,17 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * @author osailton
  */
 
+@Builder
+@Setter
+@Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PontuacaoDtoRequest implements Serializable {
 
@@ -20,56 +27,31 @@ public class PontuacaoDtoRequest implements Serializable {
 	@JsonProperty("id_turma")
 	private Long idTurma;
 	
+	@JsonProperty("id_regra")
+	private Long idRegra;
+	
 	@JsonProperty("pontos")
 	private Integer pontos;
 	
 	@JsonProperty("operacao")
 	private String operacao;
 	
-	@JsonProperty("descricao")
-	private String descricao;
+	@JsonProperty("motivacao")
+	private String motivacao;
 	
 	public PontuacaoDtoRequest() {
 
 	}
 
-	public Integer getContador() {
-		return contador;
-	}
-
-	public void setContador(Integer contador) {
+	public PontuacaoDtoRequest(Integer contador, Long idTurma, Long idRegra, Integer pontos, String operacao,
+			String motivacao) {
+		super();
 		this.contador = contador;
-	}
-
-	public Long getIdTurma() {
-		return idTurma;
-	}
-
-	public void setIdTurma(Long idTurma) {
 		this.idTurma = idTurma;
-	}
-
-	public Integer getPontos() {
-		return pontos;
-	}
-
-	public void setPontos(Integer pontos) {
+		this.idRegra = idRegra;
 		this.pontos = pontos;
-	}
-
-	public String getOperacao() {
-		return operacao;
-	}
-
-	public void setOperacao(String operacao) {
 		this.operacao = operacao;
+		this.motivacao = motivacao;
 	}
 
-	public String getDescricao() {
-		return descricao;
-	}
-
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
 }

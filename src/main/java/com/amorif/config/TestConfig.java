@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Profile;
 import com.amorif.entities.AnoLetivo;
 import com.amorif.entities.FrequenciaRegraEnum;
 import com.amorif.entities.Pontuacao;
-import com.amorif.entities.PontuacaoOperationEnum;
 import com.amorif.entities.Role;
 import com.amorif.entities.RoleEnum;
 import com.amorif.entities.Senso;
@@ -103,41 +102,6 @@ public class TestConfig implements CommandLineRunner {
 		Turma turmaE = Turma.builder().id(5L).anoLetivo(ano23).nome("ADM 4VA").descricao("Descricao da turma.").build();
 
 		turmaRepository.saveAll(Arrays.asList(turmaA, turmaB, turmaC, turmaD, turmaE));
-
-//		Criar pontuação
-		Pontuacao pontTrA1 = Pontuacao.builder().contador(1).turma(turmaA).operacao(PontuacaoOperationEnum.SUM)
-				.pontos(3).descricao("Descricao da pontuacao.").aplicado(true).anulado(false)
-				.data(new Date(System.currentTimeMillis())).build();
-		Pontuacao pontTrA2 = Pontuacao.builder().contador(2).turma(turmaA).operacao(PontuacaoOperationEnum.SUM)
-				.pontos(10).descricao("Descricao da pontuacao.").aplicado(true).anulado(false)
-				.data(new Date(System.currentTimeMillis())).build();
-		Pontuacao pontTrA3 = Pontuacao.builder().contador(3).turma(turmaA).operacao(PontuacaoOperationEnum.SUB)
-				.pontos(5).descricao("Descricao da pontuacao.").aplicado(true).anulado(false)
-				.data(new Date(System.currentTimeMillis())).build();
-		Pontuacao pontTrA4 = Pontuacao.builder().contador(4).turma(turmaA).operacao(PontuacaoOperationEnum.SUM)
-				.pontos(4).descricao("Descricao da pontuacao.").aplicado(true).anulado(false)
-				.data(new Date(System.currentTimeMillis())).build();
-		Pontuacao pontTrA5 = Pontuacao.builder().contador(5).turma(turmaA).operacao(PontuacaoOperationEnum.SUM)
-				.pontos(2).descricao("Descricao da pontuacao.").aplicado(true).anulado(false)
-				.data(new Date(System.currentTimeMillis())).build();
-		pontuacaoRepository.saveAll(Arrays.asList(pontTrA1, pontTrA2, pontTrA3, pontTrA4, pontTrA5));
-
-		Pontuacao pontTrB1 = Pontuacao.builder().contador(1).turma(turmaB).operacao(PontuacaoOperationEnum.SUM)
-				.pontos(2).descricao("Descricao da pontuacao.").aplicado(true).anulado(false)
-				.data(new Date(System.currentTimeMillis())).build();
-		Pontuacao pontTrB2 = Pontuacao.builder().contador(2).turma(turmaB).operacao(PontuacaoOperationEnum.SUM)
-				.pontos(8).descricao("Descricao da pontuacao.").aplicado(true).anulado(false)
-				.data(new Date(System.currentTimeMillis())).build();
-		Pontuacao pontTrB3 = Pontuacao.builder().contador(3).turma(turmaB).operacao(PontuacaoOperationEnum.SUM)
-				.pontos(5).descricao("Descricao da pontuacao.").aplicado(true).anulado(false)
-				.data(new Date(System.currentTimeMillis())).build();
-		Pontuacao pontTrB4 = Pontuacao.builder().contador(4).turma(turmaB).operacao(PontuacaoOperationEnum.SUB)
-				.pontos(4).descricao("Descricao da pontuacao.").aplicado(true).anulado(false)
-				.data(new Date(System.currentTimeMillis())).build();
-		Pontuacao pontTrB5 = Pontuacao.builder().contador(6).turma(turmaB).operacao(PontuacaoOperationEnum.SUM)
-				.pontos(1).descricao("Descricao da pontuacao.").aplicado(true).anulado(false)
-				.data(new Date(System.currentTimeMillis())).build();
-		pontuacaoRepository.saveAll(Arrays.asList(pontTrB1, pontTrB2, pontTrB3, pontTrB4, pontTrB5));
 
 		// Criar sensos
 		Senso senso1 = Senso.builder().descricao("Utilização").build();
@@ -350,7 +314,39 @@ public class TestConfig implements CommandLineRunner {
 						.roles(Arrays.asList(administrador)).build());
 
 		regraRepository.saveAll(regras);
+		
+//		Criar pontuação
+		Pontuacao pontuacao1 = Pontuacao.builder()
+		        .contador(1)
+		        .turma(turmaA)
+		        .regra(regras.get(1))
+		        .anoLetivo(ano23)
+		        .user(u1)
+		        .bimestre(1)
+		        .pontos(30)
+		        .motivacao("Participação na campanha de doação de livros.")
+		        .aplicado(true)
+		        .anulado(false)
+		        .data(new Date())
+		        .build();
 
+		Pontuacao pontuacao2 = Pontuacao.builder()
+		        .contador(2)
+		        .turma(turmaA)
+		        .regra(regras.get(3))
+		        .anoLetivo(ano23)
+		        .user(u1)
+		        .bimestre(2)
+		        .pontos(20)
+		        .motivacao("Perdesse o livro, rapaz")
+		        .aplicado(true)
+		        .anulado(false)
+		        .data(new Date())
+		        .build();
+
+		// Salvar pontuações
+		pontuacaoRepository.saveAll(Arrays.asList(pontuacao1, pontuacao2));
+		
 	}
 
 }

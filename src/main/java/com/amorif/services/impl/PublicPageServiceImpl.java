@@ -55,7 +55,7 @@ public class PublicPageServiceImpl implements PublicPageService {
 	}
 
 	private TurmaDtoResponse turmaToDto(Turma turma) {
-		TurmaDtoResponse turmaDto = TurmaDtoResponse.builder()
+		TurmaDtoResponse turmaDto = TurmaDtoResponse.builder().id(turma.getId())
 				.anoLetivo(new AnoLetivoDtoResponse.Builder().id(turma.getAnoLetivo().getId())
 						.anoLetivo(turma.getAnoLetivo().getAno()).build())
 				.nome(turma.getNome()).descricao(turma.getDescricao()).build();

@@ -8,9 +8,10 @@ import org.springframework.stereotype.Service;
 import com.amorif.dto.request.PontuacaoDtoRequest;
 import com.amorif.dto.response.PontuacaoDtoResponse;
 import com.amorif.entities.Pontuacao;
-import com.amorif.entities.PontuacaoOperationEnum;
+import com.amorif.entities.Regra;
 import com.amorif.entities.Turma;
 import com.amorif.repository.PontuacaoRepository;
+import com.amorif.repository.RegraRepository;
 import com.amorif.repository.TurmaRepository;
 import com.amorif.services.PontuacaoService;
 
@@ -19,6 +20,7 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 	
 	private PontuacaoRepository pontuacaoRepository;
 	private TurmaRepository turmaRepository;
+	private RegraRepository regraRepository;
 	
 	public PontuacaoServiceImpl(PontuacaoRepository pontuacaoRepository, TurmaRepository turmaRepository) {
 		this.pontuacaoRepository = pontuacaoRepository;
@@ -36,12 +38,13 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 	@Override
 	public PontuacaoDtoResponse throwPoints(PontuacaoDtoRequest dtoRequest) {
 		Turma turma = this.turmaRepository.getReferenceById(dtoRequest.getIdTurma());
+		Regra regra = this.regraRepository.getReferenceById(dtoRequest.getIdRegra());
 		if(turma != null) {
 			Integer count = this.pontuacaoRepository.contadorByTurma(turma);
 			Pontuacao pontuacao = Pontuacao.builder()
 					.pontos(dtoRequest.getPontos())
-					.operacao(dtoRequest.getOperacao().equals("SUM") ? PontuacaoOperationEnum.SUM : PontuacaoOperationEnum.SUB)
-					.descricao(dtoRequest.getDescricao())
+					.regra(regra)
+					.motivacao(dtoRequest.getMotivacao())
 					.turma(turma)
 					.contador(count != null ? this.pontuacaoRepository.contadorByTurma(turma) + 1 : 1)
 					.aplicado(false)
@@ -58,9 +61,9 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 				.contador(pontuacao.getContador())
 				.nomeTurma(pontuacao.getTurma().getNome())
 				.idTurma(pontuacao.getTurma().getId())
-				.descricao(pontuacao.getDescricao())
+				.descricao(pontuacao.getMotivacao())
 				.pontos(pontuacao.getPontos())
-				.operacao(pontuacao.getOperacao().toString())
+				.operacao(pontuacao.getRegra().getOperacao().toString())
 				.aplicado(pontuacao.isAplicado())
 				.anulado(pontuacao.isAnulado())
 				.build();

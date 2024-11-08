@@ -6,8 +6,6 @@ import java.util.Objects;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
@@ -16,6 +14,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author osailton
@@ -24,6 +25,9 @@ import jakarta.persistence.TemporalType;
  *         points
  */
 
+@Getter
+@Setter
+@Builder
 @Entity
 @IdClass(PontuacaoID.class)
 @Table(name = "pontuacao")
@@ -38,13 +42,26 @@ public class Pontuacao implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
 	@JoinColumn(name = "turma_id")
 	private Turma turma;
+	
+	@ManyToOne(cascade = CascadeType.MERGE)
+	@JoinColumn(name = "regra_id")
+	private Regra regra;
+	
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+	@JoinColumn(name = "ano_id")
+	private AnoLetivo anoLetivo;
+	
+	@ManyToOne(cascade = CascadeType.MERGE)
+	@JoinColumn(name = "created_by")
+	private User user;
 
-	@Enumerated(EnumType.STRING)
-	private PontuacaoOperationEnum operacao = PontuacaoOperationEnum.SUM;
-
+	private int bimestre;
+	
 	private Integer pontos;
 
-	private String descricao;
+	private String motivacao;
+	
+	private String matriculaAluno;
 
 	private boolean aplicado;
 
@@ -52,85 +69,6 @@ public class Pontuacao implements Serializable {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date data;
-
-	public Pontuacao() {
-
-	}
-
-	public Pontuacao(Builder builder) {
-		this.contador = builder.contador;
-		this.turma = builder.turma;
-		this.operacao = builder.operacao;
-		this.pontos = builder.pontos;
-		this.descricao = builder.descricao;
-		this.aplicado = builder.aplicado;
-		this.anulado = builder.anulado;
-		this.data = builder.data;
-	}
-
-	public Integer getContador() {
-		return contador;
-	}
-
-	public void setContador(Integer contador) {
-		this.contador = contador;
-	}
-
-	public Turma getTurma() {
-		return turma;
-	}
-
-	public void setTurma(Turma turma) {
-		this.turma = turma;
-	}
-
-	public PontuacaoOperationEnum getOperacao() {
-		return operacao;
-	}
-
-	public void setOperacao(PontuacaoOperationEnum operacao) {
-		this.operacao = operacao;
-	}
-
-	public Integer getPontos() {
-		return pontos;
-	}
-
-	public void setPontos(Integer pontos) {
-		this.pontos = pontos;
-	}
-
-	public String getDescricao() {
-		return descricao;
-	}
-
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
-
-	public boolean isAplicado() {
-		return aplicado;
-	}
-
-	public void setAplicado(boolean aplicado) {
-		this.aplicado = aplicado;
-	}
-
-	public boolean isAnulado() {
-		return anulado;
-	}
-
-	public void setAnulado(boolean anulado) {
-		this.anulado = anulado;
-	}
-
-	public Date getData() {
-		return data;
-	}
-
-	public void setData(Date data) {
-		this.data = data;
-	}
 
 	@Override
 	public int hashCode() {
@@ -149,63 +87,25 @@ public class Pontuacao implements Serializable {
 		return Objects.equals(contador, other.contador) && Objects.equals(turma, other.turma);
 	}
 	
-	public static Builder builder() {
-		return new Builder();
-	}	
-
-	public static final class Builder {
-		Integer contador;
-		Turma turma;
-		PontuacaoOperationEnum operacao;
-		Integer pontos;
-		String descricao;
-		boolean aplicado;
-		boolean anulado;
-		Date data;
-
-		public Builder contador(Integer contador) {
-			this.contador = contador;
-			return this;
-		}
-
-		public Builder turma(Turma turma) {
-			this.turma = turma;
-			return this;
-		}
-
-		public Builder operacao(PontuacaoOperationEnum operacao) {
-			this.operacao = operacao;
-			return this;
-		}
-
-		public Builder pontos(Integer pontos) {
-			this.pontos = pontos;
-			return this;
-		}
-
-		public Builder descricao(String descricao) {
-			this.descricao = descricao;
-			return this;
-		}
-
-		public Builder aplicado(boolean aplicado) {
-			this.aplicado = aplicado;
-			return this;
-		}
-
-		public Builder anulado(boolean anulado) {
-			this.anulado = anulado;
-			return this;
-		}
-
-		public Builder data(Date data) {
-			this.data = data;
-			return this;
-		}
-
-		public Pontuacao build() {
-			return new Pontuacao(this);
-		}
+	public Pontuacao() {
+		super();
 	}
 
+	public Pontuacao(Integer contador, Turma turma, Regra regra, AnoLetivo anoLetivo, User user, int bimestre,
+			Integer pontos, String motivacao, String matriculaAluno, boolean aplicado, boolean anulado, Date data) {
+		super();
+		this.contador = contador;
+		this.turma = turma;
+		this.regra = regra;
+		this.anoLetivo = anoLetivo;
+		this.user = user;
+		this.bimestre = bimestre;
+		this.pontos = pontos;
+		this.motivacao = motivacao;
+		this.matriculaAluno = matriculaAluno;
+		this.aplicado = aplicado;
+		this.anulado = anulado;
+		this.data = data;
+	}
+	
 }
