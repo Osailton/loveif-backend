@@ -1,6 +1,7 @@
 package com.amorif.controller;
 
 import com.amorif.config.security.JWTTokenProvider;
+import com.amorif.config.security.TestSecurityConfig;
 import com.amorif.entities.Regra;
 import com.amorif.repository.TokenRepository;
 import com.amorif.services.RegraService;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -21,6 +23,7 @@ import static org.hamcrest.Matchers.*;
 
 @ActiveProfiles("test")
 @WebMvcTest(RegraController.class)
+@Import(TestSecurityConfig.class)
 public class RegraControllerTest {
 
     @Autowired

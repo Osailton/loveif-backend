@@ -9,10 +9,11 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-@Profile("!test") // Configuração de segurança para o perfil "test"
+@Profile("test") // Configuração de segurança para o perfil "test"
 public class TestSecurityConfig {
 
-    @Bean
+    @SuppressWarnings("removal")
+	@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
             .authorizeHttpRequests((auth) -> auth.anyRequest().permitAll());
