@@ -125,4 +125,15 @@ public class JWTTokenProvider {
 			throw new InvalidJWTAuthenticationException("Autenticação inválida!");
 		}
 	}
+	
+	public JWTTokenProvider(UserDetailsService userDetailsService, 
+            @Value("${JWT_SECRET_KEY}") String secrectKey, 
+            @Value("${JWT_EXPIRE_LENGTH:3600000}") long expireInMilliseconds, 
+            @Value("${JWT_REFRESH_EXPIRE_LENGTH:10800000}") long refresgTokenExpireInMilliseconds) {
+		this.userDetailsService = userDetailsService;
+		this.secrectKey = Base64.getEncoder().encodeToString(secrectKey.getBytes());
+		this.expireInMilliseconds = expireInMilliseconds;
+		this.refresgTokenExpireInMilliseconds = refresgTokenExpireInMilliseconds;
+		this.algorithm = Algorithm.HMAC256(this.secrectKey.getBytes());
+	}
 }

@@ -12,6 +12,7 @@ import com.amorif.dto.response.ErrorMessageDtoResponse;
 import com.amorif.exceptions.InvalidArgumentException;
 import com.amorif.exceptions.InvalidJWTAuthenticationException;
 import com.amorif.exceptions.UserAlreadyExistsException;
+import com.amorif.exceptions.UserHasNoPermitedRoleException;
 
 @ControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
@@ -31,6 +32,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(InvalidArgumentException.class)
 	public ResponseEntity<Object> handleInvalidArgumentException(InvalidArgumentException e, WebRequest request) {
 		ErrorMessageDtoResponse eMessage = new ErrorMessageDtoResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+		return new ResponseEntity<Object>(eMessage, new HttpHeaders(), eMessage.getStatus());
+	}
+	
+	@ExceptionHandler(UserHasNoPermitedRoleException.class)
+	public ResponseEntity<Object> handleUserHasNoPermitedRoleException(UserHasNoPermitedRoleException e, WebRequest request) {
+		ErrorMessageDtoResponse eMessage = new ErrorMessageDtoResponse(HttpStatus.FORBIDDEN, e.getMessage());
 		return new ResponseEntity<Object>(eMessage, new HttpHeaders(), eMessage.getStatus());
 	}
 

@@ -3,6 +3,8 @@ package com.amorif.services.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.amorif.dto.request.PontuacaoDtoRequest;
@@ -10,6 +12,7 @@ import com.amorif.dto.response.PontuacaoDtoResponse;
 import com.amorif.entities.Pontuacao;
 import com.amorif.entities.Regra;
 import com.amorif.entities.Turma;
+import com.amorif.exceptions.UserHasNoPermitedRoleException;
 import com.amorif.repository.PontuacaoRepository;
 import com.amorif.repository.RegraRepository;
 import com.amorif.repository.TurmaRepository;
@@ -39,7 +42,13 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 	public PontuacaoDtoResponse throwPoints(PontuacaoDtoRequest dtoRequest) {
 		Turma turma = this.turmaRepository.getReferenceById(dtoRequest.getIdTurma());
 		Regra regra = this.regraRepository.getReferenceById(dtoRequest.getIdRegra());
+		
 		if(turma != null) {
+
+	        if (!userHasPermission(regra)) {
+	            throw new UserHasNoPermitedRoleException("Usuário não tem permissão para lançar esta pontuação.");
+	        }
+			
 			Integer count = this.pontuacaoRepository.contadorByTurma(turma);
 			Pontuacao pontuacao = Pontuacao.builder()
 					.pontos(dtoRequest.getPontos())
@@ -63,10 +72,26 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 				.idTurma(pontuacao.getTurma().getId())
 				.descricao(pontuacao.getMotivacao())
 				.pontos(pontuacao.getPontos())
-				.operacao(pontuacao.getRegra().getOperacao().toString())
+				.operacao(pontuacao.getRegra().getOperacao())
 				.aplicado(pontuacao.isAplicado())
 				.anulado(pontuacao.isAnulado())
 				.build();
+	}
+	
+	private boolean userHasPermission(Regra regra) {
+		// Obtenha o usuário autenticado
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        // Verifique os papéis do usuário
+        List<String> userRoles = userDetails.getAuthorities().stream()
+            .map(authority -> authority.getAuthority())
+            .collect(Collectors.toList());
+
+        // Verifique se algum dos papéis do usuário está permitido na regra
+        boolean hasPermission = regra.getRoles().stream()
+            .anyMatch(role -> userRoles.contains(role.getName()));
+        
+        return hasPermission;
 	}
 
 }
