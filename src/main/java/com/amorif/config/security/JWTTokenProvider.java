@@ -4,6 +4,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -34,6 +35,7 @@ public class JWTTokenProvider {
 	@Value("${JWT_REFRESH_EXPIRE_LENGTH:10800000}")
 	private long refresgTokenExpireInMilliseconds = 10800000;
 	
+	@Autowired
 	private UserDetailsService userDetailsService;
 
 	private Algorithm algorithm = null;
@@ -135,5 +137,8 @@ public class JWTTokenProvider {
 		this.expireInMilliseconds = expireInMilliseconds;
 		this.refresgTokenExpireInMilliseconds = refresgTokenExpireInMilliseconds;
 		this.algorithm = Algorithm.HMAC256(this.secrectKey.getBytes());
+	}
+	
+	public JWTTokenProvider() {
 	}
 }

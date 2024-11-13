@@ -1,17 +1,21 @@
 package com.amorif.config.security;
 
+import java.util.Collections;
+
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-import com.amorif.entities.User;
-
 import jakarta.servlet.http.HttpServletRequest;
 
-@Profile("test")
+@Primary
 @Service
+@Profile("test")
 public class JWTTokenProviderMock extends JWTTokenProvider {
 
     public JWTTokenProviderMock(UserDetailsService userDetailsService) {
@@ -19,14 +23,10 @@ public class JWTTokenProviderMock extends JWTTokenProvider {
     }
 
     @Override
-    public Authentication getAuthentication(String token) {
+    public Authentication getAuthentication(String token) {    	
         // Cria um usuário de teste com roles definidas
-        User userDetails = User.builder()
-                .matricula("testUser")
-                .nome("Test User")
-                .email("testuser@example.com")
-                //.funcoes(Set.of(new Role("ROLE_TEST")))  // Roles de exemplo, substituíveis conforme necessário
-                .build();
+        User userDetails = new User("user", "password", 
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_BIBLIOTECARIO")));
 
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }

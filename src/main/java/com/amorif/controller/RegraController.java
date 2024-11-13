@@ -21,4 +21,11 @@ public class RegraController {
     public List<Regra> listarTodas() {
         return regraService.listarTodas();
     }
+    
+    @GetMapping("/permitidas")
+    public List<Regra> listarRegrasPermitidasParaUsuario() {
+        List<Regra> regras = regraService.listarRegrasPermitidasParaUsuario();
+        return regras;
+    }
+    
 }

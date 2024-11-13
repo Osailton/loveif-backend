@@ -97,7 +97,7 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	public AuthenticationDtoResponse register(SUAPUserDtoRequest dto) {
-		User user = new User().builder().matricula(dto.getMatricula()).nome(dto.getNomeUsual()).build();
+		User user = User.builder().matricula(dto.getMatricula()).nome(dto.getNomeUsual()).build();
 
 		switch (dto.getTipoVinculo()) {
 		case "Servidor": {

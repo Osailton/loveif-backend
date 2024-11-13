@@ -3,6 +3,7 @@ package com.amorif.config;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
@@ -32,7 +33,7 @@ import com.amorif.repository.RegraRepository;
  */
 
 @Configuration
-@Profile("test")
+@Profile({"test", "dev"})
 public class TestConfig implements CommandLineRunner {
 
 	private final AnoLetivoRepository anoLetivoRepository;
@@ -79,7 +80,7 @@ public class TestConfig implements CommandLineRunner {
 		roleRepository.saveAll(Arrays.asList(r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13));
 
 //		Create User
-		User u1 = User.builder().nome("Teste").matricula("0101").funcao(r1).build();
+		User u1 = User.builder().nome("Teste").matricula("0101").funcoes(Set.of(r5)).build();
 		userRepository.saveAll(Arrays.asList(u1));
 
 //		Criar ano letivo

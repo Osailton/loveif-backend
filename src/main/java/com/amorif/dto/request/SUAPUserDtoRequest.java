@@ -5,10 +5,17 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * @author osailton
  */
 
+@Getter
+@Setter
+@Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SUAPUserDtoRequest implements Serializable {
 	
@@ -28,35 +35,11 @@ public class SUAPUserDtoRequest implements Serializable {
 		
 	}
 
-	public String getMatricula() {
-		return matricula;
-	}
-
-	public void setMatricula(String matricula) {
+	public SUAPUserDtoRequest(String matricula, String nomeUsual, String tipoVinculo, String email) {
+		super();
 		this.matricula = matricula;
-	}
-
-	public String getNomeUsual() {
-		return nomeUsual;
-	}
-
-	public void setNomeUsual(String nomeUsual) {
 		this.nomeUsual = nomeUsual;
-	}
-
-	public String getTipoVinculo() {
-		return tipoVinculo;
-	}
-
-	public void setTipoVinculo(String tipoVinculo) {
 		this.tipoVinculo = tipoVinculo;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
 		this.email = email;
 	}
 
