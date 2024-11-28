@@ -1,6 +1,9 @@
 package com.amorif.config.security;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -55,9 +58,11 @@ public class SecurityConfig {
 				.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests((auth) -> auth
 						.requestMatchers(WHITE_LIST).permitAll()
-						.requestMatchers(AVAL_LIST).hasAnyRole(
-								this.getRole(RoleEnum.ROLE_ADMINISTRADOR.toString()),
-								this.getRole(RoleEnum.ROLE_AVAL.toString()))
+						.requestMatchers(AVAL_LIST).hasAnyRole(Stream.concat(
+					            getRolesByCategory("Aval").stream(), // First list
+					            getRolesByCategory("Admin").stream() // Second list
+					        ).map(role -> getRole(role))
+					        .toArray(String[]::new))
 						.requestMatchers(MANAGER_LIST).hasAnyRole(
 								this.getRole(RoleEnum.ROLE_ADMINISTRADOR.toString()))
 						.requestMatchers("/users").denyAll().anyRequest().authenticated())
@@ -68,4 +73,10 @@ public class SecurityConfig {
 	private String getRole(String role) {
 		return role.substring("ROLE_".length());
 	}
+	
+	private List<String> getRolesByCategory(String category) {
+        return RoleEnum.getByCategory(category).stream()
+                .map(role -> role.toString()) // Convert enum to its string representation
+                .collect(Collectors.toList());
+    }
 }

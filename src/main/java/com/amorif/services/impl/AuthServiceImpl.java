@@ -101,7 +101,6 @@ public class AuthServiceImpl implements AuthService {
 
 		switch (dto.getTipoVinculo()) {
 		case "Servidor": {
-			user.getFuncoes().add(this.roleRepository.getByName(RoleEnum.ROLE_SERV.toString()));
 			user.getFuncoes().add(this.roleRepository.getByName(RoleEnum.ROLE_AVAL.toString()));
 			break;
 		}

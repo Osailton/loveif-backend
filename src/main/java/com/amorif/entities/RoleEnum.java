@@ -1,23 +1,43 @@
 package com.amorif.entities;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author osailton
  */
 
 public enum RoleEnum {
 	
-	ROLE_AVAL,
-	ROLE_SERV,
-	ROLE_ALUNO,
-	ROLE_BIBLIOTECARIO,
-	ROLE_APOIO_ACADEMICO,
-	ROLE_SISTEMA,
-	ROLE_DOCENTE,
-	ROLE_ASSESSORIA_PEDAGOGICA,
-	ROLE_COEXPEIN,
-	ROLE_COORDENADOR_CURSO,
-	ROLE_ASSISTENCIA_ESTUDANTIL,
-	ROLE_ASSESSORIA_LABORATORIO,
-	ROLE_ADMINISTRADOR
+	// Grouping with categories
+    ROLE_AVAL("Aval"),
+    ROLE_ALUNO("General"),
+    ROLE_BIBLIOTECARIO("Aval"),
+    ROLE_APOIO_ACADEMICO("Aval"),
+    ROLE_SISTEMA("System"),
+    ROLE_DOCENTE("General"),
+    ROLE_ASSESSORIA_PEDAGOGICA("Aval"),
+    ROLE_COEXPEIN("Aval"),
+    ROLE_COORDENADOR_CURSO("Aval"),
+    ROLE_ASSISTENCIA_ESTUDANTIL("Aval"),
+    ROLE_ASSESSORIA_LABORATORIO("Aval"),
+    ROLE_ADMINISTRADOR("Admin");
 
+    private final String category;
+
+    RoleEnum(String category) {
+        this.category = category;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    // Method to filter roles by category
+    public static List<RoleEnum> getByCategory(String category) {
+        return Arrays.stream(values())
+                     .filter(role -> role.category.equals(category))
+                     .toList();
+    }
+  
 }

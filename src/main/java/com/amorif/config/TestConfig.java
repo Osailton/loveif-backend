@@ -66,7 +66,6 @@ public class TestConfig implements CommandLineRunner {
 //		Create Roles
 		Role r1 = Role.builder().name(RoleEnum.ROLE_ADMINISTRADOR.toString()).build();
 		Role r2 = Role.builder().name(RoleEnum.ROLE_AVAL.toString()).build();
-		Role r3 = Role.builder().name(RoleEnum.ROLE_SERV.toString()).build();
 		Role r4 = Role.builder().name(RoleEnum.ROLE_ALUNO.toString()).build();
 		Role r5 = Role.builder().name(RoleEnum.ROLE_BIBLIOTECARIO.toString()).build();
 		Role r6 = Role.builder().name(RoleEnum.ROLE_APOIO_ACADEMICO.toString()).build();
@@ -77,7 +76,7 @@ public class TestConfig implements CommandLineRunner {
 		Role r11 = Role.builder().name(RoleEnum.ROLE_COORDENADOR_CURSO.toString()).build();
 		Role r12 = Role.builder().name(RoleEnum.ROLE_ASSESSORIA_LABORATORIO.toString()).build();
 		Role r13 = Role.builder().name(RoleEnum.ROLE_ASSISTENCIA_ESTUDANTIL.toString()).build();
-		roleRepository.saveAll(Arrays.asList(r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13));
+		roleRepository.saveAll(Arrays.asList(r1, r2, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13));
 
 //		Create User
 		User u1 = User.builder().nome("Teste").matricula("0101").funcoes(Set.of(r5)).build();

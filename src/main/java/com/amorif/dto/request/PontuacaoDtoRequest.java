@@ -40,7 +40,7 @@ public class PontuacaoDtoRequest implements Serializable {
 	private String motivacao;
 	
 	@JsonProperty("bimestre")
-	private int bimestre;
+	private Integer bimestre;
 	
 	public PontuacaoDtoRequest() {
 

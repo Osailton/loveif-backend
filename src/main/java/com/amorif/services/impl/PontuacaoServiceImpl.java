@@ -27,9 +27,10 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 	private TurmaRepository turmaRepository;
 	private RegraRepository regraRepository;
 	
-	public PontuacaoServiceImpl(PontuacaoRepository pontuacaoRepository, TurmaRepository turmaRepository) {
+	public PontuacaoServiceImpl(PontuacaoRepository pontuacaoRepository, TurmaRepository turmaRepository, RegraRepository regraRepository) {
 		this.pontuacaoRepository = pontuacaoRepository;
 		this.turmaRepository = turmaRepository;
+		this.regraRepository = regraRepository;
 	}
 
 	@Override
@@ -42,6 +43,7 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 
 	@Override
 	public PontuacaoDtoResponse throwPoints(PontuacaoDtoRequest dtoRequest) {
+		System.out.println(dtoRequest);
 		Turma turma = this.turmaRepository.getReferenceById(dtoRequest.getIdTurma());
 		Regra regra = this.regraRepository.getReferenceById(dtoRequest.getIdRegra());
 		
@@ -100,7 +102,7 @@ public class PontuacaoServiceImpl implements PontuacaoService {
         return hasPermission;
 	}
 	
-	private boolean bimesterIsValid(int bimestre) {
+	private boolean bimesterIsValid(Integer bimestre) {
 		return bimestre >= 0 && bimestre < BimestreEnum.values().length;
 	}
 
