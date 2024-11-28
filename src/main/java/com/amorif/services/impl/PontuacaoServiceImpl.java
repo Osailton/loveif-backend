@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 
 import com.amorif.dto.request.PontuacaoDtoRequest;
 import com.amorif.dto.response.PontuacaoDtoResponse;
+import com.amorif.entities.BimestreEnum;
 import com.amorif.entities.Pontuacao;
 import com.amorif.entities.Regra;
 import com.amorif.entities.Turma;
+import com.amorif.exceptions.InvalidBimesterException;
 import com.amorif.exceptions.UserHasNoPermitedRoleException;
 import com.amorif.repository.PontuacaoRepository;
 import com.amorif.repository.RegraRepository;
@@ -47,6 +49,10 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 
 	        if (!userHasPermission(regra)) {
 	            throw new UserHasNoPermitedRoleException("Usuário não tem permissão para lançar esta pontuação.");
+	        }
+	        
+	        if (!bimesterIsValid(dtoRequest.getBimestre())) {
+	        	throw new InvalidBimesterException("Bimestre inválido");
 	        }
 			
 			Integer count = this.pontuacaoRepository.contadorByTurma(turma);
@@ -92,6 +98,10 @@ public class PontuacaoServiceImpl implements PontuacaoService {
             .anyMatch(role -> userRoles.contains(role.getName()));
         
         return hasPermission;
+	}
+	
+	private boolean bimesterIsValid(int bimestre) {
+		return bimestre >= 0 && bimestre < BimestreEnum.values().length;
 	}
 
 }

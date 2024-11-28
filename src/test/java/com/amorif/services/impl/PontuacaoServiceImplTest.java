@@ -11,6 +11,7 @@ import com.amorif.entities.Pontuacao;
 import com.amorif.entities.Regra;
 import com.amorif.entities.Role;
 import com.amorif.entities.Turma;
+import com.amorif.exceptions.InvalidBimesterException;
 import com.amorif.exceptions.UserHasNoPermitedRoleException;
 import com.amorif.repository.PontuacaoRepository;
 import com.amorif.repository.RegraRepository;
@@ -76,6 +77,7 @@ public class PontuacaoServiceImplTest {
         dtoRequest.setIdRegra(1L);
         dtoRequest.setPontos(10);
         dtoRequest.setMotivacao("Motivação Teste");
+        dtoRequest.setBimestre(0);
 
         when(turmaRepository.getReferenceById(dtoRequest.getIdTurma())).thenReturn(turma);
         when(regraRepository.getReferenceById(dtoRequest.getIdRegra())).thenReturn(regra);
@@ -109,6 +111,39 @@ public class PontuacaoServiceImplTest {
 
         // Verifica se o lançamento falha ao usuário não ter permissão
         assertThrows(UserHasNoPermitedRoleException.class, () -> {
+            pontuacaoService.throwPoints(dtoRequest);
+        });
+    }
+    
+    @Test
+    public void testThrowPoints_BimesterValid_ShouldRegisterPoints() {
+        // Mockando o contexto de segurança com uma role que permite o lançamento
+        User userWithPermission = new User("user", "password", 
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_APOIO_ACADEMICO")));
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(userWithPermission, null, userWithPermission.getAuthorities())
+        );
+
+        PontuacaoDtoResponse response = pontuacaoService.throwPoints(dtoRequest);
+
+        // Verifica se o lançamento foi feito com sucesso
+        assertNotNull(response);
+        assertEquals(dtoRequest.getBimestre(), response.getBimestre());
+    }
+    
+    @Test
+    public void testThrowPoints_BimesterInvalid_ShouldNotRegisterPoints() {
+        // Mockando o contexto de segurança com uma role que permite o lançamento
+        User userWithPermission = new User("user", "password", 
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_APOIO_ACADEMICO")));
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(userWithPermission, null, userWithPermission.getAuthorities())
+        );
+        
+        dtoRequest.setBimestre(9);
+
+        // Verifica se o lançamento falha com bimestre inválido
+        assertThrows(InvalidBimesterException.class, () -> {
             pontuacaoService.throwPoints(dtoRequest);
         });
     }
