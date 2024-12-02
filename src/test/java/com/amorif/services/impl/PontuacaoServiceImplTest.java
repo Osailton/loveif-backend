@@ -14,6 +14,7 @@ import com.amorif.entities.TipoRegra;
 import com.amorif.entities.Turma;
 import com.amorif.exceptions.InvalidBimesterException;
 import com.amorif.exceptions.InvalidExtraBimesterException;
+import com.amorif.exceptions.InvalidFixedValueException;
 import com.amorif.exceptions.UserHasNoPermitedRoleException;
 import com.amorif.repository.PontuacaoRepository;
 import com.amorif.repository.RegraRepository;
@@ -191,6 +192,49 @@ public class PontuacaoServiceImplTest {
 
         // Verifica se o lançamento falha com bimestre inválido
         assertThrows(InvalidExtraBimesterException.class, () -> {
+            pontuacaoService.throwPoints(dtoRequest);
+        });
+    }
+    
+    @Test
+    public void testThrowPoints_FixedValueValid_ShouldRegisterPoints() {
+        // Mockando o contexto de segurança com uma role que permite o lançamento
+        User userWithPermission = new User("user", "password", 
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_APOIO_ACADEMICO")));
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(userWithPermission, null, userWithPermission.getAuthorities())
+        );
+        
+        TipoRegra tr2 = TipoRegra.builder().id(1L).fixo(true).build();
+        regra.setTipoRegra(tr2);
+        regra.setValorMinimo(10);
+        dtoRequest.setBimestre(0);
+        dtoRequest.setPontos(10);
+
+        PontuacaoDtoResponse response = pontuacaoService.throwPoints(dtoRequest);
+
+        // Verifica se o lançamento foi feito com sucesso
+        assertNotNull(response);
+        assertEquals(dtoRequest.getPontos(), response.getPontos());
+    }
+    
+    @Test
+    public void testThrowPoints_FixedValueInvalid_ShouldNotRegisterPoints() {
+    	// Mockando o contexto de segurança com uma role que permite o lançamento
+        User userWithPermission = new User("user", "password", 
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_APOIO_ACADEMICO")));
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(userWithPermission, null, userWithPermission.getAuthorities())
+        );
+        
+        TipoRegra tr2 = TipoRegra.builder().id(1L).fixo(true).build();
+        regra.setTipoRegra(tr2);
+        regra.setValorMinimo(10);
+        dtoRequest.setBimestre(0);
+        dtoRequest.setPontos(8);
+
+        // Verifica se o lançamento falha com pontos inválidos
+        assertThrows(InvalidFixedValueException.class, () -> {
             pontuacaoService.throwPoints(dtoRequest);
         });
     }

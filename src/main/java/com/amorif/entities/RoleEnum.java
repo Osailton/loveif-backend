@@ -15,7 +15,7 @@ public enum RoleEnum {
     ROLE_BIBLIOTECARIO("Aval"),
     ROLE_APOIO_ACADEMICO("Aval"),
     ROLE_SISTEMA("System"),
-    ROLE_DOCENTE("General"),
+    ROLE_DOCENTE("Aval"),
     ROLE_ASSESSORIA_PEDAGOGICA("Aval"),
     ROLE_COEXPEIN("Aval"),
     ROLE_COORDENADOR_CURSO("Aval"),

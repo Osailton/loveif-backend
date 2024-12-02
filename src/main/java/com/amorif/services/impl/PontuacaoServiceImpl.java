@@ -15,6 +15,8 @@ import com.amorif.entities.Regra;
 import com.amorif.entities.Turma;
 import com.amorif.exceptions.InvalidBimesterException;
 import com.amorif.exceptions.InvalidExtraBimesterException;
+import com.amorif.exceptions.InvalidFixedValueException;
+import com.amorif.exceptions.InvalidVariableValueException;
 import com.amorif.exceptions.UserHasNoPermitedRoleException;
 import com.amorif.repository.PontuacaoRepository;
 import com.amorif.repository.RegraRepository;
@@ -50,19 +52,13 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 		
 		if(turma != null) {
 
-	        if (!userHasPermission(regra)) {
-	            throw new UserHasNoPermitedRoleException("Usuário não tem permissão para lançar esta pontuação.");
-	        }
+			checkUserPermissionToReleasePoints(regra);
 	        
-	        if (!bimesterIsValid(dtoRequest.getBimestre())) {
-	        	throw new InvalidBimesterException("Bimestre inválido.");
-	        }
+	        checkIfBimesterIsValid(dtoRequest.getBimestre());
 	        
-	        if (regra.getTipoRegra().isBimestreExtra()) {
-	        	if (!isExtraBimesterValid(dtoRequest.getBimestre())) {
-	        		throw new InvalidExtraBimesterException("A pontuação para essa regra deve ser lançada em um bimestre extra.");
-	        	}
-	        }
+	        checkIfIsExtraBimesterValid(regra, dtoRequest.getBimestre());
+	        
+	        checkReleasedPoints(regra, dtoRequest.getPontos());
 			
 			Integer count = this.pontuacaoRepository.contadorByTurma(turma);
 			Pontuacao pontuacao = Pontuacao.builder()
@@ -117,6 +113,47 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 	
 	private boolean isExtraBimesterValid(Integer bimestre) {
 		return bimestre == BimestreEnum.BI_EXTRA.ordinal() ? true : false;
+	}
+	
+	private void checkReleasedPoints(Regra regra, Integer pontos) {
+		if (regra.getTipoRegra().isFixo()) {
+        	
+        	Integer valorFixo = regra.getValorMinimo();
+        	
+        	if (valorFixo != pontos) {
+        		throw new InvalidFixedValueException("Os pontos lançados não correspondem ao valor fixo da regra");
+        	}
+        	
+        } else {
+        	
+        	Integer valorMinimo = regra.getValorMinimo();
+        	Integer valorMaximo = regra.getValorMaximo();
+        	
+        	if (pontos < valorMinimo || pontos > valorMaximo) {
+        		throw new InvalidVariableValueException("Os pontos lançados não estão no intervalo da regra");
+        	}
+        	
+        }
+	}
+	
+	private void checkUserPermissionToReleasePoints(Regra regra) {
+		if (!userHasPermission(regra)) {
+            throw new UserHasNoPermitedRoleException("Usuário não tem permissão para lançar esta pontuação.");
+        }
+	}
+	
+	private void checkIfBimesterIsValid(Integer bimestre) {
+		if (!bimesterIsValid(bimestre)) {
+        	throw new InvalidBimesterException("Bimestre inválido.");
+        }
+	}
+	
+	private void checkIfIsExtraBimesterValid(Regra regra, Integer bimestre) {
+		if (regra.getTipoRegra().isBimestreExtra()) {
+        	if (!isExtraBimesterValid(bimestre)) {
+        		throw new InvalidExtraBimesterException("A pontuação para essa regra deve ser lançada em um bimestre extra.");
+        	}
+        }
 	}
 
 }
