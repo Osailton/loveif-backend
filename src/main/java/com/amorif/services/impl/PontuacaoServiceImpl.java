@@ -14,6 +14,7 @@ import com.amorif.entities.Pontuacao;
 import com.amorif.entities.Regra;
 import com.amorif.entities.Turma;
 import com.amorif.exceptions.InvalidBimesterException;
+import com.amorif.exceptions.InvalidExtraBimesterException;
 import com.amorif.exceptions.UserHasNoPermitedRoleException;
 import com.amorif.repository.PontuacaoRepository;
 import com.amorif.repository.RegraRepository;
@@ -54,11 +55,18 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 	        }
 	        
 	        if (!bimesterIsValid(dtoRequest.getBimestre())) {
-	        	throw new InvalidBimesterException("Bimestre inválido");
+	        	throw new InvalidBimesterException("Bimestre inválido.");
+	        }
+	        
+	        if (regra.getTipoRegra().isBimestreExtra()) {
+	        	if (!isExtraBimesterValid(dtoRequest.getBimestre())) {
+	        		throw new InvalidExtraBimesterException("A pontuação para essa regra deve ser lançada em um bimestre extra.");
+	        	}
 	        }
 			
 			Integer count = this.pontuacaoRepository.contadorByTurma(turma);
 			Pontuacao pontuacao = Pontuacao.builder()
+					.bimestre(dtoRequest.getBimestre())
 					.pontos(dtoRequest.getPontos())
 					.regra(regra)
 					.motivacao(dtoRequest.getMotivacao())
@@ -75,6 +83,7 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 
 	private PontuacaoDtoResponse dtoFromPontuacao(Pontuacao pontuacao) {
 		return PontuacaoDtoResponse.builder()
+				.bimestre(pontuacao.getBimestre())
 				.contador(pontuacao.getContador())
 				.nomeTurma(pontuacao.getTurma().getNome())
 				.idTurma(pontuacao.getTurma().getId())
@@ -104,6 +113,10 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 	
 	private boolean bimesterIsValid(Integer bimestre) {
 		return bimestre >= 0 && bimestre < BimestreEnum.values().length;
+	}
+	
+	private boolean isExtraBimesterValid(Integer bimestre) {
+		return bimestre == BimestreEnum.BI_EXTRA.ordinal() ? true : false;
 	}
 
 }

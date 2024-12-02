@@ -11,6 +11,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import com.amorif.dto.response.ErrorMessageDtoResponse;
 import com.amorif.exceptions.InvalidArgumentException;
 import com.amorif.exceptions.InvalidBimesterException;
+import com.amorif.exceptions.InvalidExtraBimesterException;
 import com.amorif.exceptions.InvalidJWTAuthenticationException;
 import com.amorif.exceptions.UserAlreadyExistsException;
 import com.amorif.exceptions.UserHasNoPermitedRoleException;
@@ -47,5 +48,11 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 		ErrorMessageDtoResponse eMessage = new ErrorMessageDtoResponse(HttpStatus.BAD_REQUEST, e.getMessage());
 		return new ResponseEntity<Object>(eMessage, new HttpHeaders(), eMessage.getStatus());
 	}	
+	
+	@ExceptionHandler(InvalidExtraBimesterException.class)
+	public ResponseEntity<Object> handleInvalidExtraBimesterException(InvalidExtraBimesterException e, WebRequest request) {
+		ErrorMessageDtoResponse eMessage = new ErrorMessageDtoResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+		return new ResponseEntity<Object>(eMessage, new HttpHeaders(), eMessage.getStatus());
+	}
 
 }

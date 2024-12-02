@@ -10,8 +10,10 @@ import com.amorif.dto.response.PontuacaoDtoResponse;
 import com.amorif.entities.Pontuacao;
 import com.amorif.entities.Regra;
 import com.amorif.entities.Role;
+import com.amorif.entities.TipoRegra;
 import com.amorif.entities.Turma;
 import com.amorif.exceptions.InvalidBimesterException;
+import com.amorif.exceptions.InvalidExtraBimesterException;
 import com.amorif.exceptions.UserHasNoPermitedRoleException;
 import com.amorif.repository.PontuacaoRepository;
 import com.amorif.repository.RegraRepository;
@@ -71,6 +73,10 @@ public class PontuacaoServiceImplTest {
         regra = new Regra();
         regra.setId(1L);
         regra.setRoles(Arrays.asList(roleWithPermission));
+        
+        TipoRegra tr1 = TipoRegra.builder().id(1L).bimestreExtra(false).build();
+        
+        regra.setTipoRegra(tr1);
 
         dtoRequest = new PontuacaoDtoRequest();
         dtoRequest.setIdTurma(1L);
@@ -108,6 +114,8 @@ public class PontuacaoServiceImplTest {
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(userWithoutPermission, null, userWithoutPermission.getAuthorities())
         );
+        
+        regra.setTipoRegra(null);
 
         // Verifica se o lançamento falha ao usuário não ter permissão
         assertThrows(UserHasNoPermitedRoleException.class, () -> {
@@ -140,10 +148,49 @@ public class PontuacaoServiceImplTest {
                 new UsernamePasswordAuthenticationToken(userWithPermission, null, userWithPermission.getAuthorities())
         );
         
-        dtoRequest.setBimestre(9);
+        dtoRequest.setBimestre(10);
 
         // Verifica se o lançamento falha com bimestre inválido
         assertThrows(InvalidBimesterException.class, () -> {
+            pontuacaoService.throwPoints(dtoRequest);
+        });
+    }
+    
+    @Test
+    public void testThrowPoints_ExtraBimesterValid_ShouldRegisterPoints() {
+        // Mockando o contexto de segurança com uma role que permite o lançamento
+        User userWithPermission = new User("user", "password", 
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_APOIO_ACADEMICO")));
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(userWithPermission, null, userWithPermission.getAuthorities())
+        );
+        
+        TipoRegra tr2 = TipoRegra.builder().id(1L).bimestreExtra(true).build();
+        regra.setTipoRegra(tr2);
+        dtoRequest.setBimestre(4);
+
+        PontuacaoDtoResponse response = pontuacaoService.throwPoints(dtoRequest);
+
+        // Verifica se o lançamento foi feito com sucesso
+        assertNotNull(response);
+        assertEquals(dtoRequest.getBimestre(), response.getBimestre());
+    }
+    
+    @Test
+    public void testThrowPoints_ExtraBimesterInvalid_ShouldNotRegisterPoints() {
+        // Mockando o contexto de segurança com uma role que permite o lançamento
+        User userWithPermission = new User("user", "password", 
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_APOIO_ACADEMICO")));
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(userWithPermission, null, userWithPermission.getAuthorities())
+        );
+        
+        TipoRegra tr2 = TipoRegra.builder().id(1L).bimestreExtra(true).build();
+        regra.setTipoRegra(tr2);
+        dtoRequest.setBimestre(0);
+
+        // Verifica se o lançamento falha com bimestre inválido
+        assertThrows(InvalidExtraBimesterException.class, () -> {
             pontuacaoService.throwPoints(dtoRequest);
         });
     }

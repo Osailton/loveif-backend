@@ -55,7 +55,7 @@ public class Pontuacao implements Serializable {
 	@JoinColumn(name = "created_by")
 	private User user;
 
-	private int bimestre;
+	private Integer bimestre;
 	
 	private Integer pontos;
 
