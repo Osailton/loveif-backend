@@ -46,14 +46,14 @@ public class TipoRegra implements Serializable {
 	private boolean bimestreExtra;
 	
 	@Column(nullable = false)
-	private int frequencia;
+	private Integer frequencia;
 	
 	@OneToMany(mappedBy = "tipoRegra", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
     private List<Regra> regras;
 
 	public TipoRegra(Long id, String descricao, boolean fixo, boolean temAluno, boolean automatico,
-			boolean bimestreExtra, int frequencia, List<Regra> regras) {
+			boolean bimestreExtra, Integer frequencia, List<Regra> regras) {
 		super();
 		this.id = id;
 		this.descricao = descricao;

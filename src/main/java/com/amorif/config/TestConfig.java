@@ -79,7 +79,7 @@ public class TestConfig implements CommandLineRunner {
 		roleRepository.saveAll(Arrays.asList(r1, r2, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13));
 
 //		Create User
-		User u1 = User.builder().nome("Teste").matricula("0101").funcoes(Set.of(r8)).build();
+		User u1 = User.builder().nome("Teste").matricula("0101").funcoes(Set.of(r1,r5,r6,r7,r8,r9,r10,r11,r12,r13)).build();
 		userRepository.saveAll(Arrays.asList(u1));
 
 //		Criar ano letivo

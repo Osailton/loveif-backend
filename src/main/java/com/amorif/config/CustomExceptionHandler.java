@@ -9,6 +9,8 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.amorif.dto.response.ErrorMessageDtoResponse;
+import com.amorif.exceptions.AnnualRuleException;
+import com.amorif.exceptions.BimonthlyRuleException;
 import com.amorif.exceptions.InvalidArgumentException;
 import com.amorif.exceptions.InvalidBimesterException;
 import com.amorif.exceptions.InvalidExtraBimesterException;
@@ -65,6 +67,18 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 	
 	@ExceptionHandler(InvalidVariableValueException.class)
 	public ResponseEntity<Object> handleInvalidVariableValueException(InvalidVariableValueException e, WebRequest request) {
+		ErrorMessageDtoResponse eMessage = new ErrorMessageDtoResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+		return new ResponseEntity<Object>(eMessage, new HttpHeaders(), eMessage.getStatus());
+	}
+	
+	@ExceptionHandler(AnnualRuleException.class)
+	public ResponseEntity<Object> handleAnnualRuleException(AnnualRuleException e, WebRequest request) {
+		ErrorMessageDtoResponse eMessage = new ErrorMessageDtoResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+		return new ResponseEntity<Object>(eMessage, new HttpHeaders(), eMessage.getStatus());
+	}
+	
+	@ExceptionHandler(BimonthlyRuleException.class)
+	public ResponseEntity<Object> handleBimonthlyRuleException(BimonthlyRuleException e, WebRequest request) {
 		ErrorMessageDtoResponse eMessage = new ErrorMessageDtoResponse(HttpStatus.BAD_REQUEST, e.getMessage());
 		return new ResponseEntity<Object>(eMessage, new HttpHeaders(), eMessage.getStatus());
 	}
