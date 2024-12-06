@@ -18,6 +18,7 @@ import com.amorif.entities.Senso;
 import com.amorif.entities.Regra;
 import com.amorif.entities.TipoRegra;
 import com.amorif.entities.Turma;
+import com.amorif.entities.TurnoEnum;
 import com.amorif.entities.User;
 import com.amorif.repository.AnoLetivoRepository;
 import com.amorif.repository.PontuacaoRepository;
@@ -33,7 +34,7 @@ import com.amorif.repository.RegraRepository;
  */
 
 @Configuration
-@Profile({"test", "dev"})
+@Profile({ "test", "dev" })
 public class TestConfig implements CommandLineRunner {
 
 	private final AnoLetivoRepository anoLetivoRepository;
@@ -79,7 +80,8 @@ public class TestConfig implements CommandLineRunner {
 		roleRepository.saveAll(Arrays.asList(r1, r2, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13));
 
 //		Create User
-		User u1 = User.builder().nome("Teste").matricula("0101").funcoes(Set.of(r1,r5,r6,r7,r8,r9,r10,r11,r12,r13)).build();
+		User u1 = User.builder().nome("Teste").matricula("0101")
+				.funcoes(Set.of(r1, r5, r6, r7, r8, r9, r10, r11, r12, r13)).build();
 		userRepository.saveAll(Arrays.asList(u1));
 
 //		Criar ano letivo
@@ -89,17 +91,20 @@ public class TestConfig implements CommandLineRunner {
 		anoLetivoRepository.saveAll(Arrays.asList(ano22, ano23));
 
 //		Criar turmas
-		Turma turmaA = Turma.builder().id(1L).anoLetivo(ano23).nome("ADM 1VA").descricao("Descricao da turma.").build();
+		Turma turmaA = Turma.builder().id(1L).anoLetivo(ano23).nome("ADM 1VA").descricao("Descricao da turma.")
+				.turno(TurnoEnum.VESPERTINO.ordinal()).build();
 
-		Turma turmaB = Turma.builder().id(2L).anoLetivo(ano23).nome("ADM 1VB").descricao("Descricao da turma.").build();
+		Turma turmaB = Turma.builder().id(2L).anoLetivo(ano23).nome("ADM 1VB").descricao("Descricao da turma.")
+				.turno(TurnoEnum.VESPERTINO.ordinal()).build();
 
 		Turma turmaC = Turma.builder().id(3L).anoLetivo(ano23).nome("INFO 1MA").descricao("Descricao da turma.")
-				.build();
+				.turno(TurnoEnum.MATUTINO.ordinal()).build();
 
 		Turma turmaD = Turma.builder().id(4L).anoLetivo(ano23).nome("INFO 2MA").descricao("Descricao da turma.")
-				.build();
+				.turno(TurnoEnum.MATUTINO.ordinal()).build();
 
-		Turma turmaE = Turma.builder().id(5L).anoLetivo(ano23).nome("ADM 4VA").descricao("Descricao da turma.").build();
+		Turma turmaE = Turma.builder().id(5L).anoLetivo(ano23).nome("ADM 4VA").descricao("Descricao da turma.")
+				.turno(TurnoEnum.VESPERTINO.ordinal()).build();
 
 		turmaRepository.saveAll(Arrays.asList(turmaA, turmaB, turmaC, turmaD, turmaE));
 
@@ -119,7 +124,7 @@ public class TestConfig implements CommandLineRunner {
 		TipoRegra tipo3 = TipoRegra.builder().descricao("Valor Fixo automático por bimestre").fixo(true).temAluno(false)
 				.frequencia(FrequenciaRegraEnum.BIMESTRAL.ordinal()).automatico(true).build();
 		TipoRegra tipo4 = TipoRegra.builder().descricao("Valor Fixo por turno").fixo(true).temAluno(false)
-				.frequencia(FrequenciaRegraEnum.AVULSO.ordinal()).build();
+				.frequencia(FrequenciaRegraEnum.AVULSO.ordinal()).porTurno(true).build();
 		TipoRegra tipo5 = TipoRegra.builder().descricao("Valor Fixo por aluno por bimestre").fixo(true).temAluno(true)
 				.frequencia(FrequenciaRegraEnum.BIMESTRAL.ordinal()).build();
 		TipoRegra tipo6 = TipoRegra.builder().descricao("Valor Variável por bimestre").fixo(false).temAluno(false)
@@ -314,39 +319,19 @@ public class TestConfig implements CommandLineRunner {
 						.roles(Arrays.asList(administrador)).build());
 
 		regraRepository.saveAll(regras);
-		
-//		Criar pontuação
-		Pontuacao pontuacao1 = Pontuacao.builder()
-		        .contador(1)
-		        .turma(turmaA)
-		        .regra(regras.get(1))
-		        .anoLetivo(ano23)
-		        .user(u1)
-		        .bimestre(1)
-		        .pontos(30)
-		        .motivacao("Participação na campanha de doação de livros.")
-		        .aplicado(true)
-		        .anulado(false)
-		        .data(new Date())
-		        .build();
 
-		Pontuacao pontuacao2 = Pontuacao.builder()
-		        .contador(2)
-		        .turma(turmaA)
-		        .regra(regras.get(3))
-		        .anoLetivo(ano23)
-		        .user(u1)
-		        .bimestre(2)
-		        .pontos(20)
-		        .motivacao("Perdesse o livro, rapaz")
-		        .aplicado(true)
-		        .anulado(false)
-		        .data(new Date())
-		        .build();
+//		Criar pontuação
+		Pontuacao pontuacao1 = Pontuacao.builder().contador(1).turma(turmaA).regra(regras.get(1)).anoLetivo(ano23)
+				.user(u1).bimestre(1).pontos(30).motivacao("Participação na campanha de doação de livros.")
+				.aplicado(true).anulado(false).data(new Date()).build();
+
+		Pontuacao pontuacao2 = Pontuacao.builder().contador(2).turma(turmaA).regra(regras.get(3)).anoLetivo(ano23)
+				.user(u1).bimestre(2).pontos(20).motivacao("Perdesse o livro, rapaz").aplicado(true).anulado(false)
+				.data(new Date()).build();
 
 		// Salvar pontuações
 		pontuacaoRepository.saveAll(Arrays.asList(pontuacao1, pontuacao2));
-		
+
 	}
 
 }

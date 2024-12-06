@@ -13,5 +13,7 @@ import com.amorif.entities.Turma;
 public interface TurmaRepository extends JpaRepository<Turma, Long> {
 	
 	List<Turma> findAllByAnoLetivo(AnoLetivo anoLetivo);
+	
+	List<Turma> findAllByTurno(Integer turno);
 
 }

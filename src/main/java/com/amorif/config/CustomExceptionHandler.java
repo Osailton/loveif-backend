@@ -16,6 +16,7 @@ import com.amorif.exceptions.InvalidBimesterException;
 import com.amorif.exceptions.InvalidExtraBimesterException;
 import com.amorif.exceptions.InvalidFixedValueException;
 import com.amorif.exceptions.InvalidJWTAuthenticationException;
+import com.amorif.exceptions.InvalidTurnException;
 import com.amorif.exceptions.InvalidVariableValueException;
 import com.amorif.exceptions.UserAlreadyExistsException;
 import com.amorif.exceptions.UserHasNoPermitedRoleException;
@@ -79,6 +80,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 	
 	@ExceptionHandler(BimonthlyRuleException.class)
 	public ResponseEntity<Object> handleBimonthlyRuleException(BimonthlyRuleException e, WebRequest request) {
+		ErrorMessageDtoResponse eMessage = new ErrorMessageDtoResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+		return new ResponseEntity<Object>(eMessage, new HttpHeaders(), eMessage.getStatus());
+	}
+	
+	@ExceptionHandler(InvalidTurnException.class)
+	public ResponseEntity<Object> handleInvalidTurnException(InvalidTurnException e, WebRequest request) {
 		ErrorMessageDtoResponse eMessage = new ErrorMessageDtoResponse(HttpStatus.BAD_REQUEST, e.getMessage());
 		return new ResponseEntity<Object>(eMessage, new HttpHeaders(), eMessage.getStatus());
 	}

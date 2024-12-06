@@ -11,6 +11,6 @@ import com.amorif.dto.response.PontuacaoDtoResponse;
 public interface PontuacaoService {
 	
 	List<PontuacaoDtoResponse> pontosByAno(Long idAno);
-	PontuacaoDtoResponse throwPoints(PontuacaoDtoRequest dtoRequest);
+	List<PontuacaoDtoResponse> throwPoints(PontuacaoDtoRequest dtoRequest);
 
 }

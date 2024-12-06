@@ -14,11 +14,13 @@ import com.amorif.entities.Regra;
 import com.amorif.entities.Role;
 import com.amorif.entities.TipoRegra;
 import com.amorif.entities.Turma;
+import com.amorif.entities.TurnoEnum;
 import com.amorif.exceptions.AnnualRuleException;
 import com.amorif.exceptions.BimonthlyRuleException;
 import com.amorif.exceptions.InvalidBimesterException;
 import com.amorif.exceptions.InvalidExtraBimesterException;
 import com.amorif.exceptions.InvalidFixedValueException;
+import com.amorif.exceptions.InvalidTurnException;
 import com.amorif.exceptions.UserHasNoPermitedRoleException;
 import com.amorif.repository.AnoLetivoRepository;
 import com.amorif.repository.PontuacaoRepository;
@@ -41,6 +43,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 @ActiveProfiles("test")
 @WebMvcTest(PontuacaoServiceImpl.class)
@@ -66,6 +69,9 @@ public class PontuacaoServiceImplTest {
     private AnoLetivoRepository anoLetivoRepository;
 
     private Turma turma;
+    private Turma turma2;
+    private Turma turma3;
+    private Turma turma4;
     private Regra regra;
     private PontuacaoDtoRequest dtoRequest;
 
@@ -75,6 +81,21 @@ public class PontuacaoServiceImplTest {
 
         turma = new Turma();
         turma.setId(1L);
+        turma.setTurno(TurnoEnum.MATUTINO.ordinal());
+        
+        turma2 = new Turma();
+        turma2.setId(1L);
+        turma2.setTurno(TurnoEnum.MATUTINO.ordinal());
+        
+        turma3 = new Turma();
+        turma3.setId(1L);
+        turma3.setTurno(TurnoEnum.VESPERTINO.ordinal());
+        
+        turma4 = new Turma();
+        turma4.setId(1L);
+        turma4.setTurno(TurnoEnum.VESPERTINO.ordinal());    
+        
+        
 
         Role roleWithPermission = new Role();
         roleWithPermission.setName("ROLE_APOIO_ACADEMICO");
@@ -100,6 +121,7 @@ public class PontuacaoServiceImplTest {
 
         when(anoLetivoRepository.getLastActiveAnoLetivo()).thenReturn(anoAtual);
         when(turmaRepository.getReferenceById(dtoRequest.getIdTurma())).thenReturn(turma);
+        when(turmaRepository.findAllByTurno(TurnoEnum.MATUTINO.ordinal())).thenReturn(Arrays.asList(turma, turma2));
         when(regraRepository.getReferenceById(dtoRequest.getIdRegra())).thenReturn(regra);
         when(pontuacaoRepository.save(any(Pontuacao.class))).thenAnswer(invocation -> invocation.getArgument(0));
     }
@@ -113,7 +135,7 @@ public class PontuacaoServiceImplTest {
                 new UsernamePasswordAuthenticationToken(userWithPermission, null, userWithPermission.getAuthorities())
         );
 
-        PontuacaoDtoResponse response = pontuacaoService.throwPoints(dtoRequest);
+        PontuacaoDtoResponse response = pontuacaoService.throwPoints(dtoRequest).getFirst();
 
         // Verifica se o lançamento foi feito com sucesso
         assertNotNull(response);
@@ -128,8 +150,6 @@ public class PontuacaoServiceImplTest {
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(userWithoutPermission, null, userWithoutPermission.getAuthorities())
         );
-        
-        regra.setTipoRegra(null);
 
         // Verifica se o lançamento falha ao usuário não ter permissão
         assertThrows(UserHasNoPermitedRoleException.class, () -> {
@@ -146,7 +166,7 @@ public class PontuacaoServiceImplTest {
                 new UsernamePasswordAuthenticationToken(userWithPermission, null, userWithPermission.getAuthorities())
         );
 
-        PontuacaoDtoResponse response = pontuacaoService.throwPoints(dtoRequest);
+        PontuacaoDtoResponse response = pontuacaoService.throwPoints(dtoRequest).getFirst();
 
         // Verifica se o lançamento foi feito com sucesso
         assertNotNull(response);
@@ -183,7 +203,7 @@ public class PontuacaoServiceImplTest {
         regra.setTipoRegra(tr2);
         dtoRequest.setBimestre(4);
 
-        PontuacaoDtoResponse response = pontuacaoService.throwPoints(dtoRequest);
+        PontuacaoDtoResponse response = pontuacaoService.throwPoints(dtoRequest).getFirst();;
 
         // Verifica se o lançamento foi feito com sucesso
         assertNotNull(response);
@@ -224,7 +244,7 @@ public class PontuacaoServiceImplTest {
         dtoRequest.setBimestre(0);
         dtoRequest.setPontos(10);
 
-        PontuacaoDtoResponse response = pontuacaoService.throwPoints(dtoRequest);
+        PontuacaoDtoResponse response = pontuacaoService.throwPoints(dtoRequest).getFirst();
 
         // Verifica se o lançamento foi feito com sucesso
         assertNotNull(response);
@@ -271,7 +291,7 @@ public class PontuacaoServiceImplTest {
         dtoRequest.setBimestre(0);
         dtoRequest.setPontos(10);
 
-        PontuacaoDtoResponse response = pontuacaoService.throwPoints(dtoRequest);
+        PontuacaoDtoResponse response = pontuacaoService.throwPoints(dtoRequest).getFirst();
 
         // Verifica se o lançamento foi feito com sucesso
         assertNotNull(response);
@@ -325,7 +345,7 @@ public class PontuacaoServiceImplTest {
         dtoRequest.setBimestre(0);
         dtoRequest.setPontos(10);
 
-        PontuacaoDtoResponse response = pontuacaoService.throwPoints(dtoRequest);
+        PontuacaoDtoResponse response = pontuacaoService.throwPoints(dtoRequest).getFirst();
 
         // Verifica se o lançamento foi feito com sucesso
         assertNotNull(response);
@@ -358,6 +378,59 @@ public class PontuacaoServiceImplTest {
 
         // Verifica se o método do repositório foi chamado com os parâmetros corretos
         verify(pontuacaoRepository).existsByYearAndRule(1L, regra.getId(), turma.getId());
+    }
+    
+    @Test
+    public void testThrowPoints_PerTurn_ShouldRegisterPoints() {
+        // Mockando o contexto de segurança com uma role que permite o lançamento
+        User userWithPermission = new User("user", "password", 
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_APOIO_ACADEMICO")));
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(userWithPermission, null, userWithPermission.getAuthorities())
+        );
+
+        // Mockando o comportamento do repository
+        when(pontuacaoRepository.existsByYearAndRule(1L, regra.getId(), turma.getId())).thenReturn(true);
+
+        // Configurando a regra e o DTO
+        TipoRegra tr2 = TipoRegra.builder().id(1L).fixo(true).frequencia(FrequenciaRegraEnum.AVULSO.ordinal()).porTurno(true).build();
+        regra.setTipoRegra(tr2);
+        regra.setValorMinimo(10);
+        dtoRequest.setBimestre(0);
+        dtoRequest.setPontos(10);
+        dtoRequest.setTurno(TurnoEnum.MATUTINO.ordinal());
+
+        List<PontuacaoDtoResponse> response = pontuacaoService.throwPoints(dtoRequest);
+
+        // Verifica se o lançamento foi feito com sucesso
+        assertNotNull(response);
+        assertEquals(2, response.size());
+    }
+    
+    @Test
+    public void testThrowPoints_PerTurn_ShouldNotRegisterPoints() {
+        // Mockando o contexto de segurança com uma role que permite o lançamento
+        User userWithPermission = new User("user", "password", 
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_APOIO_ACADEMICO")));
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(userWithPermission, null, userWithPermission.getAuthorities())
+        );
+
+        // Mockando o comportamento do repository
+        when(pontuacaoRepository.existsByYearAndRule(1L, regra.getId(), turma.getId())).thenReturn(true);
+
+        // Configurando a regra e o DTO
+        TipoRegra tr2 = TipoRegra.builder().id(1L).fixo(true).frequencia(FrequenciaRegraEnum.AVULSO.ordinal()).porTurno(true).build();
+        regra.setTipoRegra(tr2);
+        regra.setValorMinimo(10);
+        dtoRequest.setBimestre(0);
+        dtoRequest.setPontos(10);
+        dtoRequest.setTurno(98);
+
+        // Verifica se a exceção BimonthlyRuleException é lançada
+        assertThrows(InvalidTurnException.class, () -> {
+            pontuacaoService.throwPoints(dtoRequest);
+        });
     }
 
 }

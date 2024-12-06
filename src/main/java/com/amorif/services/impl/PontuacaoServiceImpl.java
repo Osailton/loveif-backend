@@ -1,5 +1,6 @@
 package com.amorif.services.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,12 +15,15 @@ import com.amorif.entities.BimestreEnum;
 import com.amorif.entities.FrequenciaRegraEnum;
 import com.amorif.entities.Pontuacao;
 import com.amorif.entities.Regra;
+import com.amorif.entities.TipoRegra;
 import com.amorif.entities.Turma;
+import com.amorif.entities.TurnoEnum;
 import com.amorif.exceptions.AnnualRuleException;
 import com.amorif.exceptions.BimonthlyRuleException;
 import com.amorif.exceptions.InvalidBimesterException;
 import com.amorif.exceptions.InvalidExtraBimesterException;
 import com.amorif.exceptions.InvalidFixedValueException;
+import com.amorif.exceptions.InvalidTurnException;
 import com.amorif.exceptions.InvalidVariableValueException;
 import com.amorif.exceptions.UserHasNoPermitedRoleException;
 import com.amorif.repository.AnoLetivoRepository;
@@ -54,8 +58,34 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 	}
 
 	@Override
-	public PontuacaoDtoResponse throwPoints(PontuacaoDtoRequest dtoRequest) {
-		System.out.println(dtoRequest);
+	public List<PontuacaoDtoResponse> throwPoints(PontuacaoDtoRequest dtoRequest) {
+		List<PontuacaoDtoResponse> pontuacoes = new ArrayList<PontuacaoDtoResponse>();
+		Regra regra = this.regraRepository.getReferenceById(dtoRequest.getIdRegra());
+		TipoRegra tipoRegra = regra.getTipoRegra();
+		
+		if (tipoRegra.isPorTurno()) {
+			
+			Integer turno = dtoRequest.getTurno();
+			
+			if (turno != null && turno >= 0 && turno < TurnoEnum.values().length) {
+				List<Turma> turmas = turmaRepository.findAllByTurno(turno);
+				
+				for (Turma turma : turmas) {
+					dtoRequest.setIdTurma(turma.getId());
+					PontuacaoDtoResponse response = throwPointsForOne(dtoRequest);
+					pontuacoes.add(response);
+				}				
+			} else {
+				throw new InvalidTurnException("O atributo turno é nulo ou não foi passado corretamente");
+			}
+		} else {
+			pontuacoes.add(throwPointsForOne(dtoRequest));
+		}
+		
+		return pontuacoes;
+	}
+	
+	public PontuacaoDtoResponse throwPointsForOne(PontuacaoDtoRequest dtoRequest) {
 		Turma turma = this.turmaRepository.getReferenceById(dtoRequest.getIdTurma());
 		Regra regra = this.regraRepository.getReferenceById(dtoRequest.getIdRegra());
 		AnoLetivo anoAtual = this.anoLetivoRepository.getLastActiveAnoLetivo();
@@ -80,6 +110,7 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 
 			return this.dtoFromPontuacao(this.pontuacaoRepository.save(pontuacao));
 		}
+		
 		return null;
 	}
 
