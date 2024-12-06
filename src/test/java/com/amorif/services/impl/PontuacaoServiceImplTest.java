@@ -16,7 +16,9 @@ import com.amorif.entities.TipoRegra;
 import com.amorif.entities.Turma;
 import com.amorif.entities.TurnoEnum;
 import com.amorif.exceptions.AnnualRuleException;
+import com.amorif.exceptions.AnnualRulePerStudentException;
 import com.amorif.exceptions.BimonthlyRuleException;
+import com.amorif.exceptions.BimonthlyRulePerStudentException;
 import com.amorif.exceptions.InvalidBimesterException;
 import com.amorif.exceptions.InvalidExtraBimesterException;
 import com.amorif.exceptions.InvalidFixedValueException;
@@ -27,6 +29,7 @@ import com.amorif.repository.PontuacaoRepository;
 import com.amorif.repository.RegraRepository;
 import com.amorif.repository.TokenRepository;
 import com.amorif.repository.TurmaRepository;
+import com.amorif.repository.UserRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,6 +47,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @ActiveProfiles("test")
 @WebMvcTest(PontuacaoServiceImpl.class)
@@ -67,6 +71,9 @@ public class PontuacaoServiceImplTest {
     
     @MockBean
     private AnoLetivoRepository anoLetivoRepository;
+    
+    @MockBean
+    private UserRepository userRepository;
 
     private Turma turma;
     private Turma turma2;
@@ -95,8 +102,8 @@ public class PontuacaoServiceImplTest {
         turma4.setId(1L);
         turma4.setTurno(TurnoEnum.VESPERTINO.ordinal());    
         
+        com.amorif.entities.User user1 = com.amorif.entities.User.builder().matricula("123456").build();
         
-
         Role roleWithPermission = new Role();
         roleWithPermission.setName("ROLE_APOIO_ACADEMICO");
 
@@ -124,6 +131,7 @@ public class PontuacaoServiceImplTest {
         when(turmaRepository.findAllByTurno(TurnoEnum.MATUTINO.ordinal())).thenReturn(Arrays.asList(turma, turma2));
         when(regraRepository.getReferenceById(dtoRequest.getIdRegra())).thenReturn(regra);
         when(pontuacaoRepository.save(any(Pontuacao.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(userRepository.findByMatricula("user")).thenReturn(Optional.of(user1));
     }
 
     @Test
@@ -311,7 +319,7 @@ public class PontuacaoServiceImplTest {
         when(pontuacaoRepository.existsByBimesterAndRule(0, regra.getId(), turma.getId())).thenReturn(true);
 
         // Configurando a regra e o DTO
-        TipoRegra tr2 = TipoRegra.builder().id(1L).fixo(true).frequencia(FrequenciaRegraEnum.BIMESTRAL.ordinal()).build();
+        TipoRegra tr2 = TipoRegra.builder().id(1L).fixo(true).frequencia(FrequenciaRegraEnum.BIMESTRAL.ordinal()).temAluno(false).build();
         regra.setTipoRegra(tr2);
         regra.setValorMinimo(10);
         dtoRequest.setBimestre(0);
@@ -431,6 +439,118 @@ public class PontuacaoServiceImplTest {
         assertThrows(InvalidTurnException.class, () -> {
             pontuacaoService.throwPoints(dtoRequest);
         });
+    }
+    
+    @Test
+    public void testThrowPoints_PerBimesterPerStudent_ShouldRegisterPoints() {
+        // Mockando o contexto de segurança com uma role que permite o lançamento
+        User userWithPermission = new User("user", "password", 
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_APOIO_ACADEMICO")));
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(userWithPermission, null, userWithPermission.getAuthorities())
+        );
+        
+        // Mockando o comportamento do repository
+        when(pontuacaoRepository.existsByBimesterAndRulePerStudent(0, regra.getId(), turma.getId(), "123")).thenReturn(false);
+
+        // Configurando a regra e o DTO
+        TipoRegra tr2 = TipoRegra.builder().id(1L).fixo(true).frequencia(FrequenciaRegraEnum.BIMESTRAL.ordinal()).build();
+        regra.setTipoRegra(tr2);
+        regra.setValorMinimo(10);
+        dtoRequest.setBimestre(0);
+        dtoRequest.setPontos(10);
+        dtoRequest.setMatriculaAluno("123");
+
+        PontuacaoDtoResponse response = pontuacaoService.throwPoints(dtoRequest).getFirst();
+
+        // Verifica se o lançamento foi feito com sucesso
+        assertNotNull(response);
+        assertEquals(dtoRequest.getMatriculaAluno(), response.getMatriculaAluno());
+    }
+    
+    @Test
+    public void testThrowPoints_PerBimesterPerStudent_ShouldNotRegisterPoints() {
+        // Mockando o contexto de segurança com uma role que permite o lançamento
+        User userWithPermission = new User("user", "password", 
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_APOIO_ACADEMICO")));
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(userWithPermission, null, userWithPermission.getAuthorities())
+        );
+
+        // Mockando o comportamento do repository
+        when(pontuacaoRepository.existsByBimesterAndRulePerStudent(0, regra.getId(), turma.getId(), "20151204010002")).thenReturn(true);
+
+        // Configurando a regra e o DTO
+        TipoRegra tr2 = TipoRegra.builder().id(1L).fixo(true).frequencia(FrequenciaRegraEnum.BIMESTRAL.ordinal()).temAluno(true).build();
+        regra.setTipoRegra(tr2);
+        regra.setValorMinimo(10);
+        dtoRequest.setBimestre(0);
+        dtoRequest.setPontos(10);
+        dtoRequest.setMatriculaAluno("20151204010002");
+
+        // Verifica se a exceção BimonthlyRuleException é lançada
+        assertThrows(BimonthlyRulePerStudentException.class, () -> {
+            pontuacaoService.throwPoints(dtoRequest);
+        });
+
+        // Verifica se o método do repositório foi chamado com os parâmetros corretos
+        verify(pontuacaoRepository).existsByBimesterAndRulePerStudent(0, regra.getId(), turma.getId(), "20151204010002");
+    }
+
+    @Test
+    public void testThrowPoints_PerYearPerStudent_ShouldRegisterPoints() {
+        // Mockando o contexto de segurança com uma role que permite o lançamento
+        User userWithPermission = new User("user", "password", 
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_APOIO_ACADEMICO")));
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(userWithPermission, null, userWithPermission.getAuthorities())
+        );
+        
+        // Mockando o comportamento do repository
+        when(pontuacaoRepository.existsByYearAndRulePerStudent(1L, regra.getId(), turma.getId(), "123")).thenReturn(false);
+
+        // Configurando a regra e o DTO
+        TipoRegra tr2 = TipoRegra.builder().id(1L).fixo(true).frequencia(FrequenciaRegraEnum.ANUAL.ordinal()).build();
+        regra.setTipoRegra(tr2);
+        regra.setValorMinimo(10);
+        dtoRequest.setBimestre(0);
+        dtoRequest.setPontos(10);
+        dtoRequest.setMatriculaAluno("123");
+
+        PontuacaoDtoResponse response = pontuacaoService.throwPoints(dtoRequest).getFirst();
+
+        // Verifica se o lançamento foi feito com sucesso
+        assertNotNull(response);
+        assertEquals(dtoRequest.getMatriculaAluno(), response.getMatriculaAluno());
+    }
+    
+    @Test
+    public void testThrowPoints_PerYearPerStudent_ShouldNotRegisterPoints() {
+        // Mockando o contexto de segurança com uma role que permite o lançamento
+        User userWithPermission = new User("user", "password", 
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_APOIO_ACADEMICO")));
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(userWithPermission, null, userWithPermission.getAuthorities())
+        );
+
+        // Mockando o comportamento do repository
+        when(pontuacaoRepository.existsByYearAndRulePerStudent(1L, regra.getId(), turma.getId(), "20151204010002")).thenReturn(true);
+
+        // Configurando a regra e o DTO
+        TipoRegra tr2 = TipoRegra.builder().id(1L).fixo(true).frequencia(FrequenciaRegraEnum.ANUAL.ordinal()).temAluno(true).build();
+        regra.setTipoRegra(tr2);
+        regra.setValorMinimo(10);
+        dtoRequest.setBimestre(0);
+        dtoRequest.setPontos(10);
+        dtoRequest.setMatriculaAluno("20151204010002");
+
+        // Verifica se a exceção BimonthlyRuleException é lançada
+        assertThrows(AnnualRulePerStudentException.class, () -> {
+            pontuacaoService.throwPoints(dtoRequest);
+        });
+
+        // Verifica se o método do repositório foi chamado com os parâmetros corretos
+        verify(pontuacaoRepository).existsByYearAndRulePerStudent(1L, regra.getId(), turma.getId(), "20151204010002");
     }
 
 }

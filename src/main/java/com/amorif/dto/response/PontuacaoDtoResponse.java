@@ -31,13 +31,14 @@ public class PontuacaoDtoResponse implements Serializable {
 	private String descricao;
 	private boolean aplicado;
 	private boolean anulado;
+	private String matriculaAluno;
 	
 	public PontuacaoDtoResponse() {
 		
 	}
 
 	public PontuacaoDtoResponse(Integer contador, TurmaDtoResponse turma, String nomeTurma, Long idTurma, Regra regra,
-			String operacao, int bimestre, AnoLetivo anoLetivo, Integer pontos, String descricao, boolean aplicado, boolean anulado) {
+			String operacao, int bimestre, AnoLetivo anoLetivo, Integer pontos, String descricao, boolean aplicado, boolean anulado, String matriculaAluno) {
 		super();
 		this.contador = contador;
 		this.nomeTurma = nomeTurma;
@@ -57,6 +58,7 @@ public class PontuacaoDtoResponse implements Serializable {
 		this.descricao = descricao;
 		this.aplicado = aplicado;
 		this.anulado = anulado;
+		this.matriculaAluno = matriculaAluno;
 	}
 	
 }

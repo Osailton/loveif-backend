@@ -1,6 +1,7 @@
 package com.amorif.services.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,14 +16,18 @@ import com.amorif.entities.BimestreEnum;
 import com.amorif.entities.FrequenciaRegraEnum;
 import com.amorif.entities.Pontuacao;
 import com.amorif.entities.Regra;
+import com.amorif.entities.User;
 import com.amorif.entities.TipoRegra;
 import com.amorif.entities.Turma;
 import com.amorif.entities.TurnoEnum;
 import com.amorif.exceptions.AnnualRuleException;
+import com.amorif.exceptions.AnnualRulePerStudentException;
 import com.amorif.exceptions.BimonthlyRuleException;
+import com.amorif.exceptions.BimonthlyRulePerStudentException;
 import com.amorif.exceptions.InvalidBimesterException;
 import com.amorif.exceptions.InvalidExtraBimesterException;
 import com.amorif.exceptions.InvalidFixedValueException;
+import com.amorif.exceptions.InvalidSchoolRegistrationException;
 import com.amorif.exceptions.InvalidTurnException;
 import com.amorif.exceptions.InvalidVariableValueException;
 import com.amorif.exceptions.UserHasNoPermitedRoleException;
@@ -30,6 +35,7 @@ import com.amorif.repository.AnoLetivoRepository;
 import com.amorif.repository.PontuacaoRepository;
 import com.amorif.repository.RegraRepository;
 import com.amorif.repository.TurmaRepository;
+import com.amorif.repository.UserRepository;
 import com.amorif.services.PontuacaoService;
 
 @Service
@@ -39,13 +45,15 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 	private TurmaRepository turmaRepository;
 	private RegraRepository regraRepository;
 	private AnoLetivoRepository anoLetivoRepository;
+	private UserRepository userRepository;
 
 	public PontuacaoServiceImpl(PontuacaoRepository pontuacaoRepository, TurmaRepository turmaRepository,
-			RegraRepository regraRepository, AnoLetivoRepository anoLetivoRepository) {
+			RegraRepository regraRepository, AnoLetivoRepository anoLetivoRepository, UserRepository userRepository) {
 		this.pontuacaoRepository = pontuacaoRepository;
 		this.turmaRepository = turmaRepository;
 		this.regraRepository = regraRepository;
 		this.anoLetivoRepository = anoLetivoRepository;
+		this.userRepository = userRepository;
 	}
 
 	@Override
@@ -62,35 +70,37 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 		List<PontuacaoDtoResponse> pontuacoes = new ArrayList<PontuacaoDtoResponse>();
 		Regra regra = this.regraRepository.getReferenceById(dtoRequest.getIdRegra());
 		TipoRegra tipoRegra = regra.getTipoRegra();
-		
+
 		if (tipoRegra.isPorTurno()) {
-			
+
 			Integer turno = dtoRequest.getTurno();
-			
+
 			if (turno != null && turno >= 0 && turno < TurnoEnum.values().length) {
 				List<Turma> turmas = turmaRepository.findAllByTurno(turno);
-				
+
 				for (Turma turma : turmas) {
 					dtoRequest.setIdTurma(turma.getId());
 					PontuacaoDtoResponse response = throwPointsForOne(dtoRequest);
 					pontuacoes.add(response);
-				}				
+				}
 			} else {
 				throw new InvalidTurnException("O atributo turno é nulo ou não foi passado corretamente");
 			}
 		} else {
 			pontuacoes.add(throwPointsForOne(dtoRequest));
 		}
-		
+
 		return pontuacoes;
 	}
-	
+
 	public PontuacaoDtoResponse throwPointsForOne(PontuacaoDtoRequest dtoRequest) {
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		User user = userRepository.findByMatricula(userDetails.getUsername()).get();
 		Turma turma = this.turmaRepository.getReferenceById(dtoRequest.getIdTurma());
 		Regra regra = this.regraRepository.getReferenceById(dtoRequest.getIdRegra());
 		AnoLetivo anoAtual = this.anoLetivoRepository.getLastActiveAnoLetivo();
 
-		if (turma != null) {
+		if (turma != null && regra != null) {
 
 			checkUserPermissionToReleasePoints(regra);
 
@@ -99,18 +109,32 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 			checkIfIsExtraBimesterValid(regra, dtoRequest.getBimestre());
 
 			checkReleasedPoints(regra, dtoRequest.getPontos());
-			
-			checkPointsFrequency(regra, anoAtual, dtoRequest.getBimestre(), dtoRequest.getIdTurma());
+
+			if (regra.getTipoRegra().isTemAluno()) {
+				checkPointsFrequencyPerStudent(regra, anoAtual, dtoRequest.getBimestre(), dtoRequest.getIdTurma(),
+						dtoRequest.getMatriculaAluno());
+			} else {
+				checkPointsFrequency(regra, anoAtual, dtoRequest.getBimestre(), dtoRequest.getIdTurma());
+			}
 
 			Integer count = this.pontuacaoRepository.contadorByTurma(turma);
-			Pontuacao pontuacao = Pontuacao.builder().bimestre(dtoRequest.getBimestre()).pontos(dtoRequest.getPontos())
-					.regra(regra).anoLetivo(anoAtual).motivacao(dtoRequest.getMotivacao()).turma(turma)
-					.contador(count != null ? this.pontuacaoRepository.contadorByTurma(turma) + 1 : 1).aplicado(false)
+			Pontuacao pontuacao = Pontuacao.builder()
+					.bimestre(dtoRequest.getBimestre())
+					.pontos(dtoRequest.getPontos())
+					.regra(regra)
+					.anoLetivo(anoAtual)
+					.motivacao(dtoRequest.getMotivacao())
+					.turma(turma)
+					.matriculaAluno(dtoRequest.getMatriculaAluno())
+					.contador(count != null ? this.pontuacaoRepository.contadorByTurma(turma) + 1 : 1)
+					.user(user)
+					.data(new Date())
+					.aplicado(false)
 					.anulado(false).build();
 
 			return this.dtoFromPontuacao(this.pontuacaoRepository.save(pontuacao));
 		}
-		
+
 		return null;
 	}
 
@@ -119,7 +143,7 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 				.nomeTurma(pontuacao.getTurma().getNome()).idTurma(pontuacao.getTurma().getId())
 				.descricao(pontuacao.getMotivacao()).pontos(pontuacao.getPontos())
 				.operacao(pontuacao.getRegra().getOperacao()).aplicado(pontuacao.isAplicado())
-				.anulado(pontuacao.isAnulado()).build();
+				.anulado(pontuacao.isAnulado()).matriculaAluno(pontuacao.getMatriculaAluno()).build();
 	}
 
 	private boolean userHasPermission(Regra regra) {
@@ -142,6 +166,20 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 
 	private boolean isExtraBimesterValid(Integer bimestre) {
 		return bimestre == BimestreEnum.BI_EXTRA.ordinal() ? true : false;
+	}
+
+	public static boolean isSchoolRegistrationValid(String matricula) {
+		// Verifica se a matrícula tem exatamente 15 caracteres
+		if (matricula == null || matricula.length() < 14) {
+			return false;
+		}
+
+		// Verifica se todos os caracteres são numéricos
+		if (!matricula.matches("\\d+")) {
+			return false;
+		}
+
+		return true;
 	}
 
 	private void checkReleasedPoints(Regra regra, Integer pontos) {
@@ -191,15 +229,40 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 
 		if (freq == FrequenciaRegraEnum.ANUAL) {
 			if (pontuacaoRepository.existsByYearAndRule(anoAtual.getId(), regra.getId(), turmaId)) {
-				throw new AnnualRuleException(
-						"A pontuação associada a essa regra é anual e já existe um registro desse tipo neste ano letivo para a turma selecionada.");
+				throw new AnnualRuleException("Já existe uma pontuação anual para esta turma no ano letivo atual.");
 			}
 		}
 
 		if (freq == FrequenciaRegraEnum.BIMESTRAL) {
 			if (pontuacaoRepository.existsByBimesterAndRule(bimestre, regra.getId(), turmaId)) {
 				throw new BimonthlyRuleException(
-						"A pontuação associada a essa regra é bimestral e já existe um registro desse tipo neste bimestre para a turma selecionada.");
+						"Já existe uma pontuação bimestral para esta turma no bimestre fornecido.");
+			}
+		}
+	}
+
+	private void checkPointsFrequencyPerStudent(Regra regra, AnoLetivo anoAtual, Integer bimestre, Long turmaId,
+			String matriculaAluno) {
+
+		if (!isSchoolRegistrationValid(matriculaAluno)) {
+			throw new InvalidSchoolRegistrationException("Matrícula inválida");
+		}
+
+		FrequenciaRegraEnum freq = FrequenciaRegraEnum.values()[regra.getTipoRegra().getFrequencia()];
+
+		if (freq == FrequenciaRegraEnum.ANUAL) {
+			if (pontuacaoRepository.existsByYearAndRulePerStudent(anoAtual.getId(), regra.getId(), turmaId,
+					matriculaAluno)) {
+				throw new AnnualRulePerStudentException(
+						"Já existe uma pontuação anual por aluno para esta turma e matrícula no ano letivo atual.");
+			}
+		}
+
+		if (freq == FrequenciaRegraEnum.BIMESTRAL) {
+			if (pontuacaoRepository.existsByBimesterAndRulePerStudent(bimestre, regra.getId(), turmaId,
+					matriculaAluno)) {
+				throw new BimonthlyRulePerStudentException(
+						"Já existe uma pontuação bimestral por aluno para esta turma e matrícula no bimestre fornecido.");
 			}
 		}
 	}

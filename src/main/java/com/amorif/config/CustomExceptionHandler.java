@@ -10,12 +10,15 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.amorif.dto.response.ErrorMessageDtoResponse;
 import com.amorif.exceptions.AnnualRuleException;
+import com.amorif.exceptions.AnnualRulePerStudentException;
 import com.amorif.exceptions.BimonthlyRuleException;
+import com.amorif.exceptions.BimonthlyRulePerStudentException;
 import com.amorif.exceptions.InvalidArgumentException;
 import com.amorif.exceptions.InvalidBimesterException;
 import com.amorif.exceptions.InvalidExtraBimesterException;
 import com.amorif.exceptions.InvalidFixedValueException;
 import com.amorif.exceptions.InvalidJWTAuthenticationException;
+import com.amorif.exceptions.InvalidSchoolRegistrationException;
 import com.amorif.exceptions.InvalidTurnException;
 import com.amorif.exceptions.InvalidVariableValueException;
 import com.amorif.exceptions.UserAlreadyExistsException;
@@ -89,5 +92,24 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 		ErrorMessageDtoResponse eMessage = new ErrorMessageDtoResponse(HttpStatus.BAD_REQUEST, e.getMessage());
 		return new ResponseEntity<Object>(eMessage, new HttpHeaders(), eMessage.getStatus());
 	}
+	
+	@ExceptionHandler(BimonthlyRulePerStudentException.class)
+	public ResponseEntity<Object> handleBimonthlyRulePerStudentException(BimonthlyRulePerStudentException e, WebRequest request) {
+		ErrorMessageDtoResponse eMessage = new ErrorMessageDtoResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+		return new ResponseEntity<Object>(eMessage, new HttpHeaders(), eMessage.getStatus());
+	}
+	
+	@ExceptionHandler(AnnualRulePerStudentException.class)
+	public ResponseEntity<Object> handleAnnualRulePerStudentException(AnnualRulePerStudentException e, WebRequest request) {
+		ErrorMessageDtoResponse eMessage = new ErrorMessageDtoResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+		return new ResponseEntity<Object>(eMessage, new HttpHeaders(), eMessage.getStatus());
+	}
+	
+	@ExceptionHandler(InvalidSchoolRegistrationException.class)
+	public ResponseEntity<Object> handleInvalidSchoolRegistrationException(InvalidSchoolRegistrationException e, WebRequest request) {
+		ErrorMessageDtoResponse eMessage = new ErrorMessageDtoResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+		return new ResponseEntity<Object>(eMessage, new HttpHeaders(), eMessage.getStatus());
+	}
+
 
 }

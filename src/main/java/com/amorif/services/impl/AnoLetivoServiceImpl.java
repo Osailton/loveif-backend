@@ -51,7 +51,7 @@ public class AnoLetivoServiceImpl implements AnoLetivoService {
 	}
 
 	private AnoLetivoDtoResponse dtoFromAnoLetivo(AnoLetivo anoLetivo) {
-		return new AnoLetivoDtoResponse().builder().id(anoLetivo.getId()).anoLetivo(anoLetivo.getAno())
+		return AnoLetivoDtoResponse.builder().id(anoLetivo.getId()).anoLetivo(anoLetivo.getAno())
 				.status(anoLetivo.isAberto() ? "Aberto" : "Fechado").build();
 	}
 
