@@ -6,6 +6,8 @@ target/
 
 *.class
 
+.DS_Store
+
 /node_modules
 
 # SSH Keys #

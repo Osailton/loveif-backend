@@ -63,6 +63,8 @@ public class SecurityConfig {
 					            getRolesByCategory("Admin").stream() // Second list
 					        ).map(role -> getRole(role))
 					        .toArray(String[]::new))
+						.requestMatchers("/api/pontuacao/lancarPontosAutomaticos")
+                        .hasRole(this.getRole(RoleEnum.ROLE_ADMINISTRADOR.toString()))
 						.requestMatchers(MANAGER_LIST).hasAnyRole(
 								this.getRole(RoleEnum.ROLE_ADMINISTRADOR.toString()))
 						.requestMatchers("/users").denyAll().anyRequest().authenticated())

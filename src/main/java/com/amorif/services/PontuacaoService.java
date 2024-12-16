@@ -12,5 +12,6 @@ public interface PontuacaoService {
 	
 	List<PontuacaoDtoResponse> pontosByAno(Long idAno);
 	List<PontuacaoDtoResponse> throwPoints(PontuacaoDtoRequest dtoRequest);
+	List<PontuacaoDtoResponse> throwAutoPoints(PontuacaoDtoRequest dtoRequest);
 
 }

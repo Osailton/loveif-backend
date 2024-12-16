@@ -37,5 +37,10 @@ public class PointsController {
 	public ResponseEntity<List<PontuacaoDtoResponse>> throwPoints(@RequestBody PontuacaoDtoRequest request) {
 		return ResponseEntity.ok().body(this.pontuacaoService.throwPoints(request));
 	}
+	
+	@PostMapping("lancarPontosAutomaticos")
+	public ResponseEntity<List<PontuacaoDtoResponse>> throwAutoPoints(@RequestBody PontuacaoDtoRequest request) {
+		return ResponseEntity.ok().body(this.pontuacaoService.throwAutoPoints(request));
+	}
 
 }

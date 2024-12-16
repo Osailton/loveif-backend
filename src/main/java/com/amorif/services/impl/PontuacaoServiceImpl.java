@@ -1,8 +1,10 @@
 package com.amorif.services.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -64,6 +66,47 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 		}
 		return null;
 	}
+	
+	@Override
+	public List<PontuacaoDtoResponse> throwAutoPoints(PontuacaoDtoRequest dtoRequest) {
+		List<PontuacaoDtoResponse> pontuacoes = new ArrayList<PontuacaoDtoResponse>();
+		
+		// Lista de Regras Automáticas
+		Regra regraAutomaticaOrdenacao = regraRepository.findById(11L)
+			    .orElseThrow(() -> new NoSuchElementException("Regra com ID 11 não encontrada"));
+			Regra regraAutomaticaLimpeza = regraRepository.findById(18L)
+			    .orElseThrow(() -> new NoSuchElementException("Regra com ID 18 não encontrada"));
+		List<Regra> regrasAutomaticas = Arrays.asList(regraAutomaticaOrdenacao, regraAutomaticaLimpeza);
+		
+		// Lista de turmas qualificadas em cada regra
+		List<List<Turma>> turmasQualificadas = new ArrayList<List<Turma>>();
+		
+		for (Regra regra : regrasAutomaticas) {
+			turmasQualificadas.add(getTurmasParaBonus(regra.getId(), dtoRequest.getBimestre()));
+		}
+		
+		// Lançamento de pontuacoes		
+		int index = 0;
+		for (List<Turma> turmasQualificadasPorRegra : turmasQualificadas) {			
+			
+			for (Turma turma : turmasQualificadasPorRegra) {
+				Regra regraAtual = regrasAutomaticas.get(index);
+				
+				dtoRequest.setIdTurma(turma.getId());
+				dtoRequest.setIdRegra(regraAtual.getId());
+				dtoRequest.setPontos(regraAtual.getValorMinimo());
+				dtoRequest.setOperacao(regraAtual.getOperacao());
+				dtoRequest.setMotivacao(regraAtual.getSenso().getDescricao() + " " + regraAtual.getDescricao());
+				
+				PontuacaoDtoResponse response = throwPointsForOne(dtoRequest);
+				pontuacoes.add(response);
+			}
+			
+			index++;
+		}
+
+		return pontuacoes;
+	}
 
 	@Override
 	public List<PontuacaoDtoResponse> throwPoints(PontuacaoDtoRequest dtoRequest) {
@@ -100,7 +143,9 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 		Regra regra = this.regraRepository.getReferenceById(dtoRequest.getIdRegra());
 		AnoLetivo anoAtual = this.anoLetivoRepository.getLastActiveAnoLetivo();
 
+		System.out.println(regra);
 		if (turma != null && regra != null) {
+			
 
 			checkUserPermissionToReleasePoints(regra);
 
@@ -109,6 +154,7 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 			checkIfIsExtraBimesterValid(regra, dtoRequest.getBimestre());
 
 			checkReleasedPoints(regra, dtoRequest.getPontos());
+			
 
 			if (regra.getTipoRegra().isTemAluno()) {
 				checkPointsFrequencyPerStudent(regra, anoAtual, dtoRequest.getBimestre(), dtoRequest.getIdTurma(),
@@ -266,5 +312,10 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 			}
 		}
 	}
+	
+	public List<Turma> getTurmasParaBonus(Long regraId, Integer bimestre) {
+	    return turmaRepository.findTurmasQualificadasParaBonus(regraId, bimestre);
+	}
+
 
 }
