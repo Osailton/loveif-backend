@@ -5,7 +5,7 @@ security:
       expire-lenght: 3600000
 spring:
   profiles:
-    active: test
+    active: dev
   config:
     import: optional:file:.env[.properties]
   datasource:
@@ -19,7 +19,9 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: true
+        format_sql: "true"
+        use_sql_comments: "true"
+    show-sql: "true"
           
 logging:
   level: 

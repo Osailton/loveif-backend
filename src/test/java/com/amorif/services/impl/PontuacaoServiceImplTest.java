@@ -24,6 +24,7 @@ import com.amorif.exceptions.InvalidBimesterException;
 import com.amorif.exceptions.InvalidExtraBimesterException;
 import com.amorif.exceptions.InvalidFixedValueException;
 import com.amorif.exceptions.InvalidTurnException;
+import com.amorif.exceptions.RuleNotFoundException;
 import com.amorif.exceptions.UserHasNoPermitedRoleException;
 import com.amorif.repository.AnoLetivoRepository;
 import com.amorif.repository.PontuacaoRepository;
@@ -612,5 +613,117 @@ public class PontuacaoServiceImplTest {
 		assertEquals(18L, savedPontuacoes.get(1).getRegra().getId()); // Verifica regra 18
 		assertEquals(20, savedPontuacoes.get(0).getPontos()); // Verifica pontuação
 	}
+	
+	@Test
+	void testThrowAutoPoints_WhenNoTurmasQualificadas_ShouldNotSavePontuacoes() {
+		// Mockando o contexto de segurança com uma role que permite o lançamento
+		User userWithPermission = new User("user", "password",
+				Collections.singleton(new SimpleGrantedAuthority("ROLE_ADMINISTRADOR")));
+		SecurityContextHolder.getContext().setAuthentication(
+				new UsernamePasswordAuthenticationToken(userWithPermission, null, userWithPermission.getAuthorities()));
+				
+	    // Configurar mocks para retornar listas vazias
+	    when(turmaRepository.findTurmasQualificadasParaBonus(eq(11L), anyInt())).thenReturn(Collections.emptyList());
+	    when(turmaRepository.findTurmasQualificadasParaBonus(eq(18L), anyInt())).thenReturn(Collections.emptyList());
+	    
+	    when(regraRepository.getReferenceById(11L)).thenReturn(regraOrdenacao);
+		when(regraRepository.getReferenceById(18L)).thenReturn(regraLimpeza);
+
+		when(regraRepository.findById(11L)).thenReturn(Optional.of(regraOrdenacao));
+		when(regraRepository.findById(18L)).thenReturn(Optional.of(regraLimpeza));
+
+	    PontuacaoDtoRequest dtoRequest = new PontuacaoDtoRequest();
+	    dtoRequest.setBimestre(1);
+
+	    // Chamar o método
+	    List<PontuacaoDtoResponse> responses = pontuacaoService.throwAutoPoints(dtoRequest);
+
+	    // Verificar que nenhuma pontuação foi salva
+	    verify(pontuacaoRepository, never()).save(any(Pontuacao.class));
+	    assertTrue(responses.isEmpty());
+	}
+	
+	@Test
+	void testThrowAutoPoints_WhenOnlyOneRegraHasTurmasQualificadas_ShouldSavePontuacoesForThatRegra() {
+		// Mockando o contexto de segurança com uma role que permite o lançamento
+		User userWithPermission = new User("user", "password",
+				Collections.singleton(new SimpleGrantedAuthority("ROLE_ADMINISTRADOR")));
+		SecurityContextHolder.getContext().setAuthentication(
+				new UsernamePasswordAuthenticationToken(userWithPermission, null, userWithPermission.getAuthorities()));
+		
+	    // Configurar turmas para apenas uma regra
+	    Turma turma1 = Turma.builder().id(1L).nome("Turma A").build();
+	    List<Turma> turmasRegra11 = Arrays.asList(turma1);
+
+	    when(turmaRepository.findTurmasQualificadasParaBonus(eq(11L), anyInt())).thenReturn(turmasRegra11);
+	    when(turmaRepository.findTurmasQualificadasParaBonus(eq(18L), anyInt())).thenReturn(Collections.emptyList());
+	    
+	    when(regraRepository.getReferenceById(11L)).thenReturn(regraOrdenacao);
+		when(regraRepository.getReferenceById(18L)).thenReturn(regraLimpeza);
+
+		when(regraRepository.findById(11L)).thenReturn(Optional.of(regraOrdenacao));
+		when(regraRepository.findById(18L)).thenReturn(Optional.of(regraLimpeza));
+
+	    PontuacaoDtoRequest dtoRequest = new PontuacaoDtoRequest();
+	    dtoRequest.setBimestre(1);
+
+	    // Chamar o método
+	    pontuacaoService.throwAutoPoints(dtoRequest);
+
+	    // Verificar que apenas pontuações da regra 11 foram salvas
+	    ArgumentCaptor<Pontuacao> pontuacaoCaptor = ArgumentCaptor.forClass(Pontuacao.class);
+	    verify(pontuacaoRepository, times(1)).save(pontuacaoCaptor.capture());
+
+	    List<Pontuacao> savedPontuacoes = pontuacaoCaptor.getAllValues();
+	    assertEquals(1, savedPontuacoes.size());
+	    assertEquals(11L, savedPontuacoes.get(0).getRegra().getId());
+	}
+	
+	@Test
+	void testThrowAutoPoints_WhenRegraNotFound_ShouldThrowException() {
+	    // Configurar mocks para uma regra inexistente
+	    when(regraRepository.findById(11L)).thenReturn(Optional.of(regraOrdenacao));
+	    when(regraRepository.findById(18L)).thenReturn(Optional.empty()); // Regra não encontrada
+
+	    PontuacaoDtoRequest dtoRequest = new PontuacaoDtoRequest();
+	    dtoRequest.setBimestre(1);
+
+	    // Verificar que uma exceção é lançada
+	    assertThrows(RuleNotFoundException.class, () -> pontuacaoService.throwAutoPoints(dtoRequest));
+	}
+
+	@Test
+	void testThrowAutoPoints_WhenTurmaWithInvalidId_ShouldNotSave() {
+		// Mockando o contexto de segurança com uma role que permite o lançamento
+		User userWithPermission = new User("user", "password",
+				Collections.singleton(new SimpleGrantedAuthority("ROLE_ADMINISTRADOR")));
+		SecurityContextHolder.getContext().setAuthentication(
+				new UsernamePasswordAuthenticationToken(userWithPermission, null, userWithPermission.getAuthorities()));
+				
+	    // Configurar turmas com ID inválido
+	    Turma turmaInvalida = Turma.builder().id(null).nome("Turma X").build();
+	    List<Turma> turmas = Arrays.asList(turmaInvalida);
+
+	    when(turmaRepository.findTurmasQualificadasParaBonus(eq(11L), anyInt())).thenReturn(turmas);
+	    when(turmaRepository.findTurmasQualificadasParaBonus(eq(18L), anyInt())).thenReturn(Collections.emptyList());
+
+	    when(regraRepository.getReferenceById(11L)).thenReturn(regraOrdenacao);
+		when(regraRepository.getReferenceById(18L)).thenReturn(regraLimpeza);
+
+		when(regraRepository.findById(11L)).thenReturn(Optional.of(regraOrdenacao));
+		when(regraRepository.findById(18L)).thenReturn(Optional.of(regraLimpeza));
+
+	    
+	    PontuacaoDtoRequest dtoRequest = new PontuacaoDtoRequest();
+	    dtoRequest.setBimestre(1);
+
+	    ArgumentCaptor<Pontuacao> pontuacaoCaptor = ArgumentCaptor.forClass(Pontuacao.class);
+	    verify(pontuacaoRepository, times(0)).save(pontuacaoCaptor.capture());
+
+	    List<Pontuacao> savedPontuacoes = pontuacaoCaptor.getAllValues();
+	    assertEquals(0, savedPontuacoes.size());
+	}
+
+
 
 }

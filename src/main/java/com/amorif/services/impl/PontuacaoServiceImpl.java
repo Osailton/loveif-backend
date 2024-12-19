@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,6 +31,7 @@ import com.amorif.exceptions.InvalidFixedValueException;
 import com.amorif.exceptions.InvalidSchoolRegistrationException;
 import com.amorif.exceptions.InvalidTurnException;
 import com.amorif.exceptions.InvalidVariableValueException;
+import com.amorif.exceptions.RuleNotFoundException;
 import com.amorif.exceptions.UserHasNoPermitedRoleException;
 import com.amorif.repository.AnoLetivoRepository;
 import com.amorif.repository.PontuacaoRepository;
@@ -73,9 +73,9 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 		
 		// Lista de Regras Automáticas
 		Regra regraAutomaticaOrdenacao = regraRepository.findById(11L)
-			    .orElseThrow(() -> new NoSuchElementException("Regra com ID 11 não encontrada"));
+			    .orElseThrow(() -> new RuleNotFoundException("Regra com ID 11 não encontrada"));
 			Regra regraAutomaticaLimpeza = regraRepository.findById(18L)
-			    .orElseThrow(() -> new NoSuchElementException("Regra com ID 18 não encontrada"));
+			    .orElseThrow(() -> new RuleNotFoundException("Regra com ID 18 não encontrada"));
 		List<Regra> regrasAutomaticas = Arrays.asList(regraAutomaticaOrdenacao, regraAutomaticaLimpeza);
 		
 		// Lista de turmas qualificadas em cada regra
@@ -84,6 +84,8 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 		for (Regra regra : regrasAutomaticas) {
 			turmasQualificadas.add(getTurmasParaBonus(regra.getId(), dtoRequest.getBimestre()));
 		}
+		
+		System.out.println(turmasQualificadas);
 		
 		// Lançamento de pontuacoes		
 		int index = 0;
@@ -313,8 +315,11 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 		}
 	}
 	
+	
 	public List<Turma> getTurmasParaBonus(Long regraId, Integer bimestre) {
-	    return turmaRepository.findTurmasQualificadasParaBonus(regraId, bimestre);
+		List<Turma> turmas = turmaRepository.findTurmasQualificadasParaBonus(regraId);
+		System.out.println(turmas);
+	    return null;
 	}
 
 
