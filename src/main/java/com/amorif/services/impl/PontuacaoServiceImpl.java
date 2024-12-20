@@ -69,47 +69,60 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 	
 	@Override
 	public List<PontuacaoDtoResponse> throwAutoPoints(PontuacaoDtoRequest dtoRequest) {
-		List<PontuacaoDtoResponse> pontuacoes = new ArrayList<PontuacaoDtoResponse>();
-		
-		// Lista de Regras Automáticas
-		Regra regraAutomaticaOrdenacao = regraRepository.findById(11L)
-			    .orElseThrow(() -> new RuleNotFoundException("Regra com ID 11 não encontrada"));
-			Regra regraAutomaticaLimpeza = regraRepository.findById(18L)
-			    .orElseThrow(() -> new RuleNotFoundException("Regra com ID 18 não encontrada"));
-		List<Regra> regrasAutomaticas = Arrays.asList(regraAutomaticaOrdenacao, regraAutomaticaLimpeza);
-		
-		// Lista de turmas qualificadas em cada regra
-		List<List<Turma>> turmasQualificadas = new ArrayList<List<Turma>>();
-		
-		for (Regra regra : regrasAutomaticas) {
-			turmasQualificadas.add(getTurmasParaBonus(regra.getId(), dtoRequest.getBimestre()));
-		}
-		
-		System.out.println(turmasQualificadas);
-		
-		// Lançamento de pontuacoes		
-		int index = 0;
-		for (List<Turma> turmasQualificadasPorRegra : turmasQualificadas) {			
-			
-			for (Turma turma : turmasQualificadasPorRegra) {
-				Regra regraAtual = regrasAutomaticas.get(index);
-				
-				dtoRequest.setIdTurma(turma.getId());
-				dtoRequest.setIdRegra(regraAtual.getId());
-				dtoRequest.setPontos(regraAtual.getValorMinimo());
-				dtoRequest.setOperacao(regraAtual.getOperacao());
-				dtoRequest.setMotivacao(regraAtual.getSenso().getDescricao() + " " + regraAtual.getDescricao());
-				
-				PontuacaoDtoResponse response = throwPointsForOne(dtoRequest);
-				pontuacoes.add(response);
-			}
-			
-			index++;
-		}
+	    List<PontuacaoDtoResponse> pontuacoes = new ArrayList<>();
 
-		return pontuacoes;
+	    // IDs das regras de qualificação
+	    Long regraLimpezaExcelenteId = 16L;
+	    Long regraOrdenacaoExcelenteId = 10L;
+
+	    // IDs das regras conflitantes
+	    List<Long> regrasLimpezaConflitantes = Arrays.asList(13L, 14L, 15L, 17L, 18L);
+	    List<Long> regrasOrdenacaoConflitantes = Arrays.asList(7L, 8L, 9L, 12L, 11L);
+
+	    // IDs das regras automáticas
+	    Long regraBonusOrdenacaoId = 11L;
+	    Long regraBonusLimpezaId = 18L;
+
+	    // Recuperando as regras automáticas
+	    Regra regraBonusOrdenacao = regraRepository.findById(regraBonusOrdenacaoId)
+	        .orElseThrow(() -> new RuleNotFoundException("Regra com ID " + regraBonusOrdenacaoId + " não encontrada"));
+	    Regra regraBonusLimpeza = regraRepository.findById(regraBonusLimpezaId)
+	        .orElseThrow(() -> new RuleNotFoundException("Regra com ID " + regraBonusLimpezaId + " não encontrada"));
+
+	    // Verificar as turmas qualificadas para limpeza e ordenação excelentes
+	    List<Turma> turmasLimpezaExcelente = turmaRepository.findTurmasQualificadasParaBonus(
+	        regraLimpezaExcelenteId, regrasLimpezaConflitantes, dtoRequest.getBimestre());
+	    List<Turma> turmasOrdenacaoExcelente = turmaRepository.findTurmasQualificadasParaBonus(
+	        regraOrdenacaoExcelenteId, regrasOrdenacaoConflitantes, dtoRequest.getBimestre());
+
+	    // Lançar pontuações para as turmas qualificadas
+	    pontuacoes.addAll(lancarPontuacoesAutomaticas(turmasLimpezaExcelente, regraBonusLimpeza, dtoRequest));
+	    pontuacoes.addAll(lancarPontuacoesAutomaticas(turmasOrdenacaoExcelente, regraBonusOrdenacao, dtoRequest));
+
+	    return pontuacoes;
+	}
+	
+	private List<PontuacaoDtoResponse> lancarPontuacoesAutomaticas(
+	        List<Turma> turmasQualificadas, Regra regraBonus, PontuacaoDtoRequest dtoRequest) {
+	    List<PontuacaoDtoResponse> responses = new ArrayList<>();
+
+	    for (Turma turma : turmasQualificadas) {
+	        // Preenchendo os dados para lançamento de pontos
+	        dtoRequest.setIdTurma(turma.getId());
+	        dtoRequest.setIdRegra(regraBonus.getId());
+	        dtoRequest.setPontos(regraBonus.getValorMinimo());
+	        dtoRequest.setOperacao(regraBonus.getOperacao());
+	        dtoRequest.setMotivacao(regraBonus.getSenso().getDescricao() + " " + regraBonus.getDescricao());
+
+	        // Lançando os pontos para a turma
+	        PontuacaoDtoResponse response = throwPointsForOne(dtoRequest);
+	        responses.add(response);
+	    }
+
+	    return responses;
 	}
 
+	
 	@Override
 	public List<PontuacaoDtoResponse> throwPoints(PontuacaoDtoRequest dtoRequest) {
 		List<PontuacaoDtoResponse> pontuacoes = new ArrayList<PontuacaoDtoResponse>();
@@ -145,7 +158,6 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 		Regra regra = this.regraRepository.getReferenceById(dtoRequest.getIdRegra());
 		AnoLetivo anoAtual = this.anoLetivoRepository.getLastActiveAnoLetivo();
 
-		System.out.println(regra);
 		if (turma != null && regra != null) {
 			
 
@@ -314,13 +326,5 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 			}
 		}
 	}
-	
-	
-	public List<Turma> getTurmasParaBonus(Long regraId, Integer bimestre) {
-		List<Turma> turmas = turmaRepository.findTurmasQualificadasParaBonus(regraId);
-		System.out.println(turmas);
-	    return null;
-	}
-
 
 }

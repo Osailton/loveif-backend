@@ -321,32 +321,36 @@ public class TestConfig implements CommandLineRunner {
 		regraRepository.saveAll(regras);
 
 //		Criar pontuação
-		Pontuacao pontuacao1 = Pontuacao.builder().contador(1).turma(turmaA).regra(regras.get(1)).anoLetivo(ano23)
-				.user(u1).bimestre(1).pontos(30).motivacao("Participação na campanha de doação de livros.")
-				.aplicado(true).anulado(false).data(new Date()).build();
+		Pontuacao pontuacao1 = Pontuacao.builder().contador(1).turma(turmaA).regra(regras.get(9)).anoLetivo(ano23)
+		        .user(u1).bimestre(1).pontos(10).motivacao("ordenacao").aplicado(true).anulado(false)
+		        .data(new Date()).build();
 
-		Pontuacao pontuacao2 = Pontuacao.builder().contador(2).turma(turmaA).regra(regras.get(3)).anoLetivo(ano23)
-				.user(u1).bimestre(2).pontos(20).motivacao("Perdesse o livro, rapaz").aplicado(true).anulado(false)
+		Pontuacao pontuacao2 = Pontuacao.builder().contador(2).turma(turmaB).regra(regras.get(9)).anoLetivo(ano23)
+		        .user(u1).bimestre(1).pontos(10).motivacao("ordenacao").aplicado(true).anulado(false)
+		        .data(new Date()).build();
+		
+		Pontuacao pontuacao3 = Pontuacao.builder().contador(3).turma(turmaA).regra(regras.get(8)).anoLetivo(ano23)
+				.user(u1).bimestre(2).pontos(10).motivacao("ordenacao").aplicado(true).anulado(false)
 				.data(new Date()).build();
 		
-		Pontuacao pontuacao3 = Pontuacao.builder().contador(3).turma(turmaA).regra(regras.get(15)).anoLetivo(ano23)
-				.user(u1).bimestre(1).pontos(10).motivacao("limpeza").aplicado(true).anulado(false)
+		Pontuacao pontuacao4 = Pontuacao.builder().contador(4).turma(turmaB).regra(regras.get(8)).anoLetivo(ano23)
+				.user(u1).bimestre(2).pontos(10).motivacao("ordenacao").aplicado(true).anulado(false)
 				.data(new Date()).build();
 		
-		Pontuacao pontuacao4 = Pontuacao.builder().contador(4).turma(turmaA).regra(regras.get(15)).anoLetivo(ano23)
-				.user(u1).bimestre(1).pontos(10).motivacao("limpeza").aplicado(true).anulado(false)
+		Pontuacao pontuacao5 = Pontuacao.builder().contador(5).turma(turmaB).regra(regras.get(14)).anoLetivo(ano23)
+				.user(u1).bimestre(2).pontos(10).motivacao("limpeza").aplicado(true).anulado(false)
 				.data(new Date()).build();
 		
-		Pontuacao pontuacao5 = Pontuacao.builder().contador(1).turma(turmaB).regra(regras.get(9)).anoLetivo(ano23)
-				.user(u1).bimestre(1).pontos(10).motivacao("ordenacao").aplicado(true).anulado(false)
+		Pontuacao pontuacao6 = Pontuacao.builder().contador(6).turma(turmaB).regra(regras.get(15)).anoLetivo(ano23)
+				.user(u1).bimestre(2).pontos(10).motivacao("limpeza").aplicado(true).anulado(false)
 				.data(new Date()).build();
 		
-		Pontuacao pontuacao6 = Pontuacao.builder().contador(2).turma(turmaB).regra(regras.get(9)).anoLetivo(ano23)
-				.user(u1).bimestre(1).pontos(10).motivacao("ordenacao").aplicado(true).anulado(false)
-				.data(new Date()).build();
+		Pontuacao pontuacao7 = Pontuacao.builder().contador(7).turma(turmaA).regra(regras.get(15)).anoLetivo(ano23)
+		        .user(u1).bimestre(2).pontos(10).motivacao("limpeza").aplicado(true).anulado(false)
+		        .data(new Date()).build();
 
 		// Salvar pontuações
-		pontuacaoRepository.saveAll(Arrays.asList(pontuacao1, pontuacao2, pontuacao3, pontuacao4, pontuacao5, pontuacao6));
+		pontuacaoRepository.saveAll(Arrays.asList(pontuacao1, pontuacao2, pontuacao3, pontuacao4, pontuacao5, pontuacao6, pontuacao7));
 
 	}
 

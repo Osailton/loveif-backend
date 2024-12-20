@@ -15,19 +15,19 @@ import com.amorif.entities.Turma;
 
 public interface PontuacaoRepository extends JpaRepository<Pontuacao, Integer> {
 
-	@Query("SELECT COUNT(p) > 0 FROM Pontuacao p WHERE p.anoLetivo.id = :anoLetivoId AND p.regra.id = :regraId AND p.turma.id = :turmaId")
+	@Query("SELECT COUNT(p) > 0 FROM Pontuacao p WHERE p.anoLetivo.id = :anoLetivoId AND p.regra.id = :regraId AND p.turma.id = :turmaId AND p.anulado = false")
 	boolean existsByYearAndRule(@Param("anoLetivoId") Long anoLetivoId, @Param("regraId") Long regraId,
 			@Param("turmaId") Long turmaId);
 
-	@Query("SELECT COUNT(p) > 0 FROM Pontuacao p WHERE p.bimestre = :bimestre AND p.regra.id = :regraId AND p.turma.id = :turmaId")
+	@Query("SELECT COUNT(p) > 0 FROM Pontuacao p WHERE p.bimestre = :bimestre AND p.regra.id = :regraId AND p.turma.id = :turmaId AND p.anulado = false")
 	boolean existsByBimesterAndRule(@Param("bimestre") Integer bimestre, @Param("regraId") Long regraId,
 			@Param("turmaId") Long turmaId);
 
-	@Query("SELECT COUNT(p) > 0 FROM Pontuacao p WHERE p.anoLetivo.id = :anoLetivoId AND p.regra.id = :regraId AND p.turma.id = :turmaId AND matriculaAluno = :matriculaAluno")
+	@Query("SELECT COUNT(p) > 0 FROM Pontuacao p WHERE p.anoLetivo.id = :anoLetivoId AND p.regra.id = :regraId AND p.turma.id = :turmaId AND matriculaAluno = :matriculaAluno AND p.anulado = false")
 	boolean existsByYearAndRulePerStudent(@Param("anoLetivoId") Long anoLetivoId, @Param("regraId") Long regraId,
 			@Param("turmaId") Long turmaId, @Param("matriculaAluno") String matriculaAluno);
 
-	@Query("SELECT COUNT(p) > 0 FROM Pontuacao p WHERE p.bimestre = :bimestre AND p.regra.id = :regraId AND p.turma.id = :turmaId AND matriculaAluno = :matriculaAluno")
+	@Query("SELECT COUNT(p) > 0 FROM Pontuacao p WHERE p.bimestre = :bimestre AND p.regra.id = :regraId AND p.turma.id = :turmaId AND matriculaAluno = :matriculaAluno AND p.anulado = false")
 	boolean existsByBimesterAndRulePerStudent(@Param("bimestre") Integer bimestre, @Param("regraId") Long regraId,
 			@Param("turmaId") Long turmaId, @Param("matriculaAluno") String matriculaAluno);
 
