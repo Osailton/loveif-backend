@@ -233,11 +233,9 @@ public class AuthServiceImpl implements AuthService {
 				}
 			};
 			String response = httpclient.execute(get, responseHandler);
-			System.out.println("SUAP Response: " + response);
 
 			ObjectMapper mapper = new ObjectMapper();
 			dto = mapper.readValue(response, SUAPUserDtoRequest.class);
-			System.out.println(dto.getVinculo().getSetorSuap());
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
