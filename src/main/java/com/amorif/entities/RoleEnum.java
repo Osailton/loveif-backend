@@ -10,18 +10,18 @@ import java.util.List;
 public enum RoleEnum {
 	
 	// Grouping with categories
+	ROLE_ALUNO("General"),
     ROLE_AVAL("Aval"),
-    ROLE_ALUNO("General"),
+    ROLE_SISTEMA("Admin"),
+    ROLE_ADMINISTRADOR("Admin"),
     ROLE_BIBLIOTECARIO("Aval"),
     ROLE_APOIO_ACADEMICO("Aval"),
-    ROLE_SISTEMA("System"),
-    ROLE_DOCENTE("Aval"),
     ROLE_ASSESSORIA_PEDAGOGICA("Aval"),
-    ROLE_COEXPEIN("Aval"),
-    ROLE_COORDENADOR_CURSO("Aval"),
     ROLE_ASSISTENCIA_ESTUDANTIL("Aval"),
     ROLE_ASSESSORIA_LABORATORIO("Aval"),
-    ROLE_ADMINISTRADOR("Admin");
+    ROLE_COORDENADOR_CURSO("Aval"),
+    ROLE_COEXPEIN("Aval"),
+    ROLE_DOCENTE("Aval");
 
     private final String category;
 

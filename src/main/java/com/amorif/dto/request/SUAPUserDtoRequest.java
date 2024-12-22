@@ -29,18 +29,31 @@ public class SUAPUserDtoRequest implements Serializable {
 	@JsonProperty("tipo_vinculo")
 	private String tipoVinculo;
 	
+	@JsonProperty("vinculo")
+	private SUAPUserVinculoDtoRequest vinculo;
+	
+	private String campus;
+	
+	@JsonProperty("url_foto_75x100")
+	private String fotoPerfil;
+	
 	private String email;
 	
 	public SUAPUserDtoRequest() {
 		
 	}
 
-	public SUAPUserDtoRequest(String matricula, String nomeUsual, String tipoVinculo, String email) {
+	public SUAPUserDtoRequest(String matricula, String nomeUsual, String tipoVinculo, SUAPUserVinculoDtoRequest vinculo, String campus,
+			String fotoPerfil, String email) {
 		super();
 		this.matricula = matricula;
 		this.nomeUsual = nomeUsual;
 		this.tipoVinculo = tipoVinculo;
+		this.vinculo = vinculo;
+		this.campus = campus;
+		this.fotoPerfil = fotoPerfil;
 		this.email = email;
 	}
 
 }
+
