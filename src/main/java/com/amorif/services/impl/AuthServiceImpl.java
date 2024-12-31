@@ -101,6 +101,7 @@ public class AuthServiceImpl implements AuthService {
 	@Override
 	public AuthenticationDtoResponse register(SUAPUserDtoRequest dto) {
 		User user = User.builder().matricula(dto.getMatricula()).nome(dto.getNomeUsual()).build();
+		user.setEmail(dto.getEmail());
 
 		// Definindo as roles para setorSuap
 	    Map<String, String> setorSuapRoles = new HashMap<>();
@@ -189,6 +190,9 @@ public class AuthServiceImpl implements AuthService {
 						HttpEntity entity = response.getEntity();
 						return entity != null ? EntityUtils.toString(entity) : null;
 					} else {
+						HttpEntity entity = response.getEntity();
+			            String errorBody = entity != null ? EntityUtils.toString(entity) : "No content";
+			            System.err.println("Error Response Body: " + errorBody);
 						throw new InvalidJWTAuthenticationException("Credenciais inválidas!");
 					}
 				}
@@ -233,7 +237,6 @@ public class AuthServiceImpl implements AuthService {
 				}
 			};
 			String response = httpclient.execute(get, responseHandler);
-
 			ObjectMapper mapper = new ObjectMapper();
 			dto = mapper.readValue(response, SUAPUserDtoRequest.class);
 		} catch (ClientProtocolException e) {

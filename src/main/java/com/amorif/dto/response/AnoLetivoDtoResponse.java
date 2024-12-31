@@ -2,6 +2,8 @@ package com.amorif.dto.response;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * @author osailton
  */
@@ -10,7 +12,10 @@ public class AnoLetivoDtoResponse implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Long id;
+	
+	@JsonProperty("ano_letivo")
 	private Integer anoLetivo;
+	
 	private String status;
 	
 	public AnoLetivoDtoResponse() {
