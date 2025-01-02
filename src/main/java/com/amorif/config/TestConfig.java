@@ -133,7 +133,7 @@ public class TestConfig implements CommandLineRunner {
 				.frequencia(FrequenciaRegraEnum.ANUAL.ordinal()).build();
 		TipoRegra tipo8 = TipoRegra.builder().descricao("Valor Variável").fixo(false).temAluno(false)
 				.frequencia(FrequenciaRegraEnum.AVULSO.ordinal()).build();
-		TipoRegra tipo9 = TipoRegra.builder().descricao("Valor Fixo por bimestre").fixo(false).temAluno(false)
+		TipoRegra tipo9 = TipoRegra.builder().descricao("Valor Fixo por bimestre").fixo(true).temAluno(false)
 				.frequencia(FrequenciaRegraEnum.BIMESTRAL.ordinal()).build();
 
 		tipoRegraRepository.saveAll(Arrays.asList(tipo1, tipo2, tipo3, tipo4, tipo5, tipo6, tipo7, tipo8, tipo9));
@@ -305,7 +305,7 @@ public class TestConfig implements CommandLineRunner {
 				Regra.builder().descricao("Pontos por turma notificada").operacao("SUB").senso(autodisciplina)
 						.tipoRegra(tipoVariavel).roles(Arrays.asList(apoioAcademico, administrador)).build(),
 				Regra.builder().descricao("1 ponto por dia de aluno da turma suspenso").operacao("SUB").valorMinimo(1)
-						.senso(autodisciplina).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador)).build(),
+						.senso(autodisciplina).tipoRegra(tipoVariavel).roles(Arrays.asList(apoioAcademico, administrador)).build(),
 
 				// Autodisciplina - Coordenador de Curso e Assessoria Pedagógica - Negativas
 				Regra.builder().descricao("0 a 15 pontos por bimestre por campanha de conscientização realizada")

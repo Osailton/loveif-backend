@@ -31,15 +31,26 @@ public class TurmaServiceImpl implements TurmaService {
 	}
 
 	@Override
+	public List<TurmaDtoResponse> listByLastActiveAnoLetivo() {
+		AnoLetivo ultimoAnoLetivo = anoLetivoRepository.getLastActiveAnoLetivo();
+		if (ultimoAnoLetivo == null) {
+			throw new InvalidArgumentException("Ano letivo não existe!");
+		}
+		return turmaRepository.findAllByAnoLetivo(ultimoAnoLetivo).stream().map(e -> dtoFromTurma(e))
+				.collect(Collectors.toList());
+	}
+
+	@Override
 	public List<TurmaDtoResponse> listAll() {
 		return turmaRepository.findAll().stream().map(e -> dtoFromTurma(e)).collect(Collectors.toList());
 	}
-	
+
 	@Override
 	public List<TurmaDtoResponse> listByAno(Long idAno) {
 		AnoLetivo ano = this.anoLetivoRepository.getReferenceById(idAno);
-		if(ano != null) {
-			return turmaRepository.findAllByAnoLetivo(ano).stream().map(e -> dtoFromTurma(e)).collect(Collectors.toList());
+		if (ano != null) {
+			return turmaRepository.findAllByAnoLetivo(ano).stream().map(e -> dtoFromTurma(e))
+					.collect(Collectors.toList());
 		} else {
 			throw new InvalidArgumentException("Ano letivo não existe!");
 		}
@@ -54,12 +65,12 @@ public class TurmaServiceImpl implements TurmaService {
 
 				turma.setNome(turmaRequest.getNome());
 				turma.setDescricao(turmaRequest.getDescricao());
-				
+
 				AnoLetivo ano = anoLetivoRepository.getReferenceById(turmaRequest.getIdAnoLetivo());
 				if (ano != null) {
 					turma.setAnoLetivo(ano);
 				}
-				
+
 				turma = this.turmaRepository.save(turma);
 				return this.dtoFromTurma(turma);
 			} else {
@@ -83,6 +94,5 @@ public class TurmaServiceImpl implements TurmaService {
 		return Turma.builder().nome(dto.getNome()).descricao(dto.getDescricao())
 				.anoLetivo(this.anoLetivoRepository.getReferenceById(dto.getIdAnoLetivo())).build();
 	}
-
 
 }

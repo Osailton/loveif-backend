@@ -12,5 +12,6 @@ public interface AnoLetivoService {
 	
 	List<AnoLetivoDtoResponse> listAll();
 	AnoLetivoDtoResponse postAnoLetivo(AnoLetivoDtoRequest anoLetivoRequest);
+	AnoLetivoDtoResponse getLastActiveAnoLetivo();
 
 }

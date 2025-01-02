@@ -24,6 +24,11 @@ public class AnoLetivoServiceImpl implements AnoLetivoService {
 	public AnoLetivoServiceImpl(AnoLetivoRepository anoLetivoRepository) {
 		this.anoLetivoRepository = anoLetivoRepository;
 	}
+	
+	@Override
+	public AnoLetivoDtoResponse getLastActiveAnoLetivo() {
+        return dtoFromAnoLetivo(anoLetivoRepository.getLastActiveAnoLetivo());
+    }
 
 	@Override
 	public List<AnoLetivoDtoResponse> listAll() {

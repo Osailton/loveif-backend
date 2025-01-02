@@ -158,7 +158,7 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 		Regra regra = this.regraRepository.getReferenceById(dtoRequest.getIdRegra());
 		AnoLetivo anoAtual = this.anoLetivoRepository.getLastActiveAnoLetivo();
 
-		if (turma != null && regra != null) {
+		if (turma != null && regra != null && anoAtual != null) {
 			
 
 			checkUserPermissionToReleasePoints(regra);
@@ -229,7 +229,6 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 	}
 
 	public static boolean isSchoolRegistrationValid(String matricula) {
-		// Verifica se a matrícula tem exatamente 15 caracteres
 		if (matricula == null || matricula.length() < 14) {
 			return false;
 		}

@@ -44,5 +44,11 @@ public class TurmaController {
 	public ResponseEntity<TurmaDtoResponse> postTurma(@RequestBody TurmaDtoRequest request) {
 		return ResponseEntity.ok().body(this.turmaService.postTurma(request));
 	}
+	
+	@GetMapping("turmas/ultimo-ano-letivo")
+    public ResponseEntity<List<TurmaDtoResponse>> listTurmasDoUltimoAnoLetivo() {
+        List<TurmaDtoResponse> turmas = turmaService.listByLastActiveAnoLetivo();
+        return ResponseEntity.ok(turmas);
+    }
 
 }

@@ -13,5 +13,6 @@ public interface TurmaService {
 	List<TurmaDtoResponse> listAll();
 	List<TurmaDtoResponse> listByAno(Long idAno);
 	TurmaDtoResponse postTurma(TurmaDtoRequest turmaRequest);
+	List<TurmaDtoResponse> listByLastActiveAnoLetivo();
 
 }
