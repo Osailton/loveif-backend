@@ -29,19 +29,23 @@ public class RegraServiceImpl implements RegraService{
     }
     
     public List<Regra> listarRegrasPermitidasParaUsuario() {
-    	 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    	 
-	    if (authentication != null && authentication.getPrincipal() instanceof User) {
-	        User user = (User) authentication.getPrincipal();
-	        List<String> userRolesNames = user.getAuthorities().stream()
-	                .map(authority -> authority.getAuthority())
-	                .collect(Collectors.toList());
-	        List<Role> userRoles = roleRepository.findByNameIn(userRolesNames);
-	        return regraRepository.findByRolesIn(userRoles);
-	    } else {
-	        throw new IllegalStateException("Usuário não autenticado ou tipo inesperado de principal");
-	    }
-	
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.getPrincipal() instanceof User) {
+            User user = (User) authentication.getPrincipal();
+            List<String> userRolesNames = user.getAuthorities().stream()
+                    .map(authority -> authority.getAuthority())
+                    .collect(Collectors.toList());
+            List<Role> userRoles = roleRepository.findByNameIn(userRolesNames);
+            
+            // Filtra as regras, excluindo aquelas que possuem a ROLE_SISTEMA
+            return regraRepository.findByRolesIn(userRoles).stream()
+                    .filter(regra -> regra.getRoles().stream()
+                            .noneMatch(role -> "ROLE_SISTEMA".equals(role.getName())))
+                    .collect(Collectors.toList());
+        } else {
+            throw new IllegalStateException("Usuário não autenticado ou tipo inesperado de principal");
+        }
     }
     
 }
