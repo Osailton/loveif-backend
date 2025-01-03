@@ -278,6 +278,11 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 				throw new InvalidExtraBimesterException(
 						"A pontuação para essa regra deve ser lançada em um bimestre extra.");
 			}
+		} else {
+			if (isExtraBimesterValid(bimestre)) {
+				throw new InvalidExtraBimesterException(
+						"A pontuação para essa regra deve ser lançada em um bimestre comum.");
+			}
 		}
 	}
 
