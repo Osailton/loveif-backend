@@ -22,6 +22,14 @@ public interface PontuacaoRepository extends JpaRepository<Pontuacao, Integer> {
 	@Query("SELECT COUNT(p) > 0 FROM Pontuacao p WHERE p.bimestre = :bimestre AND p.regra.id = :regraId AND p.turma.id = :turmaId AND p.anulado = false")
 	boolean existsByBimesterAndRule(@Param("bimestre") Integer bimestre, @Param("regraId") Long regraId,
 			@Param("turmaId") Long turmaId);
+	
+	@Query("SELECT COUNT(p) > 0 FROM Pontuacao p WHERE p.anoLetivo.id = :anoLetivoId AND p.turma.id = :turmaId AND p.anulado = false AND p.regra.grupo = :grupo")
+	boolean existsByYearAndGroup(@Param("anoLetivoId") Long anoLetivoId,
+			@Param("turmaId") Long turmaId, @Param("grupo") String grupo);
+
+	@Query("SELECT COUNT(p) > 0 FROM Pontuacao p WHERE p.bimestre = :bimestre AND p.turma.id = :turmaId AND p.anulado = false AND p.regra.grupo = :grupo")
+	boolean existsByBimesterAndGroup(@Param("bimestre") Integer bimestre,
+			@Param("turmaId") Long turmaId, @Param("grupo") String grupo);
 
 	@Query("SELECT COUNT(p) > 0 FROM Pontuacao p WHERE p.anoLetivo.id = :anoLetivoId AND p.regra.id = :regraId AND p.turma.id = :turmaId AND matriculaAluno = :matriculaAluno AND p.anulado = false")
 	boolean existsByYearAndRulePerStudent(@Param("anoLetivoId") Long anoLetivoId, @Param("regraId") Long regraId,
@@ -30,6 +38,14 @@ public interface PontuacaoRepository extends JpaRepository<Pontuacao, Integer> {
 	@Query("SELECT COUNT(p) > 0 FROM Pontuacao p WHERE p.bimestre = :bimestre AND p.regra.id = :regraId AND p.turma.id = :turmaId AND matriculaAluno = :matriculaAluno AND p.anulado = false")
 	boolean existsByBimesterAndRulePerStudent(@Param("bimestre") Integer bimestre, @Param("regraId") Long regraId,
 			@Param("turmaId") Long turmaId, @Param("matriculaAluno") String matriculaAluno);
+	
+	@Query("SELECT COUNT(p) > 0 FROM Pontuacao p WHERE p.anoLetivo.id = :anoLetivoId AND p.turma.id = :turmaId AND matriculaAluno = :matriculaAluno AND p.anulado = false AND p.regra.grupo = :grupo")
+	boolean existsByYearAndGroupPerStudent(@Param("anoLetivoId") Long anoLetivoId,
+			@Param("turmaId") Long turmaId, @Param("matriculaAluno") String matriculaAluno, @Param("grupo") String grupo);
+
+	@Query("SELECT COUNT(p) > 0 FROM Pontuacao p WHERE p.bimestre = :bimestre AND p.turma.id = :turmaId AND matriculaAluno = :matriculaAluno AND p.anulado = false AND p.regra.grupo = :grupo")
+	boolean existsByBimesterAndGroupPerStudent(@Param("bimestre") Integer bimestre,
+			@Param("turmaId") Long turmaId, @Param("matriculaAluno") String matriculaAluno, @Param("grupo") String grupo);
 
 	@Query(value = "SELECT COALESCE(SUM(p.pontos), 0) FROM Pontuacao p " + "JOIN p.regra r " + "WHERE p.turma = :turma "
 			+ "AND r.operacao = 'SUM' " + "AND p.aplicado = true " + "AND p.anulado = false ")

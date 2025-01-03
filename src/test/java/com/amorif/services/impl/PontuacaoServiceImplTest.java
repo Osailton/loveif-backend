@@ -583,9 +583,9 @@ public class PontuacaoServiceImplTest {
 	    List<Turma> turmasOrdenacao = Arrays.asList(turma1);
 
 	    // Mock para regras específicas
-	    when(turmaRepository.findTurmasQualificadasParaBonus(16L, Arrays.asList(13L, 14L, 15L, 17L), 1))
+	    when(turmaRepository.findTurmasQualificadasParaBonus(16L, Arrays.asList(13L, 14L, 15L, 17L, 18L), 1))
 	            .thenReturn(turmasLimpeza);
-	    when(turmaRepository.findTurmasQualificadasParaBonus(10L, Arrays.asList(7L, 8L, 9L, 12L), 1))
+	    when(turmaRepository.findTurmasQualificadasParaBonus(10L, Arrays.asList(7L, 8L, 9L, 12L, 11L), 1))
 	            .thenReturn(turmasOrdenacao);
 
 	    when(regraRepository.findById(18L)).thenReturn(Optional.of(regraLimpeza));
@@ -649,9 +649,9 @@ public class PontuacaoServiceImplTest {
 	    List<Turma> turmasOrdenacao = Arrays.asList(turma1);
 
 	    // Mock para apenas uma regra qualificada
-	    when(turmaRepository.findTurmasQualificadasParaBonus(16L, Arrays.asList(13L, 14L, 15L, 17L), 1))
+	    when(turmaRepository.findTurmasQualificadasParaBonus(16L, Arrays.asList(13L, 14L, 15L, 17L, 18L), 1))
 	            .thenReturn(Collections.emptyList());
-	    when(turmaRepository.findTurmasQualificadasParaBonus(10L, Arrays.asList(7L, 8L, 9L, 12L), 1))
+	    when(turmaRepository.findTurmasQualificadasParaBonus(10L, Arrays.asList(7L, 8L, 9L, 12L, 11L), 1))
 	            .thenReturn(turmasOrdenacao);
 
 	    when(regraRepository.findById(18L)).thenReturn(Optional.of(regraLimpeza));
@@ -659,6 +659,9 @@ public class PontuacaoServiceImplTest {
 	    
 	    when(regraRepository.getReferenceById(18L)).thenReturn(regraLimpeza);
 	    when(regraRepository.getReferenceById(11L)).thenReturn(regraOrdenacao);
+	    
+	    AnoLetivo ultimoAnoLetivoAtivo = AnoLetivo.builder().ano(2023).build();
+	    when(anoLetivoRepository.getLastActiveAnoLetivo()).thenReturn(ultimoAnoLetivoAtivo);
 
 	    PontuacaoDtoRequest dtoRequest = new PontuacaoDtoRequest();
 	    dtoRequest.setBimestre(1);

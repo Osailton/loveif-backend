@@ -231,23 +231,23 @@ public class TestConfig implements CommandLineRunner {
 						.roles(Arrays.asList(sistema, administrador)).build(),
 
 				// Saúde - Docente - Positivas
-				Regra.builder().descricao("0 pontos pela média menor ao do bimestre anterior").operacao("SUM")
+				Regra.builder().descricao("0 pontos pela média menor ao do bimestre anterior").operacao("SUM").grupo("media_comparativa")
 						.valorMinimo(0).senso(saude).tipoRegra(tipoFixoPorBimestre).roles(Arrays.asList(docente, administrador))
 						.build(),
-				Regra.builder().descricao("8 pontos pela média igual ao do bimestre anterior").operacao("SUM")
+				Regra.builder().descricao("8 pontos pela média igual ao do bimestre anterior").operacao("SUM").grupo("media_comparativa")
 						.valorMinimo(8).senso(saude).tipoRegra(tipoFixoPorBimestre).roles(Arrays.asList(docente, administrador))
 						.build(),
-				Regra.builder().descricao("20 pontos pela média maior ao do bimestre anterior").operacao("SUM")
+				Regra.builder().descricao("20 pontos pela média maior ao do bimestre anterior").operacao("SUM").grupo("media_comparativa")
 						.valorMinimo(20).senso(saude).tipoRegra(tipoFixoPorBimestre).roles(Arrays.asList(docente, administrador))
 						.build(),
 
-				Regra.builder().descricao("0 pontos pela frequência menor ao do bimestre anterior").operacao("SUM")
+				Regra.builder().descricao("0 pontos pela frequência menor ao do bimestre anterior").operacao("SUM").grupo("frequencia_comparativa")
 						.valorMinimo(0).senso(saude).tipoRegra(tipoFixoPorBimestre).roles(Arrays.asList(docente, administrador))
 						.build(),
-				Regra.builder().descricao("8 pontos pela frequência igual ao do bimestre anterior").operacao("SUM")
+				Regra.builder().descricao("8 pontos pela frequência igual ao do bimestre anterior").operacao("SUM").grupo("frequencia_comparativa")
 						.valorMinimo(8).senso(saude).tipoRegra(tipoFixoPorBimestre).roles(Arrays.asList(docente, administrador))
 						.build(),
-				Regra.builder().descricao("20 pontos pela frequência maior ao do bimestre anterior").operacao("SUM")
+				Regra.builder().descricao("20 pontos pela frequência maior ao do bimestre anterior").operacao("SUM").grupo("frequencia_comparativa")
 						.valorMinimo(20).senso(saude).tipoRegra(tipoFixoPorBimestre).roles(Arrays.asList(docente, administrador))
 						.build(),
 
