@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.amorif.dto.request.PontuacaoDtoRequest;
 import com.amorif.dto.response.PontuacaoDtoResponse;
+import com.amorif.dto.response.RegraDtoResponse;
 import com.amorif.entities.AnoLetivo;
 import com.amorif.entities.BimestreEnum;
 import com.amorif.entities.FrequenciaRegraEnum;
@@ -195,11 +196,13 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 	}
 
 	private PontuacaoDtoResponse dtoFromPontuacao(Pontuacao pontuacao) {
+		RegraDtoResponse regraDto = RegraDtoResponse.fromRegra(pontuacao.getRegra());
+		
 		return PontuacaoDtoResponse.builder().bimestre(pontuacao.getBimestre()).contador(pontuacao.getContador())
 				.nomeTurma(pontuacao.getTurma().getNome()).idTurma(pontuacao.getTurma().getId())
 				.descricao(pontuacao.getMotivacao()).pontos(pontuacao.getPontos())
 				.operacao(pontuacao.getRegra().getOperacao()).aplicado(pontuacao.isAplicado())
-				.anulado(pontuacao.isAnulado()).matriculaAluno(pontuacao.getMatriculaAluno()).build();
+				.createdAt(pontuacao.getData()).regra(regraDto).anulado(pontuacao.isAnulado()).matriculaAluno(pontuacao.getMatriculaAluno()).build();
 	}
 
 	private boolean userHasPermission(Regra regra) {

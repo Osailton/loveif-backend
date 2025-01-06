@@ -66,7 +66,8 @@ public interface PontuacaoRepository extends JpaRepository<Pontuacao, Integer> {
 	@Query(value = "SELECT p FROM Pontuacao p " + "WHERE p.contador = :contador " + "AND p.turma = :turma")
 	Pontuacao getByContadorTurma(Integer contador, Turma turma);
 	
-	List<Pontuacao> findByUser(User user);
+    @Query("SELECT p FROM Pontuacao p WHERE p.user = :user ORDER BY p.data DESC")
+    List<Pontuacao> findByUser(@Param("user") User user);
 	
 	Pontuacao findByContadorAndTurma_Id(Integer contador, Integer turmaId);
 

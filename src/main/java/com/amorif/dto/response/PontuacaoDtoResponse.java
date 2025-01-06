@@ -1,9 +1,9 @@
 package com.amorif.dto.response;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.amorif.entities.AnoLetivo;
-import com.amorif.entities.Regra;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -23,7 +23,7 @@ public class PontuacaoDtoResponse implements Serializable {
 	private TurmaDtoResponse turma;
 	private String nomeTurma;
 	private Long idTurma;
-	private Regra regra;
+	private RegraDtoResponse regra;
 	private String operacao;
 	private int bimestre;
 	private AnoLetivo anoLetivo;
@@ -32,13 +32,14 @@ public class PontuacaoDtoResponse implements Serializable {
 	private boolean aplicado;
 	private boolean anulado;
 	private String matriculaAluno;
+	private Date createdAt;
 	
 	public PontuacaoDtoResponse() {
 		
 	}
 
-	public PontuacaoDtoResponse(Integer contador, TurmaDtoResponse turma, String nomeTurma, Long idTurma, Regra regra,
-			String operacao, int bimestre, AnoLetivo anoLetivo, Integer pontos, String descricao, boolean aplicado, boolean anulado, String matriculaAluno) {
+	public PontuacaoDtoResponse(Integer contador, TurmaDtoResponse turma, String nomeTurma, Long idTurma, RegraDtoResponse regra,
+			String operacao, int bimestre, AnoLetivo anoLetivo, Integer pontos, String descricao, boolean aplicado, boolean anulado, String matriculaAluno, Date createdAt) {
 		super();
 		this.contador = contador;
 		this.nomeTurma = nomeTurma;
@@ -59,6 +60,7 @@ public class PontuacaoDtoResponse implements Serializable {
 		this.aplicado = aplicado;
 		this.anulado = anulado;
 		this.matriculaAluno = matriculaAluno;
+		this.createdAt = createdAt;
 	}
 	
 }
