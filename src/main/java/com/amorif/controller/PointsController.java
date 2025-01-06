@@ -28,6 +28,11 @@ public class PointsController {
 		this.pontuacaoService = pontuacaoService;
 	}
 	
+	@GetMapping("pontuacaoPorServidor")
+	public ResponseEntity<List<PontuacaoDtoResponse>> pontosByLoggedUser() {
+		return ResponseEntity.ok().body(this.pontuacaoService.pontosByLoggedUser());
+	}
+	
 	@GetMapping("pontos")
 	public ResponseEntity<List<PontuacaoDtoResponse>> pontosByAno(@RequestParam(name = "ano", defaultValue = "0") Long idAno) {
 		return ResponseEntity.ok().body(this.pontuacaoService.pontosByAno(idAno));

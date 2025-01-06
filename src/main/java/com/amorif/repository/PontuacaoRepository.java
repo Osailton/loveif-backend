@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.amorif.entities.Pontuacao;
 import com.amorif.entities.Turma;
+import com.amorif.entities.User;
 
 /**
  * @author osailton
@@ -64,4 +65,6 @@ public interface PontuacaoRepository extends JpaRepository<Pontuacao, Integer> {
 
 	@Query(value = "SELECT p FROM Pontuacao p " + "WHERE p.contador = :contador " + "AND p.turma = :turma")
 	Pontuacao getByContadorTurma(Integer contador, Turma turma);
+	
+	List<Pontuacao> findByUser(User user);
 }
