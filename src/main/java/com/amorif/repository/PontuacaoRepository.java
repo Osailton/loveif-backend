@@ -67,4 +67,8 @@ public interface PontuacaoRepository extends JpaRepository<Pontuacao, Integer> {
 	Pontuacao getByContadorTurma(Integer contador, Turma turma);
 	
 	List<Pontuacao> findByUser(User user);
+	
+	Pontuacao findByContadorAndTurma_Id(Integer contador, Integer turmaId);
+
+    void deleteByContadorAndTurma_Id(Integer contador, Integer turmaId);
 }

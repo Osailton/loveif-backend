@@ -21,6 +21,7 @@ import com.amorif.exceptions.InvalidJWTAuthenticationException;
 import com.amorif.exceptions.InvalidSchoolRegistrationException;
 import com.amorif.exceptions.InvalidTurnException;
 import com.amorif.exceptions.InvalidVariableValueException;
+import com.amorif.exceptions.RuleAlreadyCancelledOrAppliedException;
 import com.amorif.exceptions.RuleNotFoundException;
 import com.amorif.exceptions.UserAlreadyExistsException;
 import com.amorif.exceptions.UserHasNoPermitedRoleException;
@@ -114,6 +115,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(RuleNotFoundException.class)
 	public ResponseEntity<Object> handleRuleNotFoundException(RuleNotFoundException e, WebRequest request) {
+		ErrorMessageDtoResponse eMessage = new ErrorMessageDtoResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+		return new ResponseEntity<Object>(eMessage, new HttpHeaders(), eMessage.getStatus());
+	}
+	
+	@ExceptionHandler(RuleAlreadyCancelledOrAppliedException.class)
+	public ResponseEntity<Object> handleRuleAlreadyCancelledOrAppliedException(RuleAlreadyCancelledOrAppliedException e, WebRequest request) {
 		ErrorMessageDtoResponse eMessage = new ErrorMessageDtoResponse(HttpStatus.BAD_REQUEST, e.getMessage());
 		return new ResponseEntity<Object>(eMessage, new HttpHeaders(), eMessage.getStatus());
 	}
