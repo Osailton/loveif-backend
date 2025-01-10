@@ -47,5 +47,11 @@ public class PointsController {
 	public ResponseEntity<List<PontuacaoDtoResponse>> throwAutoPoints(@RequestBody PontuacaoDtoRequest request) {
 		return ResponseEntity.ok().body(this.pontuacaoService.throwAutoPoints(request));
 	}
+	
+	@PostMapping("deletarPontuacao")
+	public ResponseEntity<String> deletePoints(@RequestBody PontuacaoDtoRequest request) {
+		this.pontuacaoService.deletePontuacao(request);
+		return ResponseEntity.ok().body("Pontuação deletada");
+	}
 
 }

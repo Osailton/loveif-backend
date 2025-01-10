@@ -18,7 +18,7 @@ import lombok.Setter;
 public class PontuacaoDtoResponse implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private Integer contador;
 	private TurmaDtoResponse turma;
 	private String nomeTurma;
@@ -33,24 +33,26 @@ public class PontuacaoDtoResponse implements Serializable {
 	private boolean anulado;
 	private String matriculaAluno;
 	private Date createdAt;
-	
+	private Long idUser;
+
 	public PontuacaoDtoResponse() {
-		
+
 	}
 
-	public PontuacaoDtoResponse(Integer contador, TurmaDtoResponse turma, String nomeTurma, Long idTurma, RegraDtoResponse regra,
-			String operacao, int bimestre, AnoLetivo anoLetivo, Integer pontos, String descricao, boolean aplicado, boolean anulado, String matriculaAluno, Date createdAt) {
+	public PontuacaoDtoResponse(Integer contador, TurmaDtoResponse turma, String nomeTurma, Long idTurma,
+			RegraDtoResponse regra, String operacao, int bimestre, AnoLetivo anoLetivo, Integer pontos,
+			String descricao, boolean aplicado, boolean anulado, String matriculaAluno, Date createdAt, Long idUser) {
 		super();
 		this.contador = contador;
 		this.nomeTurma = nomeTurma;
 		this.idTurma = idTurma;
-		
+
 		if (turma != null) {
-			this.turma = turma;			
+			this.turma = turma;
 		} else {
 			this.turma = TurmaDtoResponse.builder().nome(this.nomeTurma).id(this.idTurma).build();
 		}
-		
+
 		this.regra = regra;
 		this.operacao = operacao;
 		this.bimestre = bimestre;
@@ -61,6 +63,7 @@ public class PontuacaoDtoResponse implements Serializable {
 		this.anulado = anulado;
 		this.matriculaAluno = matriculaAluno;
 		this.createdAt = createdAt;
+		this.idUser = idUser;
 	}
-	
+
 }

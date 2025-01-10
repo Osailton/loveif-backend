@@ -48,12 +48,15 @@ public class PontuacaoDtoRequest implements Serializable {
 	@JsonProperty("turno")
 	private Integer turno;
 	
+	@JsonProperty("id_user")
+	private Long idUser;
+	
 	public PontuacaoDtoRequest() {
 
 	}
 
 	public PontuacaoDtoRequest(Integer contador, Long idTurma, Long idRegra, Integer pontos, String operacao,
-			String motivacao, String matriculaAluno, Integer bimestre, Integer turno) {
+			String motivacao, String matriculaAluno, Integer bimestre, Integer turno, Long idUser) {
 		super();
 		this.contador = contador;
 		this.idTurma = idTurma;
@@ -64,6 +67,7 @@ public class PontuacaoDtoRequest implements Serializable {
 		this.matriculaAluno = matriculaAluno;
 		this.bimestre = bimestre;
 		this.turno = turno;
+		this.idUser = idUser;
 	}
 	
 }

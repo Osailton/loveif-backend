@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.amorif.dto.request.PontuacaoDtoRequest;
 import com.amorif.dto.response.PontuacaoDtoResponse;
@@ -32,6 +33,8 @@ import com.amorif.exceptions.InvalidFixedValueException;
 import com.amorif.exceptions.InvalidSchoolRegistrationException;
 import com.amorif.exceptions.InvalidTurnException;
 import com.amorif.exceptions.InvalidVariableValueException;
+import com.amorif.exceptions.PointsAlreadyCancelledOrAppliedException;
+import com.amorif.exceptions.PointsNotFoundException;
 import com.amorif.exceptions.RuleNotFoundException;
 import com.amorif.exceptions.UserHasNoPermitedRoleException;
 import com.amorif.repository.AnoLetivoRepository;
@@ -194,15 +197,55 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 
 		return null;
 	}
+	
+	@Override
+	@Transactional
+	public void deletePontuacao(PontuacaoDtoRequest pontuacaoDtoRequest) {
+	    // Busca a pontuação no repositório
+	    Pontuacao pontuacao = pontuacaoRepository.findByContadorAndTurma_Id(
+	            pontuacaoDtoRequest.getContador(), 
+	            pontuacaoDtoRequest.getIdTurma()
+	    );
+	    
+	    if (pontuacao == null) {
+	    	throw new PointsNotFoundException("Pontuação não encontrada");
+	    }
+
+	    // Verifica se a pontuação está anulada ou aplicada
+	    if (pontuacao.isAnulado() || pontuacao.isAplicado()) {
+	        throw new PointsAlreadyCancelledOrAppliedException("Não é possível deletar uma pontuação já aplicada ou anulada.");
+	    }
+
+	    // Obtém o usuário logado
+	    UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		User user = userRepository.findByMatricula(userDetails.getUsername()).get();
+	    boolean isAdmin = SecurityContextHolder.getContext().getAuthentication()
+	                      .getAuthorities()
+	                      .stream()
+	                      .anyMatch(role -> role.getAuthority().equals("ROLE_ADMINISTRADOR"));
+
+	    // Verifica se o usuário logado tem permissão para deletar
+	    if (!(pontuacao.getUser().getId() == user.getId()) && !isAdmin) {
+	        throw new UserHasNoPermitedRoleException("Usuário não tem permissão para deletar essa pontuação.");
+	    }
+
+	    // Deleta a pontuação
+	    pontuacaoRepository.deleteByContadorAndTurma_Id(
+	            pontuacaoDtoRequest.getContador(), 
+	            pontuacaoDtoRequest.getIdTurma()
+	    );
+	}
+
 
 	private PontuacaoDtoResponse dtoFromPontuacao(Pontuacao pontuacao) {
 		RegraDtoResponse regraDto = RegraDtoResponse.fromRegra(pontuacao.getRegra());
-		
+
 		return PontuacaoDtoResponse.builder().bimestre(pontuacao.getBimestre()).contador(pontuacao.getContador())
 				.nomeTurma(pontuacao.getTurma().getNome()).idTurma(pontuacao.getTurma().getId())
 				.descricao(pontuacao.getMotivacao()).pontos(pontuacao.getPontos())
 				.operacao(pontuacao.getRegra().getOperacao()).aplicado(pontuacao.isAplicado())
-				.createdAt(pontuacao.getData()).regra(regraDto).anulado(pontuacao.isAnulado()).matriculaAluno(pontuacao.getMatriculaAluno()).build();
+				.createdAt(pontuacao.getData()).regra(regraDto).anulado(pontuacao.isAnulado())
+				.matriculaAluno(pontuacao.getMatriculaAluno()).idUser(pontuacao.getUser().getId()).build();
 	}
 
 	private boolean userHasPermission(Regra regra) {

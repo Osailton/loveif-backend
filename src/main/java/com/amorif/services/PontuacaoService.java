@@ -14,5 +14,6 @@ public interface PontuacaoService {
 	List<PontuacaoDtoResponse> throwPoints(PontuacaoDtoRequest dtoRequest);
 	List<PontuacaoDtoResponse> throwAutoPoints(PontuacaoDtoRequest dtoRequest);
 	List<PontuacaoDtoResponse> pontosByLoggedUser();
+	void deletePontuacao(PontuacaoDtoRequest dtoRequest);
 
 }

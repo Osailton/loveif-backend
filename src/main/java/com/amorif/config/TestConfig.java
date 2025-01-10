@@ -83,6 +83,10 @@ public class TestConfig implements CommandLineRunner {
 		User u1 = User.builder().nome("Teste").matricula("0101")
 				.funcoes(Set.of(r1, r5, r6, r7, r8, r9, r10, r11, r12, r13)).build();
 		userRepository.saveAll(Arrays.asList(u1));
+		
+		User u2 = User.builder().nome("Teste").matricula("0102")
+				.funcoes(Set.of(r5, r6, r7, r8, r9, r10, r11, r12, r13)).build();
+		userRepository.saveAll(Arrays.asList(u2));
 
 //		Criar ano letivo
 		AnoLetivo ano22 = AnoLetivo.builder().ano(2022).aberto(true).build();
