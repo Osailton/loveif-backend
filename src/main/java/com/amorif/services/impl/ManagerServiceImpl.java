@@ -61,6 +61,7 @@ public class ManagerServiceImpl implements ManagerService {
 			Pontuacao pontuacao = this.pontuacaoRepository.getByContadorTurma(request.getContador(), turma);
 			if(pontuacao != null) {
 				pontuacao.setAplicado(true);
+				pontuacao.setAnulado(false);
 				pontuacao = this.pontuacaoRepository.save(pontuacao);
 				return this.dtoFromPontuacao(pontuacao);
 			} else {
@@ -78,6 +79,7 @@ public class ManagerServiceImpl implements ManagerService {
 			Pontuacao pontuacao = this.pontuacaoRepository.getByContadorTurma(request.getContador(), turma);
 			if(pontuacao != null) {
 				pontuacao.setAnulado(true);
+				pontuacao.setAplicado(false);
 				pontuacao = this.pontuacaoRepository.save(pontuacao);
 				return this.dtoFromPontuacao(pontuacao);
 			} else {
