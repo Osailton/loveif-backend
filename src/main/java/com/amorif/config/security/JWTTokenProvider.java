@@ -117,8 +117,8 @@ public class JWTTokenProvider {
 	}
 	
 	public boolean validateToken(String token) {
-		DecodedJWT decodedJWT = decodedToken(token);
 		try {
+			DecodedJWT decodedJWT = decodedToken(token);
 			if(decodedJWT.getExpiresAt().before(new Date())) {
 				return false;
 			}

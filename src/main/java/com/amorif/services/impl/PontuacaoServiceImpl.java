@@ -2,6 +2,7 @@ package com.amorif.services.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.amorif.dto.request.PontuacaoDtoRequest;
 import com.amorif.dto.response.PontuacaoDtoResponse;
 import com.amorif.dto.response.RegraDtoResponse;
+import com.amorif.dto.response.UserDtoResponse;
 import com.amorif.entities.AnoLetivo;
 import com.amorif.entities.BimestreEnum;
 import com.amorif.entities.FrequenciaRegraEnum;
@@ -72,11 +74,87 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 	}
 
 	@Override
-	public List<PontuacaoDtoResponse> pontosByLoggedUser() {
-		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		User user = userRepository.findByMatricula(userDetails.getUsername()).get();
+	public List<PontuacaoDtoResponse> pontosByLastActiveYear() {
+		AnoLetivo anoLetivo = this.anoLetivoRepository.getLastActiveAnoLetivo();
 
-		return pontuacaoRepository.findByUser(user).stream().map(pontuacao -> dtoFromPontuacao(pontuacao)).toList();
+		Long idAno = anoLetivo.getId();
+
+		if (idAno > 0) {
+			return this.pontuacaoRepository.pontosByAno(idAno).stream().map(e -> dtoFromPontuacao(e))
+					.collect(Collectors.toList());
+		}
+
+		return Collections.emptyList();
+	}
+
+	@Override
+	public List<PontuacaoDtoResponse> pointsToValidate() {
+		AnoLetivo anoLetivo = this.anoLetivoRepository.getLastActiveAnoLetivo();
+
+		Long idAno = anoLetivo.getId();
+
+		if (idAno > 0) {
+			return this.pontuacaoRepository.pontosByAno(idAno).stream().filter(p -> !p.isAplicado() && !p.isAnulado()) // Filtra
+																														// os
+																														// pontos
+																														// que
+																														// não
+																														// foram
+																														// aplicados
+																														// nem
+																														// anulados
+					.map(this::dtoFromPontuacao).collect(Collectors.toList());
+		}
+
+		return Collections.emptyList();
+	}
+
+	@Override
+	public List<PontuacaoDtoResponse> appliedPointsOfLastActiveYear() {
+		AnoLetivo anoLetivo = this.anoLetivoRepository.getLastActiveAnoLetivo();
+
+		Long idAno = anoLetivo.getId();
+
+		if (idAno > 0) {
+			return this.pontuacaoRepository.pontosByAno(idAno).stream().filter(p -> p.isAplicado()) // Filtra os pontos
+																									// que não foram
+																									// aplicados nem
+																									// anulados
+					.map(this::dtoFromPontuacao).collect(Collectors.toList());
+		}
+
+		return Collections.emptyList();
+	}
+
+	@Override
+	public List<PontuacaoDtoResponse> cancelledPointsOfLastActiveYear() {
+		AnoLetivo anoLetivo = this.anoLetivoRepository.getLastActiveAnoLetivo();
+
+		Long idAno = anoLetivo.getId();
+
+		if (idAno > 0) {
+			return this.pontuacaoRepository.pontosByAno(idAno).stream().filter(p -> p.isAnulado()) // Filtra os pontos
+																									// que não foram
+																									// aplicados nem
+																									// anulados
+					.map(this::dtoFromPontuacao).collect(Collectors.toList());
+		}
+
+		return Collections.emptyList();
+	}
+
+	@Override
+	public List<PontuacaoDtoResponse> pontosByLoggedUser() {
+		AnoLetivo anoLetivo = this.anoLetivoRepository.getLastActiveAnoLetivo();
+		
+		if(anoLetivo.getId() > 0) {
+			UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			User user = userRepository.findByMatricula(userDetails.getUsername()).get();
+			
+			return pontuacaoRepository.findByUserAndLastActiveYear(user, anoLetivo).stream().map(pontuacao -> dtoFromPontuacao(pontuacao)).toList();			
+		}
+		
+		return Collections.emptyList();		
 	}
 
 	@Override
@@ -197,45 +275,39 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 
 		return null;
 	}
-	
+
 	@Override
 	@Transactional
 	public void deletePontuacao(PontuacaoDtoRequest pontuacaoDtoRequest) {
-	    // Busca a pontuação no repositório
-	    Pontuacao pontuacao = pontuacaoRepository.findByContadorAndTurma_Id(
-	            pontuacaoDtoRequest.getContador(), 
-	            pontuacaoDtoRequest.getIdTurma()
-	    );
-	    
-	    if (pontuacao == null) {
-	    	throw new PointsNotFoundException("Pontuação não encontrada");
-	    }
+		// Busca a pontuação no repositório
+		Pontuacao pontuacao = pontuacaoRepository.findByContadorAndTurma_Id(pontuacaoDtoRequest.getContador(),
+				pontuacaoDtoRequest.getIdTurma());
 
-	    // Verifica se a pontuação está anulada ou aplicada
-	    if (pontuacao.isAnulado() || pontuacao.isAplicado()) {
-	        throw new PointsAlreadyCancelledOrAppliedException("Não é possível deletar uma pontuação já aplicada ou anulada.");
-	    }
+		if (pontuacao == null) {
+			throw new PointsNotFoundException("Pontuação não encontrada");
+		}
 
-	    // Obtém o usuário logado
-	    UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		// Verifica se a pontuação está anulada ou aplicada
+		if (pontuacao.isAnulado() || pontuacao.isAplicado()) {
+			throw new PointsAlreadyCancelledOrAppliedException(
+					"Não é possível deletar uma pontuação já aplicada ou anulada.");
+		}
+
+		// Obtém o usuário logado
+		UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		User user = userRepository.findByMatricula(userDetails.getUsername()).get();
-	    boolean isAdmin = SecurityContextHolder.getContext().getAuthentication()
-	                      .getAuthorities()
-	                      .stream()
-	                      .anyMatch(role -> role.getAuthority().equals("ROLE_ADMINISTRADOR"));
+		boolean isAdmin = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+				.anyMatch(role -> role.getAuthority().equals("ROLE_ADMINISTRADOR"));
 
-	    // Verifica se o usuário logado tem permissão para deletar
-	    if (!(pontuacao.getUser().getId() == user.getId()) && !isAdmin) {
-	        throw new UserHasNoPermitedRoleException("Usuário não tem permissão para deletar essa pontuação.");
-	    }
+		// Verifica se o usuário logado tem permissão para deletar
+		if (!(pontuacao.getUser().getId() == user.getId()) && !isAdmin) {
+			throw new UserHasNoPermitedRoleException("Usuário não tem permissão para deletar essa pontuação.");
+		}
 
-	    // Deleta a pontuação
-	    pontuacaoRepository.deleteByContadorAndTurma_Id(
-	            pontuacaoDtoRequest.getContador(), 
-	            pontuacaoDtoRequest.getIdTurma()
-	    );
+		// Deleta a pontuação
+		pontuacaoRepository.deleteByContadorAndTurma_Id(pontuacaoDtoRequest.getContador(),
+				pontuacaoDtoRequest.getIdTurma());
 	}
-
 
 	private PontuacaoDtoResponse dtoFromPontuacao(Pontuacao pontuacao) {
 		RegraDtoResponse regraDto = RegraDtoResponse.fromRegra(pontuacao.getRegra());
@@ -245,7 +317,10 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 				.descricao(pontuacao.getMotivacao()).pontos(pontuacao.getPontos())
 				.operacao(pontuacao.getRegra().getOperacao()).aplicado(pontuacao.isAplicado())
 				.createdAt(pontuacao.getData()).regra(regraDto).anulado(pontuacao.isAnulado())
-				.matriculaAluno(pontuacao.getMatriculaAluno()).idUser(pontuacao.getUser().getId()).build();
+				.matriculaAluno(pontuacao.getMatriculaAluno()).idUser(pontuacao.getUser().getId())
+				.criadoPor(UserDtoResponse.builder().matricula(pontuacao.getUser().getMatricula())
+						.email(pontuacao.getUser().getEmail()).username(pontuacao.getUser().getNome()).build())
+				.build();
 	}
 
 	private boolean userHasPermission(Regra regra) {

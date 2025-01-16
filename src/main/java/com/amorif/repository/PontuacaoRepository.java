@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.amorif.entities.AnoLetivo;
 import com.amorif.entities.Pontuacao;
 import com.amorif.entities.Turma;
 import com.amorif.entities.User;
@@ -56,7 +57,7 @@ public interface PontuacaoRepository extends JpaRepository<Pontuacao, Integer> {
 			+ "AND r.operacao = 'SUB' " + "AND p.aplicado = true " + "AND p.anulado = false ")
 	Integer negativePoints(Turma turma);
 
-	@Query(value = "SELECT p FROM Pontuacao p " + "WHERE p.turma.anoLetivo.id = :idAno " + "ORDER by p.contador")
+	@Query(value = "SELECT p FROM Pontuacao p " + "WHERE p.turma.anoLetivo.id = :idAno " + "ORDER by p.data DESC")
 	List<Pontuacao> pontosByAno(Long idAno);
 
 	@Query(value = "SELECT p.contador FROM Pontuacao p " + "WHERE p.turma = :turma " + "ORDER BY p.contador DESC "
@@ -66,8 +67,8 @@ public interface PontuacaoRepository extends JpaRepository<Pontuacao, Integer> {
 	@Query(value = "SELECT p FROM Pontuacao p " + "WHERE p.contador = :contador " + "AND p.turma = :turma")
 	Pontuacao getByContadorTurma(Integer contador, Turma turma);
 	
-    @Query("SELECT p FROM Pontuacao p WHERE p.user = :user ORDER BY p.data DESC")
-    List<Pontuacao> findByUser(@Param("user") User user);
+    @Query("SELECT p FROM Pontuacao p WHERE p.user = :user AND p.anoLetivo = :year ORDER BY p.data DESC")
+    List<Pontuacao> findByUserAndLastActiveYear(@Param("user") User user, @Param("year") AnoLetivo year);
 	
 	Pontuacao findByContadorAndTurma_Id(Integer contador, Long turmaId);
 

@@ -38,6 +38,26 @@ public class PointsController {
 		return ResponseEntity.ok().body(this.pontuacaoService.pontosByAno(idAno));
 	}
 	
+	@GetMapping("pontosDoAnoCorrente")
+	public ResponseEntity<List<PontuacaoDtoResponse>> pontosByLastActiveYear() {
+		return ResponseEntity.ok().body(this.pontuacaoService.pontosByLastActiveYear());
+	}
+	
+	@GetMapping("pontosDoAnoCorrenteParaValidar")
+	public ResponseEntity<List<PontuacaoDtoResponse>> pointsToValidate() {
+		return ResponseEntity.ok().body(this.pontuacaoService.pointsToValidate());
+	}
+	
+	@GetMapping("pontosDoAnoCorrenteAplicados")
+	public ResponseEntity<List<PontuacaoDtoResponse>> appliedPointsOfLastActiveYear() {
+		return ResponseEntity.ok().body(this.pontuacaoService.appliedPointsOfLastActiveYear());
+	}
+	
+	@GetMapping("pontosDoAnoCorrenteAnulados")
+	public ResponseEntity<List<PontuacaoDtoResponse>> cancelledPointsOfLastActiveYear() {
+		return ResponseEntity.ok().body(this.pontuacaoService.cancelledPointsOfLastActiveYear());
+	}
+	
 	@PostMapping("lancar")
 	public ResponseEntity<List<PontuacaoDtoResponse>> throwPoints(@RequestBody PontuacaoDtoRequest request) {
 		return ResponseEntity.ok().body(this.pontuacaoService.throwPoints(request));
