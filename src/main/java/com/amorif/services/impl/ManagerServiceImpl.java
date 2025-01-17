@@ -56,6 +56,7 @@ public class ManagerServiceImpl implements ManagerService {
 
 	@Override
 	public PontuacaoDtoResponse approvePoints(PontuacaoDtoRequest request) {
+		System.out.println(request.getContador());
 		Turma turma = this.turmaRepository.getReferenceById(request.getIdTurma());
 		if(turma != null) {
 			Pontuacao pontuacao = this.pontuacaoRepository.getByContadorTurma(request.getContador(), turma);

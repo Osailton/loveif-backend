@@ -1,5 +1,8 @@
 package com.amorif.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,6 +38,20 @@ public class ManagerController {
 	@PostMapping("aprovar")
 	public ResponseEntity<PontuacaoDtoResponse> approvePoints(@RequestBody PontuacaoDtoRequest request) {
 		return ResponseEntity.ok().body(this.managerService.approvePoints(request));
+	}
+	
+	@PostMapping("aprovarTodas")
+	public ResponseEntity<List<PontuacaoDtoResponse>> approveAllPoints(@RequestBody List<PontuacaoDtoRequest> requests) {
+		List<PontuacaoDtoResponse> response = new ArrayList<PontuacaoDtoResponse>();
+		System.out.println(requests);
+		
+		System.out.println(requests.getFirst().getBimestre());
+		
+		for (PontuacaoDtoRequest request : requests) {
+			response.add(this.managerService.approvePoints(request));
+		}
+		
+		return ResponseEntity.ok().body(response);
 	}
 	
 	@PostMapping("cancelar")

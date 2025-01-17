@@ -98,7 +98,7 @@ public class JWTTokenProvider {
 	
 	public Authentication getAuthentication(String token) {
 		DecodedJWT decodedJWT = decodedToken(token);
-		UserDetails userDetails = this.userDetailsService.loadUserByUsername(decodedJWT.getSubject());
+		UserDetails userDetails =  this.userDetailsService.loadUserByUsername(decodedJWT.getSubject());			
 		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
 	}
 
