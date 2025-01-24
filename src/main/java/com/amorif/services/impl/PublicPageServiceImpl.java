@@ -6,9 +6,14 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.amorif.dto.response.AnoLetivoDtoResponse;
+import com.amorif.dto.response.PontuacaoDtoResponse;
+import com.amorif.dto.response.RegraDtoResponse;
 import com.amorif.dto.response.TurmaDtoResponse;
+import com.amorif.dto.response.UserDtoResponse;
 import com.amorif.entities.AnoLetivo;
+import com.amorif.entities.Pontuacao;
 import com.amorif.entities.Turma;
+import com.amorif.exceptions.TurmaNotFoundException;
 import com.amorif.repository.AnoLetivoRepository;
 import com.amorif.repository.PontuacaoRepository;
 import com.amorif.repository.TurmaRepository;
@@ -30,6 +35,21 @@ public class PublicPageServiceImpl implements PublicPageService {
 		this.pontuacaoRepository = pontuacaoRepository;
 		this.turmaRepository = turmaRepository;
 		this.anoLetivoRepository = anoLetivoRepository;
+	}
+
+	@Override
+	public List<PontuacaoDtoResponse> listPontuacaoByTurma(Long turmaId) {
+		Turma turma = this.turmaRepository.findById(turmaId)
+				.orElseThrow(() -> new TurmaNotFoundException("Turma não encontrada"));
+
+		List<Pontuacao> pontuacoes = this.pontuacaoRepository.findByTurma(turma);
+		List<PontuacaoDtoResponse> response = new ArrayList<PontuacaoDtoResponse>();
+
+		for (Pontuacao pontuacao : pontuacoes) {
+			response.add(dtoFromPontuacao(pontuacao));
+		}
+
+		return response;
 	}
 
 	@Override
@@ -60,6 +80,20 @@ public class PublicPageServiceImpl implements PublicPageService {
 						.anoLetivo(turma.getAnoLetivo().getAno()).build())
 				.nome(turma.getNome()).descricao(turma.getDescricao()).build();
 		return turmaDto;
+	}
+
+	private PontuacaoDtoResponse dtoFromPontuacao(Pontuacao pontuacao) {
+		RegraDtoResponse regraDto = RegraDtoResponse.fromRegra(pontuacao.getRegra());
+
+		return PontuacaoDtoResponse.builder().bimestre(pontuacao.getBimestre()).contador(pontuacao.getContador())
+				.nomeTurma(pontuacao.getTurma().getNome()).idTurma(pontuacao.getTurma().getId())
+				.descricao(pontuacao.getMotivacao()).pontos(pontuacao.getPontos())
+				.operacao(pontuacao.getRegra().getOperacao()).aplicado(pontuacao.isAplicado())
+				.createdAt(pontuacao.getData()).regra(regraDto).anulado(pontuacao.isAnulado())
+				.matriculaAluno(pontuacao.getMatriculaAluno()).idUser(pontuacao.getUser().getId())
+				.criadoPor(UserDtoResponse.builder().matricula(pontuacao.getUser().getMatricula())
+						.email(pontuacao.getUser().getEmail()).username(pontuacao.getUser().getNome()).build())
+				.build();
 	}
 
 }

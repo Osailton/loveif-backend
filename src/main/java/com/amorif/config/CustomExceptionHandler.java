@@ -24,6 +24,7 @@ import com.amorif.exceptions.InvalidVariableValueException;
 import com.amorif.exceptions.PointsAlreadyCancelledOrAppliedException;
 import com.amorif.exceptions.PointsNotFoundException;
 import com.amorif.exceptions.RuleNotFoundException;
+import com.amorif.exceptions.TurmaNotFoundException;
 import com.amorif.exceptions.UserAlreadyExistsException;
 import com.amorif.exceptions.UserHasNoPermitedRoleException;
 
@@ -128,6 +129,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 	
 	@ExceptionHandler(PointsNotFoundException.class)
 	public ResponseEntity<Object> handlePointsNotFoundException(PointsNotFoundException e, WebRequest request) {
+		ErrorMessageDtoResponse eMessage = new ErrorMessageDtoResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+		return new ResponseEntity<Object>(eMessage, new HttpHeaders(), eMessage.getStatus());
+	}
+	
+	@ExceptionHandler(TurmaNotFoundException.class)
+	public ResponseEntity<Object> handleTurmaNotFoundException(TurmaNotFoundException e, WebRequest request) {
 		ErrorMessageDtoResponse eMessage = new ErrorMessageDtoResponse(HttpStatus.BAD_REQUEST, e.getMessage());
 		return new ResponseEntity<Object>(eMessage, new HttpHeaders(), eMessage.getStatus());
 	}

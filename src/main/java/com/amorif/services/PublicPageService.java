@@ -2,6 +2,7 @@ package com.amorif.services;
 
 import java.util.List;
 
+import com.amorif.dto.response.PontuacaoDtoResponse;
 import com.amorif.dto.response.TurmaDtoResponse;
 
 /**
@@ -11,5 +12,7 @@ import com.amorif.dto.response.TurmaDtoResponse;
 public interface PublicPageService {
 	
 	List<TurmaDtoResponse> listPontuacao();
+	
+	List<PontuacaoDtoResponse> listPontuacaoByTurma(Long turmaId);
 
 }
