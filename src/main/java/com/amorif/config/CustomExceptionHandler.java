@@ -26,7 +26,6 @@ import com.amorif.exceptions.PointsNotFoundException;
 import com.amorif.exceptions.RuleNotFoundException;
 import com.amorif.exceptions.UserAlreadyExistsException;
 import com.amorif.exceptions.UserHasNoPermitedRoleException;
-import com.amorif.exceptions.UserNotFoundException;
 
 @ControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {

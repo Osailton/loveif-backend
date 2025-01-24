@@ -46,7 +46,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 			return;
 		}
 		
-		String username = this.jwtTokenProvider.getAuthentication(token).getName();
+		String username = this.jwtTokenProvider.getAuthentication(token).getName();			
 		if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 			User user = (User) this.userDetailsService.loadUserByUsername(username);
 			boolean isTokenValid = this.tokenRepository.findByToken(token)

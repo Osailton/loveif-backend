@@ -44,7 +44,7 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, CustomAuthenticationEntryPoint authenticationEntryPoint) throws Exception {
 		return httpSecurity.httpBasic((basic) -> basic.disable()).csrf((csrf) -> csrf.disable())
 				.cors(httpSecurityCorsConfigurer  -> {
 					CorsConfiguration config = new CorsConfiguration();
@@ -68,6 +68,9 @@ public class SecurityConfig {
 						.requestMatchers(MANAGER_LIST).hasAnyRole(
 								this.getRole(RoleEnum.ROLE_ADMINISTRADOR.toString()))
 						.requestMatchers("/users").denyAll().anyRequest().authenticated())
+				.exceptionHandling(exceptionHandling -> exceptionHandling
+	                    .authenticationEntryPoint(authenticationEntryPoint) // Adiciona tratamento de erro 401
+	            )
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 				.authenticationProvider(this.authenticationProvider).build();
 	}
