@@ -28,9 +28,9 @@ import com.amorif.entities.RoleEnum;
 @Profile("dev")
 public class SecurityConfig {
 
-	private final String[] WHITE_LIST = new String[] { "/api/auth/**", "/api/public/**" };
+	private final String[] WHITE_LIST = new String[] { "/api/auth/**", "/api/public/**", "/api/pontuacao/pontosDoAnoCorrente" };
 
-	private final String[] AVAL_LIST = new String[] { "/api/pontuacao/**", "/api/anoletivo/**", "/api/turma/**" };
+	private final String[] AVAL_LIST = new String[] { "/api/pontuacao/**", "/api/anoletivo/**", "/api/turma/**", "/api/regras/**" };
 
 	private final String[] MANAGER_LIST = new String[] { "/api/manager/**" };
 
@@ -58,13 +58,17 @@ public class SecurityConfig {
 				.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests((auth) -> auth
 						.requestMatchers(WHITE_LIST).permitAll()
+						.requestMatchers("/api/pontuacao/lancarPontosAutomaticos")
+						.hasRole(this.getRole(RoleEnum.ROLE_ADMINISTRADOR.toString()))
+						.requestMatchers("/api/anoletivo/ano")
+						.hasRole(this.getRole(RoleEnum.ROLE_ADMINISTRADOR.toString()))
+						.requestMatchers("/api/turma/turma")
+						.hasRole(this.getRole(RoleEnum.ROLE_ADMINISTRADOR.toString()))
 						.requestMatchers(AVAL_LIST).hasAnyRole(Stream.concat(
 					            getRolesByCategory("Aval").stream(), // First list
 					            getRolesByCategory("Admin").stream() // Second list
 					        ).map(role -> getRole(role))
 					        .toArray(String[]::new))
-						.requestMatchers("/api/pontuacao/lancarPontosAutomaticos")
-                        .hasRole(this.getRole(RoleEnum.ROLE_ADMINISTRADOR.toString()))
 						.requestMatchers(MANAGER_LIST).hasAnyRole(
 								this.getRole(RoleEnum.ROLE_ADMINISTRADOR.toString()))
 						.requestMatchers("/users").denyAll().anyRequest().authenticated())

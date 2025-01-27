@@ -83,9 +83,9 @@ public class TestConfig implements CommandLineRunner {
 		User u1 = User.builder().nome("Teste").matricula("0101")
 				.funcoes(Set.of(r1, r5, r6, r7, r8, r9, r10, r11, r12, r13)).build();
 		userRepository.saveAll(Arrays.asList(u1));
-		
-		User u2 = User.builder().nome("Teste").matricula("0102")
-				.funcoes(Set.of(r5, r6, r7, r8, r9, r10, r11, r12, r13)).build();
+
+		User u2 = User.builder().nome("Teste").matricula("0102").funcoes(Set.of(r5, r6, r7, r8, r9, r10, r11, r12, r13))
+				.build();
 		userRepository.saveAll(Arrays.asList(u2));
 
 //		Criar ano letivo
@@ -178,9 +178,11 @@ public class TestConfig implements CommandLineRunner {
 		List<Regra> regras = Arrays.asList(
 				// Utilização - Bibliotecário - Positivas
 				Regra.builder().descricao("1 ponto por livro emprestado").operacao("SUM").valorMinimo(1)
-						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador)).build(),
+						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador))
+						.build(),
 				Regra.builder().descricao("30 pontos por campanha de doação").operacao("SUM").valorMinimo(30)
-						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador)).build(),
+						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador))
+						.build(),
 				Regra.builder().descricao(
 						"20 pontos no bimestre extra para a turma que mais tiver formado grupos de estudo no ano letivo")
 						.operacao("SUM").valorMinimo(20).senso(utilizacao).tipoRegra(tipoFixoBimestreExtra)
@@ -188,21 +190,28 @@ public class TestConfig implements CommandLineRunner {
 
 				// Utilização - Bibliotecário - Negativas
 				Regra.builder().descricao("20 pontos por perda de livro").operacao("SUB").valorMinimo(20)
-						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador)).build(),
+						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador))
+						.build(),
 				Regra.builder().descricao("3 pontos por atraso de livro").operacao("SUB").valorMinimo(3)
-						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador)).build(),
+						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador))
+						.build(),
 				Regra.builder().descricao("5 pontos por avaria de livro").operacao("SUB").valorMinimo(5)
-						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador)).build(),
+						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador))
+						.build(),
 
 				// Ordenação - Apoio Acadêmico - Positivas
 				Regra.builder().descricao("0 pontos pela organização ruim").operacao("SUM").valorMinimo(0)
-						.senso(ordenacao).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador)).build(),
+						.senso(ordenacao).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador))
+						.build(),
 				Regra.builder().descricao("5 pontos pela organização mediana").operacao("SUM").valorMinimo(5)
-						.senso(ordenacao).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador)).build(),
+						.senso(ordenacao).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador))
+						.build(),
 				Regra.builder().descricao("8 pontos pela organização boa").operacao("SUM").valorMinimo(8)
-						.senso(ordenacao).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador)).build(),
+						.senso(ordenacao).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador))
+						.build(),
 				Regra.builder().descricao("10 pontos pela organização excelente").operacao("SUM").valorMinimo(10)
-						.senso(ordenacao).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador)).build(),
+						.senso(ordenacao).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador))
+						.build(),
 
 				// Ordenação - Sistema - Positivas
 				Regra.builder().descricao("20 pontos ao fim de cada bimestre se a turma tiver 100% de nota 10")
@@ -212,7 +221,9 @@ public class TestConfig implements CommandLineRunner {
 				// Ordenação - Assistência Estudantil, Apoio Acadêmico e ASLAB - Negativas
 				Regra.builder().descricao("10 pontos por desordem para todas as turmas do turno").operacao("SUB")
 						.valorMinimo(10).senso(ordenacao).tipoRegra(tipoPorTurno)
-						.roles(Arrays.asList(assistenciaEstudantil, apoioAcademico, assessoriaLaboratorio, administrador)).build(),
+						.roles(Arrays.asList(assistenciaEstudantil, apoioAcademico, assessoriaLaboratorio,
+								administrador))
+						.build(),
 
 				// Limpeza - Apoio Acadêmico - Positivas
 				Regra.builder().descricao("0 pontos pela limpeza ruim").operacao("SUM").valorMinimo(0).senso(limpeza)
@@ -235,25 +246,25 @@ public class TestConfig implements CommandLineRunner {
 						.roles(Arrays.asList(sistema, administrador)).build(),
 
 				// Saúde - Docente - Positivas
-				Regra.builder().descricao("0 pontos pela média menor ao do bimestre anterior").operacao("SUM").grupo("media_comparativa")
-						.valorMinimo(0).senso(saude).tipoRegra(tipoFixoPorBimestre).roles(Arrays.asList(docente, administrador))
-						.build(),
-				Regra.builder().descricao("8 pontos pela média igual ao do bimestre anterior").operacao("SUM").grupo("media_comparativa")
-						.valorMinimo(8).senso(saude).tipoRegra(tipoFixoPorBimestre).roles(Arrays.asList(docente, administrador))
-						.build(),
-				Regra.builder().descricao("20 pontos pela média maior ao do bimestre anterior").operacao("SUM").grupo("media_comparativa")
-						.valorMinimo(20).senso(saude).tipoRegra(tipoFixoPorBimestre).roles(Arrays.asList(docente, administrador))
-						.build(),
+				Regra.builder().descricao("0 pontos pela média menor ao do bimestre anterior").operacao("SUM")
+						.grupo("media_comparativa").valorMinimo(0).senso(saude).tipoRegra(tipoFixoPorBimestre)
+						.roles(Arrays.asList(docente, administrador)).build(),
+				Regra.builder().descricao("8 pontos pela média igual ao do bimestre anterior").operacao("SUM")
+						.grupo("media_comparativa").valorMinimo(8).senso(saude).tipoRegra(tipoFixoPorBimestre)
+						.roles(Arrays.asList(docente, administrador)).build(),
+				Regra.builder().descricao("20 pontos pela média maior ao do bimestre anterior").operacao("SUM")
+						.grupo("media_comparativa").valorMinimo(20).senso(saude).tipoRegra(tipoFixoPorBimestre)
+						.roles(Arrays.asList(docente, administrador)).build(),
 
-				Regra.builder().descricao("0 pontos pela frequência menor ao do bimestre anterior").operacao("SUM").grupo("frequencia_comparativa")
-						.valorMinimo(0).senso(saude).tipoRegra(tipoFixoPorBimestre).roles(Arrays.asList(docente, administrador))
-						.build(),
-				Regra.builder().descricao("8 pontos pela frequência igual ao do bimestre anterior").operacao("SUM").grupo("frequencia_comparativa")
-						.valorMinimo(8).senso(saude).tipoRegra(tipoFixoPorBimestre).roles(Arrays.asList(docente, administrador))
-						.build(),
-				Regra.builder().descricao("20 pontos pela frequência maior ao do bimestre anterior").operacao("SUM").grupo("frequencia_comparativa")
-						.valorMinimo(20).senso(saude).tipoRegra(tipoFixoPorBimestre).roles(Arrays.asList(docente, administrador))
-						.build(),
+				Regra.builder().descricao("0 pontos pela frequência menor ao do bimestre anterior").operacao("SUM")
+						.grupo("frequencia_comparativa").valorMinimo(0).senso(saude).tipoRegra(tipoFixoPorBimestre)
+						.roles(Arrays.asList(docente, administrador)).build(),
+				Regra.builder().descricao("8 pontos pela frequência igual ao do bimestre anterior").operacao("SUM")
+						.grupo("frequencia_comparativa").valorMinimo(8).senso(saude).tipoRegra(tipoFixoPorBimestre)
+						.roles(Arrays.asList(docente, administrador)).build(),
+				Regra.builder().descricao("20 pontos pela frequência maior ao do bimestre anterior").operacao("SUM")
+						.grupo("frequencia_comparativa").valorMinimo(20).senso(saude).tipoRegra(tipoFixoPorBimestre)
+						.roles(Arrays.asList(docente, administrador)).build(),
 
 				Regra.builder().descricao("10 pontos para a turma que mais participou de CAs no bimestre (opcional)")
 						.operacao("SUM").valorMinimo(10).senso(saude).tipoRegra(tipoFixoPorBimestre)
@@ -261,8 +272,8 @@ public class TestConfig implements CommandLineRunner {
 
 				Regra.builder().descricao(
 						"2 pontos por aluno de cada turma que participar de olimpíadas coordenadas pelo professor no bimestre extra")
-						.operacao("SUM").valorMinimo(2).senso(saude).tipoRegra(tipoFixo).roles(Arrays.asList(docente, administrador))
-						.build(),
+						.operacao("SUM").valorMinimo(2).senso(saude).tipoRegra(tipoFixo)
+						.roles(Arrays.asList(docente, administrador)).build(),
 
 				Regra.builder().descricao("1 ponto por aluno da turma em cada bimestre por atuação de monitoria")
 						.operacao("SUM").valorMinimo(1).senso(saude).tipoRegra(tipoPorAlunoBimestre)
@@ -290,32 +301,35 @@ public class TestConfig implements CommandLineRunner {
 						.roles(Arrays.asList(coexpein, administrador)).build(),
 
 				Regra.builder().descricao("5 pontos por premiação de aluno da turma na Expotec do campus")
-						.operacao("SUM").valorMinimo(5).senso(saude).tipoRegra(tipoFixo).roles(Arrays.asList(coexpein, administrador))
-						.build(),
+						.operacao("SUM").valorMinimo(5).senso(saude).tipoRegra(tipoFixo)
+						.roles(Arrays.asList(coexpein, administrador)).build(),
 
 				Regra.builder()
 						.descricao(
 								"2 pontos por participação do aluno da turma em eventos científicos externos ao campus")
-						.operacao("SUM").valorMinimo(2).senso(saude).tipoRegra(tipoFixo).roles(Arrays.asList(coexpein, administrador))
-						.build(),
+						.operacao("SUM").valorMinimo(2).senso(saude).tipoRegra(tipoFixo)
+						.roles(Arrays.asList(coexpein, administrador)).build(),
 
 				// Autodisciplina - Apoio Acadêmico - Positivas
 				Regra.builder().descricao("2 pontos por delação premiada").operacao("SUM").valorMinimo(2)
-						.senso(autodisciplina).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador)).build(),
+						.senso(autodisciplina).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador))
+						.build(),
 
 				// Autodisciplina - Apoio Acadêmico - Negativas
 				Regra.builder().descricao("1 ponto por aluno da turma notificado").operacao("SUB").valorMinimo(1)
-						.senso(autodisciplina).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador)).build(),
+						.senso(autodisciplina).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador))
+						.build(),
 				Regra.builder().descricao("Pontos por turma notificada").operacao("SUB").senso(autodisciplina)
 						.tipoRegra(tipoVariavel).roles(Arrays.asList(apoioAcademico, administrador)).build(),
 				Regra.builder().descricao("1 ponto por dia de aluno da turma suspenso").operacao("SUB").valorMinimo(1)
-						.senso(autodisciplina).tipoRegra(tipoVariavel).roles(Arrays.asList(apoioAcademico, administrador)).build(),
+						.senso(autodisciplina).tipoRegra(tipoVariavel)
+						.roles(Arrays.asList(apoioAcademico, administrador)).build(),
 
 				// Autodisciplina - Coordenador de Curso e Assessoria Pedagógica - Negativas
 				Regra.builder().descricao("0 a 15 pontos por bimestre por campanha de conscientização realizada")
 						.operacao("SUM").valorMinimo(0).valorMaximo(15).senso(autodisciplina)
-						.tipoRegra(tipoVariavelBimestre).roles(Arrays.asList(coordenadorCurso, assessoriaPedagogica, administrador))
-						.build(),
+						.tipoRegra(tipoVariavelBimestre)
+						.roles(Arrays.asList(coordenadorCurso, assessoriaPedagogica, administrador)).build(),
 
 				// Autodisciplina - Administrador - Negativas
 				Regra.builder().descricao("5 a 10 pontos por má conduta em eventos").operacao("SUB").valorMinimo(5)
@@ -325,36 +339,116 @@ public class TestConfig implements CommandLineRunner {
 		regraRepository.saveAll(regras);
 
 //		Criar pontuação
-		Pontuacao pontuacao1 = Pontuacao.builder().contador(1).turma(turmaA).regra(regras.get(9)).anoLetivo(ano23)
-		        .user(u1).bimestre(1).pontos(10).motivacao("ordenacao").aplicado(true).anulado(false)
-		        .data(new Date()).build();
+		Pontuacao pontuacao1 = Pontuacao.builder().contador(1).turma(turmaA).regra(regras.get(0)) // 1 ponto por livro
+																									// emprestado
+				.anoLetivo(ano23).user(u1).bimestre(1).pontos(1).motivacao("Livro emprestado").aplicado(true)
+				.anulado(false).data(new Date(1673568000000L)) // Data de 13 de janeiro de 2023
+				.build();
 
-		Pontuacao pontuacao2 = Pontuacao.builder().contador(2).turma(turmaB).regra(regras.get(9)).anoLetivo(ano23)
-		        .user(u1).bimestre(1).pontos(10).motivacao("ordenacao").aplicado(true).anulado(false)
-		        .data(new Date()).build();
-		
-		Pontuacao pontuacao3 = Pontuacao.builder().contador(3).turma(turmaA).regra(regras.get(8)).anoLetivo(ano23)
-				.user(u1).bimestre(2).pontos(10).motivacao("ordenacao").aplicado(true).anulado(false)
-				.data(new Date()).build();
-		
-		Pontuacao pontuacao4 = Pontuacao.builder().contador(4).turma(turmaB).regra(regras.get(8)).anoLetivo(ano23)
-				.user(u1).bimestre(2).pontos(10).motivacao("ordenacao").aplicado(true).anulado(false)
-				.data(new Date()).build();
-		
-		Pontuacao pontuacao5 = Pontuacao.builder().contador(5).turma(turmaB).regra(regras.get(14)).anoLetivo(ano23)
-				.user(u1).bimestre(2).pontos(10).motivacao("limpeza").aplicado(true).anulado(false)
-				.data(new Date()).build();
-		
-		Pontuacao pontuacao6 = Pontuacao.builder().contador(6).turma(turmaB).regra(regras.get(15)).anoLetivo(ano23)
-				.user(u1).bimestre(2).pontos(10).motivacao("limpeza").aplicado(true).anulado(false)
-				.data(new Date()).build();
-		
-		Pontuacao pontuacao7 = Pontuacao.builder().contador(7).turma(turmaA).regra(regras.get(15)).anoLetivo(ano23)
-		        .user(u1).bimestre(2).pontos(10).motivacao("limpeza").aplicado(true).anulado(false)
-		        .data(new Date()).build();
+		Pontuacao pontuacao2 = Pontuacao.builder().contador(2).turma(turmaA).regra(regras.get(2)) // 30 pontos por
+																									// campanha de
+																									// doação
+				.anoLetivo(ano23).user(u1).bimestre(1).pontos(30).motivacao("Campanha de doação").aplicado(false)
+				.anulado(false).data(new Date(1678924800000L)) // Data de 15 de março de 2023
+				.build();
 
-		// Salvar pontuações
-		pontuacaoRepository.saveAll(Arrays.asList(pontuacao1, pontuacao2, pontuacao3, pontuacao4, pontuacao5, pontuacao6, pontuacao7));
+		Pontuacao pontuacao3 = Pontuacao.builder().contador(3).turma(turmaA).regra(regras.get(7)) // 10 pontos por
+																									// desordem no turno
+				.anoLetivo(ano23).user(u1).bimestre(2).pontos(10).motivacao("Desordem no turno").aplicado(true)
+				.anulado(false).data(new Date(1686787200000L)) // Data de 15 de junho de 2023
+				.build();
+
+		Pontuacao pontuacao4 = Pontuacao.builder().contador(4).turma(turmaA).regra(regras.get(10)) // 20 pontos por
+																									// maior
+																									// participação em
+																									// CAs
+				.anoLetivo(ano23).user(u1).bimestre(2).pontos(20).motivacao("Maior participação em CAs").aplicado(true)
+				.anulado(false).data(new Date(1689379200000L)) // Data de 15 de julho de 2023
+				.build();
+
+		Pontuacao pontuacao5 = Pontuacao.builder().contador(5).turma(turmaA).regra(regras.get(12)) // 20 pontos para
+																									// 100% de nota 10
+				.anoLetivo(ano23).user(u1).bimestre(3).pontos(20).motivacao("100% de nota 10").aplicado(true)
+				.anulado(false).data(new Date(1696118400000L)) // Data de 1 de outubro de 2023
+				.build();
+
+		Pontuacao pontuacao6 = Pontuacao.builder().contador(6).turma(turmaA).regra(regras.get(14)) // 10 pontos por
+																									// limpeza excelente
+				.anoLetivo(ano23).user(u1).bimestre(3).pontos(10).motivacao("Limpeza excelente").aplicado(true)
+				.anulado(false).data(new Date(1698700800000L)) // Data de 30 de outubro de 2023
+				.build();
+
+		Pontuacao pontuacao7 = Pontuacao.builder().contador(7).turma(turmaA).regra(regras.get(15)) // 5 pontos por
+																									// avaria de livro
+				.anoLetivo(ano23).user(u1).bimestre(4).pontos(5).motivacao("Avaria de livro").aplicado(true)
+				.anulado(false).data(new Date(1701302400000L)) // Data de 30 de novembro de 2023
+				.build();
+
+		Pontuacao pontuacao8 = Pontuacao.builder().contador(7).turma(turmaA).regra(regras.get(21)).anoLetivo(ano23)
+				.user(u1).bimestre(4).pontos(5).motivacao("Avaria de livro").aplicado(true).anulado(false)
+				.data(new Date(1701302400000L)).build();
+
+		Pontuacao pontuacao9 = Pontuacao.builder().contador(8).turma(turmaA).regra(regras.get(36)).anoLetivo(ano23)
+				.user(u1).bimestre(4).pontos(2).motivacao("Avaria de livro").aplicado(true).anulado(false)
+				.data(new Date(1701302400000L)).build();
+
+		Pontuacao pontuacao10 = Pontuacao.builder().contador(1).turma(turmaB).regra(regras.get(0)) // 1 ponto por livro
+																									// emprestado
+				.anoLetivo(ano23).user(u1).bimestre(1).pontos(1).motivacao("Livro emprestado").aplicado(true)
+				.anulado(false).data(new Date(1673568000000L)) // Data de 13 de janeiro de 2023
+				.build();
+
+		Pontuacao pontuacao11 = Pontuacao.builder().contador(2).turma(turmaB).regra(regras.get(2)) // 30 pontos por
+																									// campanha de
+																									// doação
+				.anoLetivo(ano23).user(u1).bimestre(1).pontos(7).motivacao("Campanha de doação").aplicado(false)
+				.anulado(false).data(new Date(1678924800000L)) // Data de 15 de março de 2023
+				.build();
+
+		Pontuacao pontuacao12 = Pontuacao.builder().contador(3).turma(turmaB).regra(regras.get(7)) // 10 pontos por
+																									// desordem no turno
+				.anoLetivo(ano23).user(u1).bimestre(2).pontos(89).motivacao("Desordem no turno").aplicado(true)
+				.anulado(false).data(new Date(1686787200000L)) // Data de 15 de junho de 2023
+				.build();
+
+		Pontuacao pontuacao13 = Pontuacao.builder().contador(4).turma(turmaB).regra(regras.get(10)) // 20 pontos por
+																									// maior
+																									// participação em
+																									// CAs
+				.anoLetivo(ano23).user(u1).bimestre(2).pontos(17).motivacao("Maior participação em CAs").aplicado(true)
+				.anulado(false).data(new Date(1689379200000L)) // Data de 15 de julho de 2023
+				.build();
+
+		Pontuacao pontuacao14 = Pontuacao.builder().contador(5).turma(turmaB).regra(regras.get(12)) // 20 pontos para
+																									// 100% de nota 10
+				.anoLetivo(ano23).user(u1).bimestre(3).pontos(3).motivacao("100% de nota 10").aplicado(true)
+				.anulado(false).data(new Date(1696118400000L)) // Data de 1 de outubro de 2023
+				.build();
+
+		Pontuacao pontuacao15 = Pontuacao.builder().contador(6).turma(turmaB).regra(regras.get(14)) // 10 pontos por
+																									// limpeza excelente
+				.anoLetivo(ano23).user(u1).bimestre(3).pontos(18).motivacao("Limpeza excelente").aplicado(true)
+				.anulado(false).data(new Date(1698700800000L)) // Data de 30 de outubro de 2023
+				.build();
+
+		Pontuacao pontuacao16 = Pontuacao.builder().contador(7).turma(turmaB).regra(regras.get(15)) // 5 pontos por
+																									// avaria de livro
+				.anoLetivo(ano23).user(u1).bimestre(4).pontos(25).motivacao("Avaria de livro").aplicado(true)
+				.anulado(false).data(new Date(1701302400000L)) // Data de 30 de novembro de 2023
+				.build();
+
+		Pontuacao pontuacao17 = Pontuacao.builder().contador(7).turma(turmaB).regra(regras.get(21)).anoLetivo(ano23)
+				.user(u1).bimestre(4).pontos(15).motivacao("Avaria de livro").aplicado(true).anulado(false)
+				.data(new Date(1701302400000L)).build();
+
+		Pontuacao pontuacao18 = Pontuacao.builder().contador(8).turma(turmaB).regra(regras.get(36)).anoLetivo(ano23)
+				.user(u1).bimestre(4).pontos(8).motivacao("Avaria de livro").aplicado(true).anulado(false)
+				.data(new Date(1701302400000L)).build();
+
+		// Salvar as pontuações
+		pontuacaoRepository.saveAll(Arrays.asList(pontuacao1, pontuacao2, pontuacao3, pontuacao4, pontuacao5,
+				pontuacao6, pontuacao7, pontuacao8, pontuacao9, pontuacao10, pontuacao11, pontuacao12, pontuacao13,
+				pontuacao14, pontuacao15, pontuacao16, pontuacao17, pontuacao18));
 
 	}
 
