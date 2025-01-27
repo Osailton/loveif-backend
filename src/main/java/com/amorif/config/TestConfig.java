@@ -354,7 +354,7 @@ public class TestConfig implements CommandLineRunner {
 
 		Pontuacao pontuacao3 = Pontuacao.builder().contador(3).turma(turmaA).regra(regras.get(7)) // 10 pontos por
 																									// desordem no turno
-				.anoLetivo(ano23).user(u1).bimestre(2).pontos(10).motivacao("Desordem no turno").aplicado(true)
+				.anoLetivo(ano23).user(u1).bimestre(1).pontos(10).motivacao("Desordem no turno").aplicado(true)
 				.anulado(false).data(new Date(1686787200000L)) // Data de 15 de junho de 2023
 				.build();
 
@@ -384,7 +384,7 @@ public class TestConfig implements CommandLineRunner {
 				.anulado(false).data(new Date(1701302400000L)) // Data de 30 de novembro de 2023
 				.build();
 
-		Pontuacao pontuacao8 = Pontuacao.builder().contador(7).turma(turmaA).regra(regras.get(21)).anoLetivo(ano23)
+		Pontuacao pontuacao8 = Pontuacao.builder().contador(9).turma(turmaA).regra(regras.get(21)).anoLetivo(ano23)
 				.user(u1).bimestre(4).pontos(5).motivacao("Avaria de livro").aplicado(true).anulado(false)
 				.data(new Date(1701302400000L)).build();
 
@@ -431,7 +431,7 @@ public class TestConfig implements CommandLineRunner {
 				.anulado(false).data(new Date(1698700800000L)) // Data de 30 de outubro de 2023
 				.build();
 
-		Pontuacao pontuacao16 = Pontuacao.builder().contador(7).turma(turmaB).regra(regras.get(15)) // 5 pontos por
+		Pontuacao pontuacao16 = Pontuacao.builder().contador(9).turma(turmaB).regra(regras.get(15)) // 5 pontos por
 																									// avaria de livro
 				.anoLetivo(ano23).user(u1).bimestre(4).pontos(25).motivacao("Avaria de livro").aplicado(true)
 				.anulado(false).data(new Date(1701302400000L)) // Data de 30 de novembro de 2023
