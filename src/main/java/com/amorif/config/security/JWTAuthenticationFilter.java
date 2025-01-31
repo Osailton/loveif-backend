@@ -2,6 +2,7 @@ package com.amorif.config.security;
 
 import java.io.IOException;
 
+import org.slf4j.MDC;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -59,7 +60,16 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 			}
 		}
 		
-		filterChain.doFilter(request, response);
+		
+        if (username != null) {
+            MDC.put("user", username);
+        }
+
+        try {
+            filterChain.doFilter(request, response);
+        } finally {
+            MDC.clear();
+        }
 	}
 
 }

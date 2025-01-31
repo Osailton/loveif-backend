@@ -2,6 +2,8 @@ package com.amorif.services.impl;
 
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.amorif.dto.request.PontuacaoDtoRequest;
@@ -25,11 +27,13 @@ import com.amorif.services.ManagerService;
 @Service
 public class ManagerServiceImpl implements ManagerService {
 
+	private static final Logger logger = LoggerFactory.getLogger(ManagerServiceImpl.class);
 	private final TurmaRepository turmaRepository;
 	private final AnoLetivoRepository anoLetivoRepository;
 	private final PontuacaoRepository pontuacaoRepository;
 
-	public ManagerServiceImpl(TurmaRepository turmaRepository, AnoLetivoRepository anoLetivoRepository, PontuacaoRepository pontuacaoRepository) {
+	public ManagerServiceImpl(TurmaRepository turmaRepository, AnoLetivoRepository anoLetivoRepository,
+			PontuacaoRepository pontuacaoRepository) {
 		this.turmaRepository = turmaRepository;
 		this.anoLetivoRepository = anoLetivoRepository;
 		this.pontuacaoRepository = pontuacaoRepository;
@@ -58,12 +62,16 @@ public class ManagerServiceImpl implements ManagerService {
 	public PontuacaoDtoResponse approvePoints(PontuacaoDtoRequest request) {
 		System.out.println(request.getContador());
 		Turma turma = this.turmaRepository.getReferenceById(request.getIdTurma());
-		if(turma != null) {
+		if (turma != null) {
 			Pontuacao pontuacao = this.pontuacaoRepository.getByContadorTurma(request.getContador(), turma);
-			if(pontuacao != null) {
+			if (pontuacao != null) {
 				pontuacao.setAplicado(true);
 				pontuacao.setAnulado(false);
 				pontuacao = this.pontuacaoRepository.save(pontuacao);
+
+				logger.info("PONTUACAO APLICADA | REGRA: " + pontuacao.getRegra().getDescricao() + " | "
+						+ pontuacao.getTurma().getNome() + " | CONTADOR: " + pontuacao.getContador());
+
 				return this.dtoFromPontuacao(pontuacao);
 			} else {
 				throw new InvalidArgumentException("Parâmetros inválidos para a requisição!");
@@ -72,16 +80,20 @@ public class ManagerServiceImpl implements ManagerService {
 			throw new InvalidArgumentException("Parâmetros inválidos para a requisição!");
 		}
 	}
-	
+
 	@Override
 	public PontuacaoDtoResponse cancelPoints(PontuacaoDtoRequest request) {
 		Turma turma = this.turmaRepository.getReferenceById(request.getIdTurma());
-		if(turma != null) {
+		if (turma != null) {
 			Pontuacao pontuacao = this.pontuacaoRepository.getByContadorTurma(request.getContador(), turma);
-			if(pontuacao != null) {
+			if (pontuacao != null) {
 				pontuacao.setAnulado(true);
 				pontuacao.setAplicado(false);
 				pontuacao = this.pontuacaoRepository.save(pontuacao);
+
+				logger.info("PONTUACAO ANULADA | REGRA: " + pontuacao.getRegra().getDescricao() + " | "
+						+ pontuacao.getTurma().getNome() + " | CONTADOR: " + pontuacao.getContador());
+
 				return this.dtoFromPontuacao(pontuacao);
 			} else {
 				throw new InvalidArgumentException("Parâmetros inválidos para a requisição!");
@@ -97,17 +109,12 @@ public class ManagerServiceImpl implements ManagerService {
 						.anoLetivo(turma.getAnoLetivo().getAno()).build())
 				.nome(turma.getNome()).descricao(turma.getDescricao()).pontuacao(0).build();
 	}
-	
+
 	private PontuacaoDtoResponse dtoFromPontuacao(Pontuacao pontuacao) {
-		return PontuacaoDtoResponse.builder()
-				.contador(pontuacao.getContador())
-				.nomeTurma(pontuacao.getTurma().getNome())
-				.idTurma(pontuacao.getTurma().getId())
-				.descricao(pontuacao.getMotivacao())
-				.pontos(pontuacao.getPontos())
-				.operacao(pontuacao.getRegra().getOperacao().toString())
-				.aplicado(pontuacao.isAplicado())
-				.anulado(pontuacao.isAnulado())
-				.build();
+		return PontuacaoDtoResponse.builder().contador(pontuacao.getContador())
+				.nomeTurma(pontuacao.getTurma().getNome()).idTurma(pontuacao.getTurma().getId())
+				.descricao(pontuacao.getMotivacao()).pontos(pontuacao.getPontos())
+				.operacao(pontuacao.getRegra().getOperacao().toString()).aplicado(pontuacao.isAplicado())
+				.anulado(pontuacao.isAnulado()).build();
 	}
 }
