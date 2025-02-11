@@ -25,7 +25,7 @@ import com.amorif.entities.RoleEnum;
 
 @Configuration
 @EnableWebSecurity
-@Profile("dev")
+@Profile({"dev", "prod"})
 public class SecurityConfig {
 
 	private final String[] WHITE_LIST = new String[] { "/api/auth/**", "/api/public/**", "/api/pontuacao/pontosDoAnoCorrente" };
