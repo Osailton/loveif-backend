@@ -622,3 +622,37 @@ com.amorif.exceptions.UserNotFoundException: Não existe um usuário no sistema 
 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
 	at java.base/java.lang.Thread.run(Thread.java:1575)
+2025-02-11 11:20:13 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils -  - Could not detect default configuration classes for test class [com.amorif.services.impl.PontuacaoServiceImplTest]: PontuacaoServiceImplTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2025-02-11 11:20:14 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper -  - Found @SpringBootConfiguration com.amorif.StartApp for test class com.amorif.services.impl.PontuacaoServiceImplTest
+2025-02-11 11:20:14 [main] INFO  o.s.b.d.r.RestartApplicationListener -  - Restart disabled due to context in which it is running
+2025-02-11 11:20:15 [main] INFO  c.a.s.impl.PontuacaoServiceImplTest -  - Starting PontuacaoServiceImplTest using Java 21.0.6 with PID 145381 (started by manoel.cunha in /home/manoel.cunha/deploy/backend)
+2025-02-11 11:20:15 [main] INFO  c.a.s.impl.PontuacaoServiceImplTest -  - The following 1 profile is active: "test"
+2025-02-11 11:20:16 [main] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration -  - 
+
+Using generated security password: d9c4108b-2bd7-4f22-b161-3c6e0c5f82a2
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-02-11 11:20:17 [main] INFO  o.s.s.web.DefaultSecurityFilterChain -  - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@4af7ac25, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@d978ab9, org.springframework.security.web.context.SecurityContextHolderFilter@3caa4d85, org.springframework.security.web.header.HeaderWriterFilter@75bf9e67, org.springframework.web.filter.CorsFilter@3cf06a01, org.springframework.security.web.authentication.logout.LogoutFilter@5c41b8d8, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@51508029, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@5f20b6fe, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@71ee2fff, org.springframework.security.web.access.ExceptionTranslationFilter@7ecb9e17, org.springframework.security.web.access.intercept.AuthorizationFilter@4de158ca]
+2025-02-11 11:20:17 [main] INFO  o.s.b.t.m.w.SpringBootMockServletContext -  - Initializing Spring TestDispatcherServlet ''
+2025-02-11 11:20:17 [main] INFO  o.s.t.w.s.TestDispatcherServlet -  - Initializing Servlet ''
+2025-02-11 11:20:17 [main] INFO  o.s.t.w.s.TestDispatcherServlet -  - Completed initialization in 2 ms
+2025-02-11 11:20:17 [main] INFO  c.a.s.impl.PontuacaoServiceImplTest -  - Started PontuacaoServiceImplTest in 2.366 seconds (process running for 4.244)
+2025-02-11 11:20:17 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils -  - Could not detect default configuration classes for test class [com.amorif.controller.RegraControllerTest]: RegraControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2025-02-11 11:20:17 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper -  - Found @SpringBootConfiguration com.amorif.StartApp for test class com.amorif.controller.RegraControllerTest
+2025-02-11 11:20:17 [main] INFO  o.s.b.d.r.RestartApplicationListener -  - Restart disabled due to context in which it is running
+2025-02-11 11:20:17 [main] INFO  c.a.controller.RegraControllerTest -  - Starting RegraControllerTest using Java 21.0.6 with PID 145381 (started by manoel.cunha in /home/manoel.cunha/deploy/backend)
+2025-02-11 11:20:17 [main] INFO  c.a.controller.RegraControllerTest -  - The following 1 profile is active: "test"
+2025-02-11 11:20:17 [main] WARN  o.s.b.a.s.s.UserDetailsServiceAutoConfiguration -  - 
+
+Using generated security password: 4cc3ef1c-deb6-420c-a58c-65797cbfdc32
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-02-11 11:20:17 [main] INFO  o.s.s.web.DefaultSecurityFilterChain -  - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@7857cb1d, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@7646c9f5, org.springframework.security.web.context.SecurityContextHolderFilter@76c587ce, org.springframework.security.web.header.HeaderWriterFilter@2555a986, org.springframework.web.filter.CorsFilter@7b54a0a4, org.springframework.security.web.authentication.logout.LogoutFilter@5535e9, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@2ae7c1d, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@5265a8dd, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@682d9f21, org.springframework.security.web.access.ExceptionTranslationFilter@78e50fca, org.springframework.security.web.access.intercept.AuthorizationFilter@687f62a5]
+2025-02-11 11:20:17 [main] INFO  o.s.b.t.m.w.SpringBootMockServletContext -  - Initializing Spring TestDispatcherServlet ''
+2025-02-11 11:20:17 [main] INFO  o.s.t.w.s.TestDispatcherServlet -  - Initializing Servlet ''
+2025-02-11 11:20:17 [main] INFO  o.s.t.w.s.TestDispatcherServlet -  - Completed initialization in 1 ms
+2025-02-11 11:20:17 [main] INFO  c.a.controller.RegraControllerTest -  - Started RegraControllerTest in 0.401 seconds (process running for 5.011)
+2025-02-11 11:20:18 [main] WARN  o.s.w.s.h.HandlerMappingIntrospector -  - Cache miss for REQUEST dispatch to '/api/regras/listarTodas' (previous null). Performing CorsConfiguration lookup. This is logged once only at WARN level, and every time at TRACE.
+2025-02-11 11:20:18 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils -  - Could not detect default configuration classes for test class [com.loveif.StartAppTests]: StartAppTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
