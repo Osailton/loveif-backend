@@ -55,8 +55,8 @@ public class ProdConfig implements CommandLineRunner {
 			Role r11 = Role.builder().name(RoleEnum.ROLE_COORDENADOR_CURSO.toString()).build();
 			Role r12 = Role.builder().name(RoleEnum.ROLE_ASSESSORIA_LABORATORIO.toString()).build();
 			Role r13 = Role.builder().name(RoleEnum.ROLE_ASSISTENCIA_ESTUDANTIL.toString()).build();
-
-			roleRepository.saveAll(Arrays.asList(r1, r2, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13));
+			Role r14 = Role.builder().name(RoleEnum.ROLE_SEAC.toString()).build();
+			roleRepository.saveAll(Arrays.asList(r1, r2, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14));
 		}
 
 		// Criar sensos
@@ -126,171 +126,178 @@ public class ProdConfig implements CommandLineRunner {
 			Role assistenciaEstudantil = roleRepository.getByName("ROLE_ASSISTENCIA_ESTUDANTIL");
 			Role assessoriaLaboratorio = roleRepository.getByName("ROLE_ASSESSORIA_LABORATORIO");
 			Role administrador = roleRepository.getByName("ROLE_ADMINISTRADOR");
+			Role seac = roleRepository.getByName("ROLE_SEAC");
 
 			// População das regras
 			List<Regra> regras = Arrays.asList(
-					// Utilização - Bibliotecário - Positivas
-					Regra.builder().descricao("1 ponto por livro emprestado").operacao("SUM").valorMinimo(1)
-							.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador))
-							.build(),
-					Regra.builder().descricao("30 pontos por campanha de doação").operacao("SUM").valorMinimo(30)
-							.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador))
-							.build(),
-					Regra.builder().descricao(
-							"20 pontos no bimestre extra para a turma que mais tiver formado grupos de estudo no ano letivo")
-							.operacao("SUM").valorMinimo(20).senso(utilizacao).tipoRegra(tipoFixoBimestreExtra)
-							.roles(Arrays.asList(bibliotecario, administrador)).build(),
+				// Utilização - Bibliotecário - Positivas
+				Regra.builder().descricao("1 ponto por livro emprestado").operacao("SUM").valorMinimo(1)
+						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador))
+						.build(),
+				Regra.builder().descricao("30 pontos por campanha de doação").operacao("SUM").valorMinimo(30)
+						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador))
+						.build(),
+				Regra.builder().descricao(
+						"20 pontos no bimestre extra para a turma que mais tiver formado grupos de estudo no ano letivo")
+						.operacao("SUM").valorMinimo(20).senso(utilizacao).tipoRegra(tipoFixoBimestreExtra)
+						.roles(Arrays.asList(bibliotecario, administrador)).build(),
 
-					// Utilização - Bibliotecário - Negativas
-					Regra.builder().descricao("20 pontos por perda de livro").operacao("SUB").valorMinimo(20)
-							.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador))
-							.build(),
-					Regra.builder().descricao("3 pontos por atraso de livro").operacao("SUB").valorMinimo(3)
-							.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador))
-							.build(),
-					Regra.builder().descricao("5 pontos por avaria de livro").operacao("SUB").valorMinimo(5)
-							.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador))
-							.build(),
+				// Utilização - Bibliotecário - Negativas
+				Regra.builder().descricao("20 pontos por perda de livro").operacao("SUB").valorMinimo(20)
+						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador))
+						.build(),
+				Regra.builder().descricao("3 pontos por atraso de livro").operacao("SUB").valorMinimo(3)
+						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador))
+						.build(),
+				Regra.builder().descricao("5 pontos por avaria de livro").operacao("SUB").valorMinimo(5)
+						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador))
+						.build(),
+				Regra.builder().descricao("Pontos por trapaça").operacao("SUB").valorMinimo(1).senso(utilizacao)
+						.tipoRegra(tipoVariavel).roles(Arrays.asList(bibliotecario, administrador)).build(),
 
-					// Ordenação - Apoio Acadêmico - Positivas
-					Regra.builder().descricao("0 pontos pela organização ruim").operacao("SUM").valorMinimo(0)
-							.senso(ordenacao).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador))
-							.build(),
-					Regra.builder().descricao("5 pontos pela organização mediana").operacao("SUM").valorMinimo(5)
-							.senso(ordenacao).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador))
-							.build(),
-					Regra.builder().descricao("8 pontos pela organização boa").operacao("SUM").valorMinimo(8)
-							.senso(ordenacao).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador))
-							.build(),
-					Regra.builder().descricao("10 pontos pela organização excelente").operacao("SUM").valorMinimo(10)
-							.senso(ordenacao).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador))
-							.build(),
+				// Ordenação - Apoio Acadêmico - Positivas
+				Regra.builder().descricao("0 pontos pela organização ruim").operacao("SUM").valorMinimo(0)
+						.senso(ordenacao).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador))
+						.build(),
+				Regra.builder().descricao("5 pontos pela organização mediana").operacao("SUM").valorMinimo(5)
+						.senso(ordenacao).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador))
+						.build(),
+				Regra.builder().descricao("8 pontos pela organização boa").operacao("SUM").valorMinimo(8)
+						.senso(ordenacao).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador))
+						.build(),
+				Regra.builder().descricao("10 pontos pela organização excelente").operacao("SUM").valorMinimo(10)
+						.senso(ordenacao).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador))
+						.build(),
 
-					// Ordenação - Sistema - Positivas
-					Regra.builder().descricao("20 pontos ao fim de cada bimestre se a turma tiver 100% de nota 10")
-							.operacao("SUM").valorMinimo(20).senso(ordenacao).tipoRegra(tipoAutomatico)
-							.roles(Arrays.asList(sistema, administrador)).build(),
+				// Ordenação - Sistema - Positivas
+				Regra.builder().descricao("20 pontos ao fim de cada bimestre se a turma tiver 100% de nota 10")
+						.operacao("SUM").valorMinimo(20).senso(ordenacao).tipoRegra(tipoAutomatico)
+						.roles(Arrays.asList(sistema, administrador)).build(),
 
-					// Ordenação - Assistência Estudantil, Apoio Acadêmico e ASLAB - Negativas
-					Regra.builder().descricao("10 pontos por desordem para todas as turmas do turno").operacao("SUB")
-							.valorMinimo(10).senso(ordenacao).tipoRegra(tipoPorTurno)
-							.roles(Arrays.asList(assistenciaEstudantil, apoioAcademico, assessoriaLaboratorio,
-									administrador))
-							.build(),
+				// Ordenação - Assistência Estudantil, Apoio Acadêmico e ASLAB - Negativas
+				Regra.builder().descricao("10 pontos por desordem para todas as turmas do turno").operacao("SUB")
+						.valorMinimo(10).senso(ordenacao).tipoRegra(tipoPorTurno)
+						.roles(Arrays.asList(assistenciaEstudantil, apoioAcademico, assessoriaLaboratorio,
+								administrador))
+						.build(),
 
-					// Limpeza - Apoio Acadêmico - Positivas
-					Regra.builder().descricao("0 pontos pela limpeza ruim").operacao("SUM").valorMinimo(0)
-							.senso(limpeza).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador))
-							.build(),
-					Regra.builder().descricao("5 pontos pela limpeza mediana").operacao("SUM").valorMinimo(5)
-							.senso(limpeza).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador))
-							.build(),
-					Regra.builder().descricao("8 pontos pela limpeza boa").operacao("SUM").valorMinimo(8).senso(limpeza)
-							.tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador)).build(),
-					Regra.builder().descricao("10 pontos pela limpeza excelente").operacao("SUM").valorMinimo(10)
-							.senso(limpeza).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador))
-							.build(),
+				// Limpeza - Apoio Acadêmico - Positivas
+				Regra.builder().descricao("0 pontos pela limpeza ruim").operacao("SUM").valorMinimo(0).senso(limpeza)
+						.tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador)).build(),
+				Regra.builder().descricao("5 pontos pela limpeza mediana").operacao("SUM").valorMinimo(5).senso(limpeza)
+						.tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador)).build(),
+				Regra.builder().descricao("8 pontos pela limpeza boa").operacao("SUM").valorMinimo(8).senso(limpeza)
+						.tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador)).build(),
+				Regra.builder().descricao("10 pontos pela limpeza excelente").operacao("SUM").valorMinimo(10)
+						.senso(limpeza).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador)).build(),
 
-					// Limpeza - Apoio Acadêmico - Negativas
-					Regra.builder().descricao("10 pontos por falta de limpeza para todas as turmas do turno")
-							.operacao("SUB").valorMinimo(10).senso(limpeza).tipoRegra(tipoPorTurno)
-							.roles(Arrays.asList(apoioAcademico, administrador)).build(),
+				// Limpeza - Apoio Acadêmico - Negativas
+				Regra.builder().descricao("10 pontos por falta de limpeza para todas as turmas do turno")
+						.operacao("SUB").valorMinimo(10).senso(limpeza).tipoRegra(tipoPorTurno)
+						.roles(Arrays.asList(apoioAcademico, administrador)).build(),
 
-					// Limpeza - Sistema - Positivas
-					Regra.builder().descricao("20 pontos ao fim de cada bimestre se a turma tiver 100% de nota 10")
-							.operacao("SUM").valorMinimo(20).senso(limpeza).tipoRegra(tipoAutomatico)
-							.roles(Arrays.asList(sistema, administrador)).build(),
+				// Limpeza - Sistema - Positivas
+				Regra.builder().descricao("20 pontos ao fim de cada bimestre se a turma tiver 100% de nota 10")
+						.operacao("SUM").valorMinimo(20).senso(limpeza).tipoRegra(tipoAutomatico)
+						.roles(Arrays.asList(sistema, administrador)).build(),
 
-					// Saúde - Docente - Positivas
-					Regra.builder().descricao("0 pontos pela média menor ao do bimestre anterior").operacao("SUM")
-							.grupo("media_comparativa").valorMinimo(0).senso(saude).tipoRegra(tipoFixoPorBimestre)
-							.roles(Arrays.asList(docente, administrador)).build(),
-					Regra.builder().descricao("8 pontos pela média igual ao do bimestre anterior").operacao("SUM")
-							.grupo("media_comparativa").valorMinimo(8).senso(saude).tipoRegra(tipoFixoPorBimestre)
-							.roles(Arrays.asList(docente, administrador)).build(),
-					Regra.builder().descricao("20 pontos pela média maior ao do bimestre anterior").operacao("SUM")
-							.grupo("media_comparativa").valorMinimo(20).senso(saude).tipoRegra(tipoFixoPorBimestre)
-							.roles(Arrays.asList(docente, administrador)).build(),
+				// Limpeza - Administrador - Positivas
+				Regra.builder().descricao("Até 20 pontos por campanha de coleta de lixo no campus").operacao("SUM")
+						.valorMinimo(1).valorMaximo(20).senso(limpeza).tipoRegra(tipoVariavelBimestre)
+						.roles(Arrays.asList(administrador)).build(),
 
-					Regra.builder().descricao("0 pontos pela frequência menor ao do bimestre anterior").operacao("SUM")
-							.grupo("frequencia_comparativa").valorMinimo(0).senso(saude).tipoRegra(tipoFixoPorBimestre)
-							.roles(Arrays.asList(docente, administrador)).build(),
-					Regra.builder().descricao("8 pontos pela frequência igual ao do bimestre anterior").operacao("SUM")
-							.grupo("frequencia_comparativa").valorMinimo(8).senso(saude).tipoRegra(tipoFixoPorBimestre)
-							.roles(Arrays.asList(docente, administrador)).build(),
-					Regra.builder().descricao("20 pontos pela frequência maior ao do bimestre anterior").operacao("SUM")
-							.grupo("frequencia_comparativa").valorMinimo(20).senso(saude).tipoRegra(tipoFixoPorBimestre)
-							.roles(Arrays.asList(docente, administrador)).build(),
+				// Saúde - Docente - Positivas
+				Regra.builder().descricao("0 pontos pela média menor ao do bimestre anterior").operacao("SUM")
+						.grupo("media_comparativa").valorMinimo(0).senso(saude).tipoRegra(tipoFixoPorBimestre)
+						.roles(Arrays.asList(docente, administrador)).build(),
+				Regra.builder().descricao("8 pontos pela média igual ao do bimestre anterior").operacao("SUM")
+						.grupo("media_comparativa").valorMinimo(8).senso(saude).tipoRegra(tipoFixoPorBimestre)
+						.roles(Arrays.asList(docente, administrador)).build(),
+				Regra.builder().descricao("20 pontos pela média maior ao do bimestre anterior").operacao("SUM")
+						.grupo("media_comparativa").valorMinimo(20).senso(saude).tipoRegra(tipoFixoPorBimestre)
+						.roles(Arrays.asList(docente, administrador)).build(),
 
-					Regra.builder()
-							.descricao("10 pontos para a turma que mais participou de CAs no bimestre (opcional)")
-							.operacao("SUM").valorMinimo(10).senso(saude).tipoRegra(tipoFixoPorBimestre)
-							.roles(Arrays.asList(docente, administrador)).build(),
+				Regra.builder().descricao("0 pontos pela frequência menor ao do bimestre anterior").operacao("SUM")
+						.grupo("frequencia_comparativa").valorMinimo(0).senso(saude).tipoRegra(tipoFixoPorBimestre)
+						.roles(Arrays.asList(docente, administrador)).build(),
+				Regra.builder().descricao("8 pontos pela frequência igual ao do bimestre anterior").operacao("SUM")
+						.grupo("frequencia_comparativa").valorMinimo(8).senso(saude).tipoRegra(tipoFixoPorBimestre)
+						.roles(Arrays.asList(docente, administrador)).build(),
+				Regra.builder().descricao("20 pontos pela frequência maior ao do bimestre anterior").operacao("SUM")
+						.grupo("frequencia_comparativa").valorMinimo(20).senso(saude).tipoRegra(tipoFixoPorBimestre)
+						.roles(Arrays.asList(docente, administrador)).build(),
 
-					Regra.builder().descricao(
-							"2 pontos por aluno de cada turma que participar de olimpíadas coordenadas pelo professor no bimestre extra")
-							.operacao("SUM").valorMinimo(2).senso(saude).tipoRegra(tipoFixo)
-							.roles(Arrays.asList(docente, administrador)).build(),
+				Regra.builder().descricao("10 pontos para a turma que mais participou de CAs no bimestre (opcional)")
+						.operacao("SUM").valorMinimo(10).senso(saude).tipoRegra(tipoFixoPorBimestre)
+						.roles(Arrays.asList(docente, administrador)).build(),
 
-					Regra.builder().descricao("1 ponto por aluno da turma em cada bimestre por atuação de monitoria")
-							.operacao("SUM").valorMinimo(1).senso(saude).tipoRegra(tipoPorAlunoBimestre)
-							.roles(Arrays.asList(docente, administrador)).build(),
+				// Saúde - Docente - Negativas
+				Regra.builder().descricao("0 a 15 pontos por bimestre por mau comportamento").operacao("SUB")
+						.valorMinimo(0).valorMaximo(15).senso(saude).tipoRegra(tipoVariavelBimestre)
+						.roles(Arrays.asList(docente, administrador)).build(),
 
-					// Saúde - Docente - Negativas
-					Regra.builder().descricao("0 a 15 pontos por bimestre por mau comportamento").operacao("SUB")
-							.valorMinimo(0).valorMaximo(15).senso(saude).tipoRegra(tipoVariavelBimestre)
-							.roles(Arrays.asList(docente, administrador)).build(),
+				// Saúde - Coordenação de Curso - Positivas
 
-					// Saúde - Assessoria Pedagógica - Positivas
-					Regra.builder().descricao("1 ponto para a turma por aluno pela elaboração de plano de estudos")
-							.operacao("SUM").valorMinimo(1).senso(saude).tipoRegra(tipoPorAlunoAno)
-							.roles(Arrays.asList(assessoriaPedagogica, administrador)).build(),
+				Regra.builder().descricao(
+						"2 pontos por aluno de cada turma que participar de olimpíadas coordenadas pelo professor no bimestre extra")
+						.operacao("SUM").valorMinimo(2).senso(saude).tipoRegra(tipoPorAlunoAno)
+						.roles(Arrays.asList(coordenadorCurso, administrador)).build(),
 
-					Regra.builder().descricao(
-							"40 pontos para a turma com presença dos pais maior que 75% nas reuniões de pais por reunião")
-							.operacao("SUM").valorMinimo(40).senso(saude).tipoRegra(tipoFixo)
-							.roles(Arrays.asList(assessoriaPedagogica, administrador)).build(),
+				Regra.builder().descricao("1 ponto por aluno da turma em cada bimestre por atuação em monitoria")
+						.operacao("SUM").valorMinimo(1).senso(saude).tipoRegra(tipoPorAlunoBimestre)
+						.roles(Arrays.asList(coordenadorCurso, administrador)).build(),
 
-					// Saúde - Assessoria Pedagógica - Positivas
-					Regra.builder().descricao(
-							"1 ponto por aluno da turma em cada bimestre por atuação em projetos de pesquisa/extensão")
-							.operacao("SUM").valorMinimo(1).senso(saude).tipoRegra(tipoPorAlunoBimestre)
-							.roles(Arrays.asList(coexpein, administrador)).build(),
+				// Saúde - Assessoria Pedagógica - Positivas
+				Regra.builder().descricao("1 ponto para a turma por aluno pela elaboração de plano de estudos")
+						.operacao("SUM").valorMinimo(1).senso(saude).tipoRegra(tipoPorAlunoAno)
+						.roles(Arrays.asList(assessoriaPedagogica, administrador)).build(),
 
-					Regra.builder().descricao("5 pontos por premiação de aluno da turma na Expotec do campus")
-							.operacao("SUM").valorMinimo(5).senso(saude).tipoRegra(tipoFixo)
-							.roles(Arrays.asList(coexpein, administrador)).build(),
+				Regra.builder().descricao(
+						"40 pontos para a turma com presença dos pais maior que 75% nas reuniões de pais por reunião")
+						.operacao("SUM").valorMinimo(40).senso(saude).tipoRegra(tipoFixo)
+						.roles(Arrays.asList(assessoriaPedagogica, administrador)).build(),
 
-					Regra.builder().descricao(
-							"2 pontos por participação do aluno da turma em eventos científicos externos ao campus")
-							.operacao("SUM").valorMinimo(2).senso(saude).tipoRegra(tipoFixo)
-							.roles(Arrays.asList(coexpein, administrador)).build(),
+				// Saúde - Assessoria Pedagógica - Positivas
+				Regra.builder().descricao(
+						"1 ponto por aluno da turma em cada bimestre por atuação em projetos de pesquisa/extensão")
+						.operacao("SUM").valorMinimo(1).senso(saude).tipoRegra(tipoPorAlunoBimestre)
+						.roles(Arrays.asList(coexpein, administrador)).build(),
 
-					// Autodisciplina - Apoio Acadêmico - Positivas
-					Regra.builder().descricao("2 pontos por delação premiada").operacao("SUM").valorMinimo(2)
-							.senso(autodisciplina).tipoRegra(tipoFixo)
-							.roles(Arrays.asList(apoioAcademico, administrador)).build(),
+				Regra.builder().descricao("5 pontos por premiação de aluno da turma na Expotec do campus")
+						.operacao("SUM").valorMinimo(5).senso(saude).tipoRegra(tipoFixo)
+						.roles(Arrays.asList(coexpein, administrador)).build(),
 
-					// Autodisciplina - Apoio Acadêmico - Negativas
-					Regra.builder().descricao("1 ponto por aluno da turma notificado").operacao("SUB").valorMinimo(1)
-							.senso(autodisciplina).tipoRegra(tipoFixo)
-							.roles(Arrays.asList(apoioAcademico, administrador)).build(),
-					Regra.builder().descricao("Pontos por turma notificada").operacao("SUB").senso(autodisciplina)
-							.tipoRegra(tipoVariavel).roles(Arrays.asList(apoioAcademico, administrador)).build(),
-					Regra.builder().descricao("1 ponto por dia de aluno da turma suspenso").operacao("SUB")
-							.valorMinimo(1).senso(autodisciplina).tipoRegra(tipoVariavel)
-							.roles(Arrays.asList(apoioAcademico, administrador)).build(),
+				Regra.builder()
+						.descricao(
+								"2 pontos por participação do aluno da turma em eventos científicos externos ao campus")
+						.operacao("SUM").valorMinimo(2).senso(saude).tipoRegra(tipoFixo)
+						.roles(Arrays.asList(coexpein, administrador)).build(),
 
-					// Autodisciplina - Coordenador de Curso e Assessoria Pedagógica - Negativas
-					Regra.builder().descricao("0 a 15 pontos por bimestre por campanha de conscientização realizada")
-							.operacao("SUM").valorMinimo(0).valorMaximo(15).senso(autodisciplina)
-							.tipoRegra(tipoVariavelBimestre)
-							.roles(Arrays.asList(coordenadorCurso, assessoriaPedagogica, administrador)).build(),
+				// Autodisciplina - Apoio Acadêmico - Positivas
+				Regra.builder().descricao("2 pontos por delação premiada").operacao("SUM").valorMinimo(2)
+						.senso(autodisciplina).tipoRegra(tipoFixo)
+						.roles(Arrays.asList(apoioAcademico, seac, administrador)).build(),
 
-					// Autodisciplina - Administrador - Negativas
-					Regra.builder().descricao("5 a 10 pontos por má conduta em eventos").operacao("SUB").valorMinimo(5)
-							.valorMaximo(10).senso(autodisciplina).tipoRegra(tipoVariavel)
-							.roles(Arrays.asList(administrador)).build());
+				// Autodisciplina - Apoio Acadêmico - Negativas
+				Regra.builder().descricao("1 ponto por aluno da turma notificado").operacao("SUB").valorMinimo(1)
+						.senso(autodisciplina).tipoRegra(tipoFixo)
+						.roles(Arrays.asList(apoioAcademico, seac, administrador)).build(),
+				Regra.builder().descricao("Pontos por turma notificada").operacao("SUB").senso(autodisciplina)
+						.tipoRegra(tipoVariavel).roles(Arrays.asList(apoioAcademico, seac, administrador)).build(),
+				Regra.builder().descricao("5 pontos por dia por aluno da turma suspenso").operacao("SUB").valorMinimo(1)
+						.senso(autodisciplina).tipoRegra(tipoVariavel)
+						.roles(Arrays.asList(apoioAcademico, seac, administrador)).build(),
+
+				// Autodisciplina - Coordenador de Curso e Assessoria Pedagógica - Negativas
+				Regra.builder().descricao("0 a 15 pontos por bimestre por campanha de conscientização realizada")
+						.operacao("SUM").valorMinimo(0).valorMaximo(15).senso(autodisciplina)
+						.tipoRegra(tipoVariavelBimestre)
+						.roles(Arrays.asList(coordenadorCurso, assessoriaPedagogica, administrador)).build(),
+
+				// Autodisciplina - Administrador - Negativas
+				Regra.builder().descricao("5 a 10 pontos por má conduta em eventos").operacao("SUB").valorMinimo(5)
+						.valorMaximo(10).senso(autodisciplina).tipoRegra(tipoVariavel)
+						.roles(Arrays.asList(administrador)).build());
 
 			regraRepository.saveAll(regras);
 		}
