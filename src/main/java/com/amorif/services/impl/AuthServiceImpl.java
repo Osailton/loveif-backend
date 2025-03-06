@@ -113,6 +113,7 @@ public class AuthServiceImpl implements AuthService {
 	    setorSuapRoles.put("COCINF", RoleEnum.ROLE_COORDENADOR_CURSO.toString());
 	    setorSuapRoles.put("COCADM", RoleEnum.ROLE_COORDENADOR_CURSO.toString());
 	    setorSuapRoles.put("COCOM", RoleEnum.ROLE_COORDENADOR_CURSO.toString());
+	    setorSuapRoles.put("ASAC", RoleEnum.ROLE_SEAC.toString());
 
 	    // Funções específicas para ADMINISTRADOR
 	    List<String> adminFunctions = Arrays.asList(
