@@ -21,7 +21,8 @@ public enum RoleEnum {
     ROLE_ASSESSORIA_LABORATORIO("Aval"),
     ROLE_COORDENADOR_CURSO("Aval"),
     ROLE_COEXPEIN("Aval"),
-    ROLE_DOCENTE("Aval");
+    ROLE_DOCENTE("Aval"),
+	ROLE_SEAC("Aval");
 
     private final String category;
 

@@ -77,11 +77,12 @@ public class TestConfig implements CommandLineRunner {
 		Role r11 = Role.builder().name(RoleEnum.ROLE_COORDENADOR_CURSO.toString()).build();
 		Role r12 = Role.builder().name(RoleEnum.ROLE_ASSESSORIA_LABORATORIO.toString()).build();
 		Role r13 = Role.builder().name(RoleEnum.ROLE_ASSISTENCIA_ESTUDANTIL.toString()).build();
-		roleRepository.saveAll(Arrays.asList(r1, r2, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13));
+		Role r14 = Role.builder().name(RoleEnum.ROLE_SEAC.toString()).build();
+		roleRepository.saveAll(Arrays.asList(r1, r2, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14));
 
 //		Create User
 		User u1 = User.builder().nome("Teste").matricula("0101")
-				.funcoes(Set.of(r1, r5, r6, r7, r8, r9, r10, r11, r12, r13)).build();
+				.funcoes(Set.of(r14)).build();
 		userRepository.saveAll(Arrays.asList(u1));
 
 		User u2 = User.builder().nome("Teste").matricula("0102").funcoes(Set.of(r5, r6, r7, r8, r9, r10, r11, r12, r13))
@@ -173,6 +174,7 @@ public class TestConfig implements CommandLineRunner {
 		Role assistenciaEstudantil = roleRepository.getByName("ROLE_ASSISTENCIA_ESTUDANTIL");
 		Role assessoriaLaboratorio = roleRepository.getByName("ROLE_ASSESSORIA_LABORATORIO");
 		Role administrador = roleRepository.getByName("ROLE_ADMINISTRADOR");
+		Role seac = roleRepository.getByName("ROLE_SEAC");
 
 		// População das regras
 		List<Regra> regras = Arrays.asList(
@@ -198,6 +200,8 @@ public class TestConfig implements CommandLineRunner {
 				Regra.builder().descricao("5 pontos por avaria de livro").operacao("SUB").valorMinimo(5)
 						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador))
 						.build(),
+				Regra.builder().descricao("Pontos por trapaça").operacao("SUB").valorMinimo(1).senso(utilizacao)
+						.tipoRegra(tipoVariavel).roles(Arrays.asList(bibliotecario, administrador)).build(),
 
 				// Ordenação - Apoio Acadêmico - Positivas
 				Regra.builder().descricao("0 pontos pela organização ruim").operacao("SUM").valorMinimo(0)
@@ -245,6 +249,11 @@ public class TestConfig implements CommandLineRunner {
 						.operacao("SUM").valorMinimo(20).senso(limpeza).tipoRegra(tipoAutomatico)
 						.roles(Arrays.asList(sistema, administrador)).build(),
 
+				// Limpeza - Administrador - Positivas
+				Regra.builder().descricao("Até 20 pontos por campanha de coleta de lixo no campus").operacao("SUM")
+						.valorMinimo(1).valorMaximo(20).senso(limpeza).tipoRegra(tipoVariavelBimestre)
+						.roles(Arrays.asList(administrador)).build(),
+
 				// Saúde - Docente - Positivas
 				Regra.builder().descricao("0 pontos pela média menor ao do bimestre anterior").operacao("SUM")
 						.grupo("media_comparativa").valorMinimo(0).senso(saude).tipoRegra(tipoFixoPorBimestre)
@@ -270,19 +279,21 @@ public class TestConfig implements CommandLineRunner {
 						.operacao("SUM").valorMinimo(10).senso(saude).tipoRegra(tipoFixoPorBimestre)
 						.roles(Arrays.asList(docente, administrador)).build(),
 
-				Regra.builder().descricao(
-						"2 pontos por aluno de cada turma que participar de olimpíadas coordenadas pelo professor no bimestre extra")
-						.operacao("SUM").valorMinimo(2).senso(saude).tipoRegra(tipoFixo)
-						.roles(Arrays.asList(docente, administrador)).build(),
-
-				Regra.builder().descricao("1 ponto por aluno da turma em cada bimestre por atuação de monitoria")
-						.operacao("SUM").valorMinimo(1).senso(saude).tipoRegra(tipoPorAlunoBimestre)
-						.roles(Arrays.asList(docente, administrador)).build(),
-
 				// Saúde - Docente - Negativas
 				Regra.builder().descricao("0 a 15 pontos por bimestre por mau comportamento").operacao("SUB")
 						.valorMinimo(0).valorMaximo(15).senso(saude).tipoRegra(tipoVariavelBimestre)
 						.roles(Arrays.asList(docente, administrador)).build(),
+
+				// Saúde - Coordenação de Curso - Positivas
+
+				Regra.builder().descricao(
+						"2 pontos por aluno de cada turma que participar de olimpíadas coordenadas pelo professor no bimestre extra")
+						.operacao("SUM").valorMinimo(2).senso(saude).tipoRegra(tipoPorAlunoAno)
+						.roles(Arrays.asList(coordenadorCurso, administrador)).build(),
+
+				Regra.builder().descricao("1 ponto por aluno da turma em cada bimestre por atuação em monitoria")
+						.operacao("SUM").valorMinimo(1).senso(saude).tipoRegra(tipoPorAlunoBimestre)
+						.roles(Arrays.asList(coordenadorCurso, administrador)).build(),
 
 				// Saúde - Assessoria Pedagógica - Positivas
 				Regra.builder().descricao("1 ponto para a turma por aluno pela elaboração de plano de estudos")
@@ -312,18 +323,18 @@ public class TestConfig implements CommandLineRunner {
 
 				// Autodisciplina - Apoio Acadêmico - Positivas
 				Regra.builder().descricao("2 pontos por delação premiada").operacao("SUM").valorMinimo(2)
-						.senso(autodisciplina).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador))
-						.build(),
+						.senso(autodisciplina).tipoRegra(tipoFixo)
+						.roles(Arrays.asList(apoioAcademico, seac, administrador)).build(),
 
 				// Autodisciplina - Apoio Acadêmico - Negativas
 				Regra.builder().descricao("1 ponto por aluno da turma notificado").operacao("SUB").valorMinimo(1)
-						.senso(autodisciplina).tipoRegra(tipoFixo).roles(Arrays.asList(apoioAcademico, administrador))
-						.build(),
+						.senso(autodisciplina).tipoRegra(tipoFixo)
+						.roles(Arrays.asList(apoioAcademico, seac, administrador)).build(),
 				Regra.builder().descricao("Pontos por turma notificada").operacao("SUB").senso(autodisciplina)
-						.tipoRegra(tipoVariavel).roles(Arrays.asList(apoioAcademico, administrador)).build(),
-				Regra.builder().descricao("1 ponto por dia de aluno da turma suspenso").operacao("SUB").valorMinimo(1)
+						.tipoRegra(tipoVariavel).roles(Arrays.asList(apoioAcademico, seac, administrador)).build(),
+				Regra.builder().descricao("5 pontos por dia por aluno da turma suspenso").operacao("SUB").valorMinimo(1)
 						.senso(autodisciplina).tipoRegra(tipoVariavel)
-						.roles(Arrays.asList(apoioAcademico, administrador)).build(),
+						.roles(Arrays.asList(apoioAcademico, seac, administrador)).build(),
 
 				// Autodisciplina - Coordenador de Curso e Assessoria Pedagógica - Negativas
 				Regra.builder().descricao("0 a 15 pontos por bimestre por campanha de conscientização realizada")
