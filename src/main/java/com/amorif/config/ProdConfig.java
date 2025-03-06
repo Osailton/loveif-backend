@@ -2,6 +2,7 @@ package com.amorif.config;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
@@ -41,95 +42,117 @@ public class ProdConfig implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-//		Create Roles
-		if (roleRepository.count() == 0) {
-			Role r1 = Role.builder().name(RoleEnum.ROLE_ADMINISTRADOR.toString()).build();
-			Role r2 = Role.builder().name(RoleEnum.ROLE_AVAL.toString()).build();
-			Role r4 = Role.builder().name(RoleEnum.ROLE_ALUNO.toString()).build();
-			Role r5 = Role.builder().name(RoleEnum.ROLE_BIBLIOTECARIO.toString()).build();
-			Role r6 = Role.builder().name(RoleEnum.ROLE_APOIO_ACADEMICO.toString()).build();
-			Role r7 = Role.builder().name(RoleEnum.ROLE_SISTEMA.toString()).build();
-			Role r8 = Role.builder().name(RoleEnum.ROLE_DOCENTE.toString()).build();
-			Role r9 = Role.builder().name(RoleEnum.ROLE_ASSESSORIA_PEDAGOGICA.toString()).build();
-			Role r10 = Role.builder().name(RoleEnum.ROLE_COEXPEIN.toString()).build();
-			Role r11 = Role.builder().name(RoleEnum.ROLE_COORDENADOR_CURSO.toString()).build();
-			Role r12 = Role.builder().name(RoleEnum.ROLE_ASSESSORIA_LABORATORIO.toString()).build();
-			Role r13 = Role.builder().name(RoleEnum.ROLE_ASSISTENCIA_ESTUDANTIL.toString()).build();
-			Role r14 = Role.builder().name(RoleEnum.ROLE_SEAC.toString()).build();
-			roleRepository.saveAll(Arrays.asList(r1, r2, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14));
+//		// Create Roles
+		List<String> rolesExistentes = roleRepository.findAll().stream().map(Role::getName)
+				.collect(Collectors.toList());
+
+		List<Role> novasRoles = Arrays.asList(Role.builder().name(RoleEnum.ROLE_ADMINISTRADOR.toString()).build(),
+				Role.builder().name(RoleEnum.ROLE_AVAL.toString()).build(),
+				Role.builder().name(RoleEnum.ROLE_ALUNO.toString()).build(),
+				Role.builder().name(RoleEnum.ROLE_BIBLIOTECARIO.toString()).build(),
+				Role.builder().name(RoleEnum.ROLE_APOIO_ACADEMICO.toString()).build(),
+				Role.builder().name(RoleEnum.ROLE_SISTEMA.toString()).build(),
+				Role.builder().name(RoleEnum.ROLE_DOCENTE.toString()).build(),
+				Role.builder().name(RoleEnum.ROLE_ASSESSORIA_PEDAGOGICA.toString()).build(),
+				Role.builder().name(RoleEnum.ROLE_COEXPEIN.toString()).build(),
+				Role.builder().name(RoleEnum.ROLE_COORDENADOR_CURSO.toString()).build(),
+				Role.builder().name(RoleEnum.ROLE_ASSESSORIA_LABORATORIO.toString()).build(),
+				Role.builder().name(RoleEnum.ROLE_ASSISTENCIA_ESTUDANTIL.toString()).build(),
+				Role.builder().name(RoleEnum.ROLE_SEAC.toString()).build());
+
+		List<Role> rolesParaSalvar = novasRoles.stream().filter(role -> !rolesExistentes.contains(role.getName()))
+				.collect(Collectors.toList());
+
+		if (!rolesParaSalvar.isEmpty()) {
+			roleRepository.saveAll(rolesParaSalvar);
 		}
 
 		// Criar sensos
-		if (sensoRepository.count() == 0) {
-			Senso senso1 = Senso.builder().descricao("Utilização").build();
-			Senso senso2 = Senso.builder().descricao("Ordenação").build();
-			Senso senso3 = Senso.builder().descricao("Limpeza").build();
-			Senso senso4 = Senso.builder().descricao("Saúde").build();
-			Senso senso5 = Senso.builder().descricao("Autodisciplina").build();
+		List<String> sensosExistentes = sensoRepository.findAll().stream().map(Senso::getDescricao)
+				.collect(Collectors.toList());
 
-			sensoRepository.saveAll(Arrays.asList(senso1, senso2, senso3, senso4, senso5));
+		List<Senso> novosSensos = Arrays.asList(Senso.builder().descricao("Utilização").build(),
+				Senso.builder().descricao("Ordenação").build(), Senso.builder().descricao("Limpeza").build(),
+				Senso.builder().descricao("Saúde").build(), Senso.builder().descricao("Autodisciplina").build());
+
+		// Filtra apenas os sensos que ainda não existem no banco
+		List<Senso> sensosParaSalvar = novosSensos.stream()
+				.filter(senso -> !sensosExistentes.contains(senso.getDescricao())).collect(Collectors.toList());
+
+		if (!sensosParaSalvar.isEmpty()) {
+			sensoRepository.saveAll(sensosParaSalvar);
 		}
 
 		// Criar tipos de regra
-		if (tipoRegraRepository.count() == 0) {
-			TipoRegra tipo1 = TipoRegra.builder().descricao("Valor Fixo").fixo(true).temAluno(false)
-					.frequencia(FrequenciaRegraEnum.AVULSO.ordinal()).build();
-			TipoRegra tipo2 = TipoRegra.builder().descricao("Valor Fixo em bimestre extra por ano letivo").fixo(true)
-					.temAluno(false).frequencia(FrequenciaRegraEnum.ANUAL.ordinal()).bimestreExtra(true).build();
-			TipoRegra tipo3 = TipoRegra.builder().descricao("Valor Fixo automático por bimestre").fixo(true)
-					.temAluno(false).frequencia(FrequenciaRegraEnum.BIMESTRAL.ordinal()).automatico(true).build();
-			TipoRegra tipo4 = TipoRegra.builder().descricao("Valor Fixo por turno").fixo(true).temAluno(false)
-					.frequencia(FrequenciaRegraEnum.AVULSO.ordinal()).porTurno(true).build();
-			TipoRegra tipo5 = TipoRegra.builder().descricao("Valor Fixo por aluno por bimestre").fixo(true)
-					.temAluno(true).frequencia(FrequenciaRegraEnum.BIMESTRAL.ordinal()).build();
-			TipoRegra tipo6 = TipoRegra.builder().descricao("Valor Variável por bimestre").fixo(false).temAluno(false)
-					.frequencia(FrequenciaRegraEnum.BIMESTRAL.ordinal()).build();
-			TipoRegra tipo7 = TipoRegra.builder().descricao("Valor Fixo por aluno por ano letivo").fixo(true)
-					.temAluno(true).frequencia(FrequenciaRegraEnum.ANUAL.ordinal()).build();
-			TipoRegra tipo8 = TipoRegra.builder().descricao("Valor Variável").fixo(false).temAluno(false)
-					.frequencia(FrequenciaRegraEnum.AVULSO.ordinal()).build();
-			TipoRegra tipo9 = TipoRegra.builder().descricao("Valor Fixo por bimestre").fixo(true).temAluno(false)
-					.frequencia(FrequenciaRegraEnum.BIMESTRAL.ordinal()).build();
+		List<String> tiposExistentes = tipoRegraRepository.findAll().stream().map(TipoRegra::getDescricao)
+				.collect(Collectors.toList());
 
-			tipoRegraRepository.saveAll(Arrays.asList(tipo1, tipo2, tipo3, tipo4, tipo5, tipo6, tipo7, tipo8, tipo9));
+		List<TipoRegra> novosTipos = Arrays.asList(
+				TipoRegra.builder().descricao("Valor Fixo").fixo(true).temAluno(false)
+						.frequencia(FrequenciaRegraEnum.AVULSO.ordinal()).build(),
+				TipoRegra.builder().descricao("Valor Fixo em bimestre extra por ano letivo").fixo(true).temAluno(false)
+						.frequencia(FrequenciaRegraEnum.ANUAL.ordinal()).bimestreExtra(true).build(),
+				TipoRegra.builder().descricao("Valor Fixo automático por bimestre").fixo(true).temAluno(false)
+						.frequencia(FrequenciaRegraEnum.BIMESTRAL.ordinal()).automatico(true).build(),
+				TipoRegra.builder().descricao("Valor Fixo por turno").fixo(true).temAluno(false)
+						.frequencia(FrequenciaRegraEnum.AVULSO.ordinal()).porTurno(true).build(),
+				TipoRegra.builder().descricao("Valor Fixo por aluno por bimestre").fixo(true).temAluno(true)
+						.frequencia(FrequenciaRegraEnum.BIMESTRAL.ordinal()).build(),
+				TipoRegra.builder().descricao("Valor Variável por bimestre").fixo(false).temAluno(false)
+						.frequencia(FrequenciaRegraEnum.BIMESTRAL.ordinal()).build(),
+				TipoRegra.builder().descricao("Valor Fixo por aluno por ano letivo").fixo(true).temAluno(true)
+						.frequencia(FrequenciaRegraEnum.ANUAL.ordinal()).build(),
+				TipoRegra.builder().descricao("Valor Variável").fixo(false).temAluno(false)
+						.frequencia(FrequenciaRegraEnum.AVULSO.ordinal()).build(),
+				TipoRegra.builder().descricao("Valor Fixo por bimestre").fixo(true).temAluno(false)
+						.frequencia(FrequenciaRegraEnum.BIMESTRAL.ordinal()).build());
+
+		List<TipoRegra> tiposParaSalvar = novosTipos.stream()
+				.filter(tipo -> !tiposExistentes.contains(tipo.getDescricao())).collect(Collectors.toList());
+
+		if (!tiposParaSalvar.isEmpty()) {
+			tipoRegraRepository.saveAll(tiposParaSalvar);
 		}
 
 		// População de regras
-		if (regraRepository.count() == 0) {
-			// Obter instâncias de Senso
-			Senso utilizacao = sensoRepository.findByDescricao("Utilização");
-			Senso ordenacao = sensoRepository.findByDescricao("Ordenação");
-			Senso limpeza = sensoRepository.findByDescricao("Limpeza");
-			Senso saude = sensoRepository.findByDescricao("Saúde");
-			Senso autodisciplina = sensoRepository.findByDescricao("Autodisciplina");
 
-			// Obter instâncias de TipoRegra
-			TipoRegra tipoFixo = tipoRegraRepository.findByDescricao("Valor Fixo");
-			TipoRegra tipoFixoBimestreExtra = tipoRegraRepository
-					.findByDescricao("Valor Fixo em bimestre extra por ano letivo");
-			TipoRegra tipoAutomatico = tipoRegraRepository.findByDescricao("Valor Fixo automático por bimestre");
-			TipoRegra tipoPorTurno = tipoRegraRepository.findByDescricao("Valor Fixo por turno");
-			TipoRegra tipoPorAlunoBimestre = tipoRegraRepository.findByDescricao("Valor Fixo por aluno por bimestre");
-			TipoRegra tipoVariavelBimestre = tipoRegraRepository.findByDescricao("Valor Variável por bimestre");
-			TipoRegra tipoPorAlunoAno = tipoRegraRepository.findByDescricao("Valor Fixo por aluno por ano letivo");
-			TipoRegra tipoVariavel = tipoRegraRepository.findByDescricao("Valor Variável");
-			TipoRegra tipoFixoPorBimestre = tipoRegraRepository.findByDescricao("Valor Fixo por bimestre");
+		// Obter instâncias de Senso
+		Senso utilizacao = sensoRepository.findByDescricao("Utilização");
+		Senso ordenacao = sensoRepository.findByDescricao("Ordenação");
+		Senso limpeza = sensoRepository.findByDescricao("Limpeza");
+		Senso saude = sensoRepository.findByDescricao("Saúde");
+		Senso autodisciplina = sensoRepository.findByDescricao("Autodisciplina");
 
-			// Obter instâncias de Role
-			Role bibliotecario = roleRepository.getByName("ROLE_BIBLIOTECARIO");
-			Role apoioAcademico = roleRepository.getByName("ROLE_APOIO_ACADEMICO");
-			Role sistema = roleRepository.getByName("ROLE_SISTEMA");
-			Role docente = roleRepository.getByName("ROLE_DOCENTE");
-			Role assessoriaPedagogica = roleRepository.getByName("ROLE_ASSESSORIA_PEDAGOGICA");
-			Role coexpein = roleRepository.getByName("ROLE_COEXPEIN");
-			Role coordenadorCurso = roleRepository.getByName("ROLE_COORDENADOR_CURSO");
-			Role assistenciaEstudantil = roleRepository.getByName("ROLE_ASSISTENCIA_ESTUDANTIL");
-			Role assessoriaLaboratorio = roleRepository.getByName("ROLE_ASSESSORIA_LABORATORIO");
-			Role administrador = roleRepository.getByName("ROLE_ADMINISTRADOR");
-			Role seac = roleRepository.getByName("ROLE_SEAC");
+		// Obter instâncias de TipoRegra
+		TipoRegra tipoFixo = tipoRegraRepository.findByDescricao("Valor Fixo");
+		TipoRegra tipoFixoBimestreExtra = tipoRegraRepository
+				.findByDescricao("Valor Fixo em bimestre extra por ano letivo");
+		TipoRegra tipoAutomatico = tipoRegraRepository.findByDescricao("Valor Fixo automático por bimestre");
+		TipoRegra tipoPorTurno = tipoRegraRepository.findByDescricao("Valor Fixo por turno");
+		TipoRegra tipoPorAlunoBimestre = tipoRegraRepository.findByDescricao("Valor Fixo por aluno por bimestre");
+		TipoRegra tipoVariavelBimestre = tipoRegraRepository.findByDescricao("Valor Variável por bimestre");
+		TipoRegra tipoPorAlunoAno = tipoRegraRepository.findByDescricao("Valor Fixo por aluno por ano letivo");
+		TipoRegra tipoVariavel = tipoRegraRepository.findByDescricao("Valor Variável");
+		TipoRegra tipoFixoPorBimestre = tipoRegraRepository.findByDescricao("Valor Fixo por bimestre");
 
-			// População das regras
-			List<Regra> regras = Arrays.asList(
+		// Obter instâncias de Role
+		Role bibliotecario = roleRepository.getByName("ROLE_BIBLIOTECARIO");
+		Role apoioAcademico = roleRepository.getByName("ROLE_APOIO_ACADEMICO");
+		Role sistema = roleRepository.getByName("ROLE_SISTEMA");
+		Role docente = roleRepository.getByName("ROLE_DOCENTE");
+		Role assessoriaPedagogica = roleRepository.getByName("ROLE_ASSESSORIA_PEDAGOGICA");
+		Role coexpein = roleRepository.getByName("ROLE_COEXPEIN");
+		Role coordenadorCurso = roleRepository.getByName("ROLE_COORDENADOR_CURSO");
+		Role assistenciaEstudantil = roleRepository.getByName("ROLE_ASSISTENCIA_ESTUDANTIL");
+		Role assessoriaLaboratorio = roleRepository.getByName("ROLE_ASSESSORIA_LABORATORIO");
+		Role administrador = roleRepository.getByName("ROLE_ADMINISTRADOR");
+		Role seac = roleRepository.getByName("ROLE_SEAC");
+
+		// População das regras
+		List<String> regrasExistentes = regraRepository.findAll().stream().map(Regra::getDescricao)
+				.collect(Collectors.toList());
+
+		List<Regra> novasRegras = Arrays.asList(
 				// Utilização - Bibliotecário - Positivas
 				Regra.builder().descricao("1 ponto por livro emprestado").operacao("SUM").valorMinimo(1)
 						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador))
@@ -299,8 +322,13 @@ public class ProdConfig implements CommandLineRunner {
 						.valorMaximo(10).senso(autodisciplina).tipoRegra(tipoVariavel)
 						.roles(Arrays.asList(administrador)).build());
 
-			regraRepository.saveAll(regras);
+		List<Regra> regrasParaSalvar = novasRegras.stream()
+				.filter(regra -> !regrasExistentes.contains(regra.getDescricao())).collect(Collectors.toList());
+
+		if (!regrasParaSalvar.isEmpty()) {
+			regraRepository.saveAll(regrasParaSalvar);
 		}
+
 	}
 
 }
