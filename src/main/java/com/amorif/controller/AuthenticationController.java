@@ -47,11 +47,6 @@ public class AuthenticationController {
 		return ResponseEntity.ok().body(this.authService.register(dto));
 	}
 	
-	@GetMapping("loginDev")
-	public ResponseEntity<?> login(@RequestParam("matricula") String matricula) {
-		return ResponseEntity.ok().body(this.authService.authenticate(SUAPUserDtoRequest.builder().matricula(matricula).build()));
-	}
-	
 	@GetMapping("user")
 	public ResponseEntity<?> user(HttpServletRequest request) {
 //		Get user from the token
