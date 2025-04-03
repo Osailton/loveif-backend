@@ -260,7 +260,7 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 				checkPointsFrequencyPerStudent(regra, anoAtual, dtoRequest.getBimestre(), dtoRequest.getIdTurma(),
 						dtoRequest.getMatriculaAluno());
 			} else {
-				checkPointsFrequency(regra, anoAtual, dtoRequest.getBimestre(), dtoRequest.getIdTurma());
+				checkPointsFrequency(regra, anoAtual, dtoRequest.getBimestre(), dtoRequest.getIdTurma(), user);
 			}
 
 			Integer count = this.pontuacaoRepository.contadorByTurma(turma);
@@ -405,21 +405,21 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 		}
 	}
 
-	private void checkPointsFrequency(Regra regra, AnoLetivo anoAtual, Integer bimestre, Long turmaId) {
+	private void checkPointsFrequency(Regra regra, AnoLetivo anoAtual, Integer bimestre, Long turmaId, User user) {
 		FrequenciaRegraEnum freq = FrequenciaRegraEnum.values()[regra.getTipoRegra().getFrequencia()];
 
 		if (regra.getGrupo() != null) {
 			if (freq == FrequenciaRegraEnum.ANUAL) {
-				if (pontuacaoRepository.existsByYearAndGroup(anoAtual.getId(), turmaId, regra.getGrupo())) {
+				if (pontuacaoRepository.existsByYearAndGroup(anoAtual.getId(), turmaId, regra.getGrupo(), user)) {
 					throw new AnnualRuleException(
-							"Já existe uma pontuação anual para esta turma no ano letivo atual nesse grupo de regras.");
+							"Já existe uma pontuação anual criada por você para esta turma no ano letivo atual nesse grupo de regras.");
 				}
 			}
 
 			if (freq == FrequenciaRegraEnum.BIMESTRAL) {
-				if (pontuacaoRepository.existsByBimesterAndGroup(bimestre, turmaId, regra.getGrupo())) {
+				if (pontuacaoRepository.existsByBimesterAndGroup(bimestre, turmaId, regra.getGrupo(), user)) {
 					throw new BimonthlyRuleException(
-							"Já existe uma pontuação bimestral para esta turma no bimestre fornecido nesse grupo de regras.");
+							"Já existe uma pontuação bimestral criada por você para esta turma no bimestre fornecido nesse grupo de regras.");
 				}
 			}
 		} else {

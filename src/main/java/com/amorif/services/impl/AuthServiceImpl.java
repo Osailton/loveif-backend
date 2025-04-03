@@ -105,15 +105,15 @@ public class AuthServiceImpl implements AuthService {
 
 		// Definindo as roles para setorSuap
 	    Map<String, String> setorSuapRoles = new HashMap<>();
-	    setorSuapRoles.put("ASBIB", RoleEnum.ROLE_BIBLIOTECARIO.toString());
-	    setorSuapRoles.put("APAC", RoleEnum.ROLE_APOIO_ACADEMICO.toString());
-	    setorSuapRoles.put("ASPED", RoleEnum.ROLE_ASSESSORIA_PEDAGOGICA.toString());
-	    setorSuapRoles.put("ASAES", RoleEnum.ROLE_ASSISTENCIA_ESTUDANTIL.toString());
-	    setorSuapRoles.put("ASLAB", RoleEnum.ROLE_ASSESSORIA_LABORATORIO.toString());
-	    setorSuapRoles.put("COCINF", RoleEnum.ROLE_COORDENADOR_CURSO.toString());
-	    setorSuapRoles.put("COCADM", RoleEnum.ROLE_COORDENADOR_CURSO.toString());
-	    setorSuapRoles.put("COCOM", RoleEnum.ROLE_COORDENADOR_CURSO.toString());
-	    setorSuapRoles.put("ASAC", RoleEnum.ROLE_SEAC.toString());
+	    setorSuapRoles.put("ASBIB/LAJ", RoleEnum.ROLE_BIBLIOTECARIO.toString());
+	    setorSuapRoles.put("APAC/LAJ", RoleEnum.ROLE_APOIO_ACADEMICO.toString());
+	    setorSuapRoles.put("ASPED/LAJ", RoleEnum.ROLE_ASSESSORIA_PEDAGOGICA.toString());
+	    setorSuapRoles.put("ASAES/LAJ", RoleEnum.ROLE_ASSISTENCIA_ESTUDANTIL.toString());
+	    setorSuapRoles.put("ASLAB/LAJ", RoleEnum.ROLE_ASSESSORIA_LABORATORIO.toString());
+	    setorSuapRoles.put("COCINF/LAJ", RoleEnum.ROLE_COORDENADOR_CURSO.toString());
+	    setorSuapRoles.put("COCADM/LAJ", RoleEnum.ROLE_COORDENADOR_CURSO.toString());
+	    setorSuapRoles.put("COCOM/LAJ", RoleEnum.ROLE_COORDENADOR_CURSO.toString());
+	    setorSuapRoles.put("ASAC/LAJ", RoleEnum.ROLE_SEAC.toString());
 
 	    // Funções específicas para ADMINISTRADOR
 	    List<String> adminFunctions = Arrays.asList(
@@ -130,7 +130,7 @@ public class AuthServiceImpl implements AuthService {
 	        }
 
 	        // Verificando a categoria para ROLE_COEXPEIN
-	        if (dto.getVinculo().getSetorSiape().contains("COEXPEIN")) {
+	        if (dto.getVinculo().getSetorSiape().contains("COEXPEIN/LAJ")) {
 	            user.getFuncoes().add(this.roleRepository.getByName(RoleEnum.ROLE_COEXPEIN.toString()));
 	        }
 

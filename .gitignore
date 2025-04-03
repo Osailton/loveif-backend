@@ -12,6 +12,8 @@ target/
 
 /node_modules
 
+/logs
+
 # SSH Keys #
 *.pem
 *.ppk
