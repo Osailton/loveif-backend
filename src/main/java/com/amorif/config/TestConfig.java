@@ -82,7 +82,7 @@ public class TestConfig implements CommandLineRunner {
 
 //		Create User
 		User u1 = User.builder().nome("Teste").matricula("0101")
-				.funcoes(Set.of(r14)).build();
+				.funcoes(Set.of(r14, r8)).build();
 		userRepository.saveAll(Arrays.asList(u1));
 
 		User u2 = User.builder().nome("Teste").matricula("0102").funcoes(Set.of(r5, r6, r7, r8, r9, r10, r11, r12, r13))
