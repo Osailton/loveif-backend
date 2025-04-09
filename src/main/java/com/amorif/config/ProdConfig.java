@@ -280,7 +280,11 @@ public class ProdConfig implements CommandLineRunner {
 						.operacao("SUM").valorMinimo(40).senso(saude).tipoRegra(tipoFixo)
 						.roles(Arrays.asList(assessoriaPedagogica, administrador)).build(),
 
-				// Saúde - Assessoria Pedagógica - Positivas
+				Regra.builder().descricao("10 pontos para a turma com maior partipação nos Conselhos de Classe do bimestre")
+						.operacao("SUM").valorMinimo(10).senso(saude).tipoRegra(tipoFixoPorBimestre)
+						.roles(Arrays.asList(assessoriaPedagogica, administrador)).build(),
+
+				// Saúde - COEXPEIN - Positivas
 				Regra.builder().descricao(
 						"1 ponto por aluno da turma em cada bimestre por atuação em projetos de pesquisa/extensão")
 						.operacao("SUM").valorMinimo(1).senso(saude).tipoRegra(tipoPorAlunoBimestre)

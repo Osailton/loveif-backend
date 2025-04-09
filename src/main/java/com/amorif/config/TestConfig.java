@@ -300,12 +300,16 @@ public class TestConfig implements CommandLineRunner {
 						.operacao("SUM").valorMinimo(1).senso(saude).tipoRegra(tipoPorAlunoAno)
 						.roles(Arrays.asList(assessoriaPedagogica, administrador)).build(),
 
+				Regra.builder().descricao("10 pontos para a turma com maior partipação nos Conselhos de Classe do bimestre")
+						.operacao("SUM").valorMinimo(10).senso(saude).tipoRegra(tipoFixoPorBimestre)
+						.roles(Arrays.asList(assessoriaPedagogica, administrador)).build(),
+
 				Regra.builder().descricao(
 						"40 pontos para a turma com presença dos pais maior que 75% nas reuniões de pais por reunião")
 						.operacao("SUM").valorMinimo(40).senso(saude).tipoRegra(tipoFixo)
 						.roles(Arrays.asList(assessoriaPedagogica, administrador)).build(),
 
-				// Saúde - Assessoria Pedagógica - Positivas
+				// Saúde - COEXPEIN - Positivas
 				Regra.builder().descricao(
 						"1 ponto por aluno da turma em cada bimestre por atuação em projetos de pesquisa/extensão")
 						.operacao("SUM").valorMinimo(1).senso(saude).tipoRegra(tipoPorAlunoBimestre)
