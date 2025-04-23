@@ -130,7 +130,7 @@ public class AuthServiceImpl implements AuthService {
 	        }
 
 	        // Verificando a categoria para ROLE_COEXPEIN
-	        if (dto.getVinculo().getSetorSiape().contains("COEXPEIN/LAJ")) {
+	        if (dto.getVinculo().getSetorSuap().contains("COEXPEIN/LAJ")) {
 	            user.getFuncoes().add(this.roleRepository.getByName(RoleEnum.ROLE_COEXPEIN.toString()));
 	        }
 
