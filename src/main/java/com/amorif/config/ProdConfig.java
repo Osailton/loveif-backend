@@ -154,9 +154,9 @@ public class ProdConfig implements CommandLineRunner {
 
 		List<Regra> novasRegras = Arrays.asList(
 				// Utilização - Bibliotecário - Positivas
-				Regra.builder().descricao("1 ponto por livro emprestado").operacao("SUM").valorMinimo(1)
-						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador))
-						.build(),
+				Regra.builder().descricao("Pontos por livro emprestado (1 ponto por livro)").operacao("SUM")
+						.valorMinimo(1).senso(utilizacao).tipoRegra(tipoVariavel)
+						.roles(Arrays.asList(bibliotecario, administrador)).build(),
 				Regra.builder().descricao("30 pontos por campanha de doação").operacao("SUM").valorMinimo(30)
 						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador))
 						.build(),
@@ -280,7 +280,8 @@ public class ProdConfig implements CommandLineRunner {
 						.operacao("SUM").valorMinimo(40).senso(saude).tipoRegra(tipoFixo)
 						.roles(Arrays.asList(assessoriaPedagogica, administrador)).build(),
 
-				Regra.builder().descricao("10 pontos para a turma com maior partipação nos Conselhos de Classe do bimestre")
+				Regra.builder()
+						.descricao("10 pontos para a turma com maior partipação nos Conselhos de Classe do bimestre")
 						.operacao("SUM").valorMinimo(10).senso(saude).tipoRegra(tipoFixoPorBimestre)
 						.roles(Arrays.asList(assessoriaPedagogica, administrador)).build(),
 
@@ -299,6 +300,16 @@ public class ProdConfig implements CommandLineRunner {
 								"2 pontos por participação do aluno da turma em eventos científicos externos ao campus")
 						.operacao("SUM").valorMinimo(2).senso(saude).tipoRegra(tipoFixo)
 						.roles(Arrays.asList(coexpein, administrador)).build(),
+
+				// Saúde - ASAES - Positivas
+
+				Regra.builder().descricao("1 ponto por aluno da turma que realizar Avaliação Biomédica de Saúde")
+						.operacao("SUM").valorMinimo(1).senso(saude).tipoRegra(tipoPorAlunoAno)
+						.roles(Arrays.asList(assistenciaEstudantil, administrador)).build(),
+
+				Regra.builder().descricao("1 ponto por aluno da turma que realizar Caracterização Socioeconômica")
+						.operacao("SUM").valorMinimo(1).senso(saude).tipoRegra(tipoPorAlunoAno)
+						.roles(Arrays.asList(assistenciaEstudantil, administrador)).build(),
 
 				// Autodisciplina - Apoio Acadêmico - Positivas
 				Regra.builder().descricao("2 pontos por delação premiada").operacao("SUM").valorMinimo(2)
