@@ -81,8 +81,7 @@ public class TestConfig implements CommandLineRunner {
 		roleRepository.saveAll(Arrays.asList(r1, r2, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14));
 
 //		Create User
-		User u1 = User.builder().nome("Teste").matricula("0101")
-				.funcoes(Set.of(r14, r8)).build();
+		User u1 = User.builder().nome("Teste").matricula("0101").funcoes(Set.of(r14, r8)).build();
 		userRepository.saveAll(Arrays.asList(u1));
 
 		User u2 = User.builder().nome("Teste").matricula("0102").funcoes(Set.of(r5, r6, r7, r8, r9, r10, r11, r12, r13))
@@ -265,16 +264,18 @@ public class TestConfig implements CommandLineRunner {
 						.grupo("media_comparativa").valorMinimo(20).senso(saude).tipoRegra(tipoFixoPorBimestre)
 						.roles(Arrays.asList(docente, administrador)).build(),
 
+				// Saúde - Assessoria Pedagogica - Positivas
 				Regra.builder().descricao("0 pontos pela frequência menor ao do bimestre anterior").operacao("SUM")
 						.grupo("frequencia_comparativa").valorMinimo(0).senso(saude).tipoRegra(tipoFixoPorBimestre)
-						.roles(Arrays.asList(docente, administrador)).build(),
-				Regra.builder().descricao("8 pontos pela frequência igual ao do bimestre anterior").operacao("SUM")
-						.grupo("frequencia_comparativa").valorMinimo(8).senso(saude).tipoRegra(tipoFixoPorBimestre)
-						.roles(Arrays.asList(docente, administrador)).build(),
-				Regra.builder().descricao("20 pontos pela frequência maior ao do bimestre anterior").operacao("SUM")
-						.grupo("frequencia_comparativa").valorMinimo(20).senso(saude).tipoRegra(tipoFixoPorBimestre)
-						.roles(Arrays.asList(docente, administrador)).build(),
+						.roles(Arrays.asList(assessoriaPedagogica, administrador)).build(),
+				Regra.builder().descricao("100 pontos pela frequência igual ao do bimestre anterior").operacao("SUM")
+						.grupo("frequencia_comparativa").valorMinimo(100).senso(saude).tipoRegra(tipoFixoPorBimestre)
+						.roles(Arrays.asList(assessoriaPedagogica, administrador)).build(),
+				Regra.builder().descricao("200 pontos pela frequência maior ao do bimestre anterior").operacao("SUM")
+						.grupo("frequencia_comparativa").valorMinimo(200).senso(saude).tipoRegra(tipoFixoPorBimestre)
+						.roles(Arrays.asList(assessoriaPedagogica, administrador)).build(),
 
+				// Saúde - Docente - Positivas
 				Regra.builder().descricao("10 pontos para a turma que mais participou de CAs no bimestre (opcional)")
 						.operacao("SUM").valorMinimo(10).senso(saude).tipoRegra(tipoFixoPorBimestre)
 						.roles(Arrays.asList(docente, administrador)).build(),
@@ -299,11 +300,9 @@ public class TestConfig implements CommandLineRunner {
 				Regra.builder().descricao("1 ponto para a turma por aluno pela elaboração de plano de estudos")
 						.operacao("SUM").valorMinimo(1).senso(saude).tipoRegra(tipoPorAlunoAno)
 						.roles(Arrays.asList(assessoriaPedagogica, administrador)).build(),
-
-				Regra.builder().descricao("10 pontos para a turma com maior partipação nos Conselhos de Classe do bimestre")
+				Regra.builder().descricao("10 pontos para a turma com maior participação nos Conselhos de Classe do bimestre")
 						.operacao("SUM").valorMinimo(10).senso(saude).tipoRegra(tipoFixoPorBimestre)
 						.roles(Arrays.asList(assessoriaPedagogica, administrador)).build(),
-
 				Regra.builder().descricao(
 						"40 pontos para a turma com presença dos pais maior que 75% nas reuniões de pais por reunião")
 						.operacao("SUM").valorMinimo(40).senso(saude).tipoRegra(tipoFixo)

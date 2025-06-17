@@ -239,17 +239,19 @@ public class ProdConfig implements CommandLineRunner {
 				Regra.builder().descricao("20 pontos pela média maior ao do bimestre anterior").operacao("SUM")
 						.grupo("media_comparativa").valorMinimo(20).senso(saude).tipoRegra(tipoFixoPorBimestre)
 						.roles(Arrays.asList(docente, administrador)).build(),
-
+						
+				// Saúde - Assessoria Pedagogica - Positivas
 				Regra.builder().descricao("0 pontos pela frequência menor ao do bimestre anterior").operacao("SUM")
 						.grupo("frequencia_comparativa").valorMinimo(0).senso(saude).tipoRegra(tipoFixoPorBimestre)
-						.roles(Arrays.asList(docente, administrador)).build(),
-				Regra.builder().descricao("8 pontos pela frequência igual ao do bimestre anterior").operacao("SUM")
-						.grupo("frequencia_comparativa").valorMinimo(8).senso(saude).tipoRegra(tipoFixoPorBimestre)
-						.roles(Arrays.asList(docente, administrador)).build(),
-				Regra.builder().descricao("20 pontos pela frequência maior ao do bimestre anterior").operacao("SUM")
-						.grupo("frequencia_comparativa").valorMinimo(20).senso(saude).tipoRegra(tipoFixoPorBimestre)
-						.roles(Arrays.asList(docente, administrador)).build(),
-
+						.roles(Arrays.asList(assessoriaPedagogica, administrador)).build(),
+				Regra.builder().descricao("100 pontos pela frequência igual ao do bimestre anterior").operacao("SUM")
+						.grupo("frequencia_comparativa").valorMinimo(100).senso(saude).tipoRegra(tipoFixoPorBimestre)
+						.roles(Arrays.asList(assessoriaPedagogica, administrador)).build(),
+				Regra.builder().descricao("200 pontos pela frequência maior ao do bimestre anterior").operacao("SUM")
+						.grupo("frequencia_comparativa").valorMinimo(200).senso(saude).tipoRegra(tipoFixoPorBimestre)
+						.roles(Arrays.asList(assessoriaPedagogica, administrador)).build(),
+						
+				// Saúde - Docente - Positivas	
 				Regra.builder().descricao("10 pontos para a turma que mais participou de CAs no bimestre (opcional)")
 						.operacao("SUM").valorMinimo(10).senso(saude).tipoRegra(tipoFixoPorBimestre)
 						.roles(Arrays.asList(docente, administrador)).build(),
@@ -281,7 +283,7 @@ public class ProdConfig implements CommandLineRunner {
 						.roles(Arrays.asList(assessoriaPedagogica, administrador)).build(),
 
 				Regra.builder()
-						.descricao("10 pontos para a turma com maior partipação nos Conselhos de Classe do bimestre")
+						.descricao("10 pontos para a turma com maior participação nos Conselhos de Classe do bimestre")
 						.operacao("SUM").valorMinimo(10).senso(saude).tipoRegra(tipoFixoPorBimestre)
 						.roles(Arrays.asList(assessoriaPedagogica, administrador)).build(),
 
