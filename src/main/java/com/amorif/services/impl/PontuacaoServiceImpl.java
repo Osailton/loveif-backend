@@ -363,7 +363,7 @@ public class PontuacaoServiceImpl implements PontuacaoService {
 
 			Integer valorFixo = regra.getValorMinimo();
 
-			if (valorFixo != pontos) {
+			if (valorFixo.longValue() != pontos.longValue()) {
 				throw new InvalidFixedValueException("Os pontos lançados não correspondem ao valor fixo da regra");
 			}
 
