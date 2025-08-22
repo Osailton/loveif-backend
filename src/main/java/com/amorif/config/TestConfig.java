@@ -193,9 +193,9 @@ public class TestConfig implements CommandLineRunner {
 				Regra.builder().descricao("20 pontos por perda de livro").operacao("SUB").valorMinimo(20)
 						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador))
 						.build(),
-				Regra.builder().descricao("3 pontos por atraso de livro").operacao("SUB").valorMinimo(3)
-						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador))
-						.build(),
+				Regra.builder().descricao("Pontos por atraso de livro (3 pontos por livro atrasado)").operacao("SUB")
+						.valorMinimo(3).senso(utilizacao).tipoRegra(tipoVariavel)
+						.roles(Arrays.asList(bibliotecario, administrador)).build(),
 				Regra.builder().descricao("5 pontos por avaria de livro").operacao("SUB").valorMinimo(5)
 						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador))
 						.build(),
@@ -300,7 +300,8 @@ public class TestConfig implements CommandLineRunner {
 				Regra.builder().descricao("1 ponto para a turma por aluno pela elaboração de plano de estudos")
 						.operacao("SUM").valorMinimo(1).senso(saude).tipoRegra(tipoPorAlunoAno)
 						.roles(Arrays.asList(assessoriaPedagogica, administrador)).build(),
-				Regra.builder().descricao("10 pontos para a turma com maior participação nos Conselhos de Classe do bimestre")
+				Regra.builder()
+						.descricao("10 pontos para a turma com maior participação nos Conselhos de Classe do bimestre")
 						.operacao("SUM").valorMinimo(10).senso(saude).tipoRegra(tipoFixoPorBimestre)
 						.roles(Arrays.asList(assessoriaPedagogica, administrador)).build(),
 				Regra.builder().descricao(

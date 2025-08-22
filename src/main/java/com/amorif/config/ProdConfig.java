@@ -169,8 +169,8 @@ public class ProdConfig implements CommandLineRunner {
 				Regra.builder().descricao("20 pontos por perda de livro").operacao("SUB").valorMinimo(20)
 						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador))
 						.build(),
-				Regra.builder().descricao("3 pontos por atraso de livro").operacao("SUB").valorMinimo(3)
-						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador))
+				Regra.builder().descricao("Pontos por atraso de livro (3 pontos por livro atrasado)").operacao("SUB").valorMinimo(3)
+						.senso(utilizacao).tipoRegra(tipoVariavel).roles(Arrays.asList(bibliotecario, administrador))
 						.build(),
 				Regra.builder().descricao("5 pontos por avaria de livro").operacao("SUB").valorMinimo(5)
 						.senso(utilizacao).tipoRegra(tipoFixo).roles(Arrays.asList(bibliotecario, administrador))
